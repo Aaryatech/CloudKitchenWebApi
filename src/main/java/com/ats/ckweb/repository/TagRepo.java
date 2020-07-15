@@ -17,7 +17,7 @@ public interface TagRepo extends JpaRepository<Tags, Integer> {
 
 	public List<Tags> findByTagDeleteStatusAndTagIsActive(int del, int status);
 	
-	public List<Tags> findByTagDeleteStatus(int del);
+	public List<Tags> findByTagDeleteStatusOrderByTagIdDesc(int del);
 	
 	public Tags findByTagIdAndTagDeleteStatus(int tagId, int del);
 	
