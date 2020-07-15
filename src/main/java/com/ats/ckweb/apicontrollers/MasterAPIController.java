@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.Info;
+import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.services.TagsServices;
@@ -104,12 +105,25 @@ public class MasterAPIController {
 		return saveingerediant;		
 	}
 	
-	@RequestMapping(value = { "/getAllIngerediant" }, method = RequestMethod.GET)
-	public @ResponseBody List<IngrediantCategory> getAllingerediant(){
+	@RequestMapping(value = { "/getAllIngerediantCategory" }, method = RequestMethod.GET)
+	public @ResponseBody List<IngrediantCategory> getAllIngerediantCategory(){
 		
 		List<IngrediantCategory> ingerediantCatList = new ArrayList<IngrediantCategory>();
 		try {
 			ingerediantCatList = tagService.getAllIngrediantCategory();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ingerediantCatList;
+		
+	}
+	
+	@RequestMapping(value = { "/getAllActiveIngerediantCategory" }, method = RequestMethod.GET)
+	public @ResponseBody List<IngrediantCategory> getAllActiveIngerediantCategory(){
+		
+		List<IngrediantCategory> ingerediantCatList = new ArrayList<IngrediantCategory>();
+		try {
+			ingerediantCatList = tagService.getAllActiveIngrediantCategory();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -129,8 +143,8 @@ public class MasterAPIController {
 		return tag;		
 	}
 	
-	@RequestMapping(value = { "/deleteIngeredianCatById" }, method = RequestMethod.POST)
-	public @ResponseBody Info deleteIngeredianCatById(@RequestParam int ingerediantCatId){
+	@RequestMapping(value = { "/deleteIngerediantCatById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteIngerediantCatById(@RequestParam int ingerediantCatId){
 		
 		Info info = new Info();
 		try {
@@ -141,6 +155,61 @@ public class MasterAPIController {
 			}else {
 				info.setError(true);
 				info.setMessage("Failed to Delete Ingerediant Category");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/saveNewIngrediant" }, method = RequestMethod.POST)
+	public @ResponseBody Ingrediant saveNewIngrediant(@RequestBody Ingrediant ingerediant){
+		System.err.println("ingerediant------------"+ingerediant);
+		Ingrediant saveIngerediant = new Ingrediant();
+		try {
+			saveIngerediant = tagService.insertIngrediant(ingerediant);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return saveIngerediant;		
+	}
+	
+	@RequestMapping(value = { "/getAllIngerediants" }, method = RequestMethod.GET)
+	public @ResponseBody List<Ingrediant> getAllIngerediants(){
+		
+		List<Ingrediant> ingrediantList = new ArrayList<Ingrediant>();
+		try {
+			ingrediantList = tagService.getAllIngrediant();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ingrediantList;
+		
+	}
+	@RequestMapping(value = { "/getIngerediantById" }, method = RequestMethod.POST)
+	public @ResponseBody Ingrediant getIngerediantById(@RequestParam int ingrediantId){
+		
+		Ingrediant ingrediant = new Ingrediant();
+		try {
+			ingrediant = tagService.getIngrediantById(ingrediantId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ingrediant;		
+	}
+	
+	@RequestMapping(value = { "/deleteIngerediantById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteIngerediantById(@RequestParam int ingerediantId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteIngerediantById(ingerediantId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Ingerediant Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Ingerediant");
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

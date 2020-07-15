@@ -6,9 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
+import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.TagRepo;
 
 @Service
@@ -17,6 +19,8 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired TagRepo tagRepo;
 	
 	@Autowired IngrediantCategoryRepo ingrediantCatRepo;
+	
+	@Autowired IngrediantRepo ingrediantRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -65,6 +69,12 @@ public class TagServiceImpl implements TagsServices {
 	}
 
 	@Override
+	public List<IngrediantCategory> getAllActiveIngrediantCategory() {
+		List<IngrediantCategory> list = ingrediantCatRepo.findByDelStatusAndIsActiveOrderByIngrediantCatIdDesc(1, 1);
+		return list;
+	}
+	
+	@Override
 	public IngrediantCategory getIngrediantCatById(int ingerediantCatId) {
 		IngrediantCategory cat = ingrediantCatRepo.findByIngrediantCatIdAndDelStatus(ingerediantCatId, 1);
 		return cat;
@@ -75,6 +85,32 @@ public class TagServiceImpl implements TagsServices {
 		int res = ingrediantCatRepo.deleteIngrediantCatById(ingerediantCatId);
 		return res;
 	}
+/***************************************************/
 
+	@Override
+	public Ingrediant insertIngrediant(Ingrediant ingerediant) {
+		Ingrediant saveIngrdnt = ingrediantRepo.save(ingerediant);
+		return saveIngrdnt;
+	}
+
+	@Override
+	public List<Ingrediant> getAllIngrediant() {
+		List<Ingrediant> list = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(1);
+		return list;
+	}
+
+	@Override
+	public Ingrediant getIngrediantById(int ingrediantId) {
+		Ingrediant ingrediant = ingrediantRepo.findByDelStatusAndIngrediantId(1, ingrediantId);
+		return ingrediant;
+	}
+
+	@Override
+	public int deleteIngerediantById(int ingerediantId) {
+		int res = ingrediantRepo.deleteIngerediantById(ingerediantId);
+		return res;
+	}
+
+	
 
 }
