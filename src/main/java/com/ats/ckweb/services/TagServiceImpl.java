@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
+import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
+import com.ats.ckweb.repository.IngredientDetailListRepo;
 import com.ats.ckweb.repository.TagRepo;
 
 @Service
@@ -22,17 +24,19 @@ public class TagServiceImpl implements TagsServices {
 	
 	@Autowired IngrediantRepo ingrediantRepo;
 	
+	@Autowired IngredientDetailListRepo ingDetailRepo;
+	
 	@Override
 	public List<Tags> getAllOfferTags() {
 		
-		List<Tags> taglist = tagRepo.findByTagDeleteStatusOrderByTagIdDesc(1);
+		List<Tags> taglist = tagRepo.findByTagDeleteStatusOrderByTagIdDesc(0);
 		
 		return taglist;
 	}
 
 	@Override
 	public Tags getTagById(int tagId) {
-		Tags tag = tagRepo.findByTagIdAndTagDeleteStatus(tagId, 1);
+		Tags tag = tagRepo.findByTagIdAndTagDeleteStatus(tagId, 0);
 		return tag;
 	}
 
@@ -45,7 +49,7 @@ public class TagServiceImpl implements TagsServices {
 	@Override
 	public List<Tags> getAllActiveOfferTags() {
 		
-		List<Tags> taglist = tagRepo.findByTagDeleteStatusAndTagIsActive(1, 1);		
+		List<Tags> taglist = tagRepo.findByTagDeleteStatusAndTagIsActive(0, 0);		
 		return taglist;
 	}
 
@@ -64,19 +68,19 @@ public class TagServiceImpl implements TagsServices {
 	@Override
 	public List<IngrediantCategory> getAllIngrediantCategory() {
 		
-		List<IngrediantCategory> catlist = ingrediantCatRepo.findBydelStatusOrderByIngrediantCatIdDesc(1);		
+		List<IngrediantCategory> catlist = ingrediantCatRepo.findBydelStatusOrderByIngrediantCatIdDesc(0);		
 		return  catlist;
 	}
 
 	@Override
 	public List<IngrediantCategory> getAllActiveIngrediantCategory() {
-		List<IngrediantCategory> list = ingrediantCatRepo.findByDelStatusAndIsActiveOrderByIngrediantCatIdDesc(1, 1);
+		List<IngrediantCategory> list = ingrediantCatRepo.findByDelStatusAndIsActiveOrderByIngrediantCatIdDesc(0, 0);
 		return list;
 	}
 	
 	@Override
 	public IngrediantCategory getIngrediantCatById(int ingerediantCatId) {
-		IngrediantCategory cat = ingrediantCatRepo.findByIngrediantCatIdAndDelStatus(ingerediantCatId, 1);
+		IngrediantCategory cat = ingrediantCatRepo.findByIngrediantCatIdAndDelStatus(ingerediantCatId, 0);
 		return cat;
 	}
 
@@ -95,13 +99,13 @@ public class TagServiceImpl implements TagsServices {
 
 	@Override
 	public List<Ingrediant> getAllIngrediant() {
-		List<Ingrediant> list = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(1);
+		List<Ingrediant> list = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
 		return list;
 	}
 
 	@Override
 	public Ingrediant getIngrediantById(int ingrediantId) {
-		Ingrediant ingrediant = ingrediantRepo.findByDelStatusAndIngrediantId(1, ingrediantId);
+		Ingrediant ingrediant = ingrediantRepo.findByDelStatusAndIngrediantId(0, ingrediantId);
 		return ingrediant;
 	}
 
@@ -109,6 +113,12 @@ public class TagServiceImpl implements TagsServices {
 	public int deleteIngerediantById(int ingerediantId) {
 		int res = ingrediantRepo.deleteIngerediantById(ingerediantId);
 		return res;
+	}
+
+	@Override
+	public List<IngredientDetailList> getAllIngrediantDetailList() {
+		List<IngredientDetailList> list = ingDetailRepo.getIngredientDetail();
+		return list;
 	}
 
 	

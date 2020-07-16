@@ -23,7 +23,7 @@ public interface TagRepo extends JpaRepository<Tags, Integer> {
 	
 	@Transactional
 	@Modifying
-	@Query(value="UPDATE mn_tags SET tag_delete_status = 0 WHERE tag_id=:tagId",nativeQuery=true)
+	@Query(value="UPDATE mn_tags SET tag_delete_status = 1 WHERE tag_id=:tagId",nativeQuery=true)
 	public int deleteTagById(@Param("tagId") int tagId);
 	
 }

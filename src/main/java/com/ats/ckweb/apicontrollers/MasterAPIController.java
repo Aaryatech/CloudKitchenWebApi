@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
+import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.services.TagsServices;
 
@@ -175,11 +176,11 @@ public class MasterAPIController {
 	}
 	
 	@RequestMapping(value = { "/getAllIngerediants" }, method = RequestMethod.GET)
-	public @ResponseBody List<Ingrediant> getAllIngerediants(){
+	public @ResponseBody List<IngredientDetailList> getAllIngerediants(){
 		
-		List<Ingrediant> ingrediantList = new ArrayList<Ingrediant>();
+		List<IngredientDetailList> ingrediantList = new ArrayList<IngredientDetailList>();
 		try {
-			ingrediantList = tagService.getAllIngrediant();
+			ingrediantList = tagService.getAllIngrediantDetailList();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

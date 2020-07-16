@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
+import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Tags;
 @Service
 public interface TagsServices {
@@ -38,6 +39,8 @@ public interface TagsServices {
 	Ingrediant getIngrediantById(int ingrediantId);
 
 	int deleteIngerediantById(int ingerediantId);
+
+	List<IngredientDetailList> getAllIngrediantDetailList();
 
 	
 

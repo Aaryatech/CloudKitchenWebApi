@@ -21,6 +21,6 @@ public interface IngrediantRepo extends JpaRepository<Ingrediant, Integer> {
 	
 	@Transactional
 	@Modifying
-	@Query(value="UPDATE mn_ingrediant SET del_status=0 WHERE ingrediant_id=:ingrediantId",nativeQuery=true)
+	@Query(value="UPDATE mn_ingrediant SET del_status=1 WHERE ingrediant_id=:ingrediantId",nativeQuery=true)
 	int deleteIngerediantById(@Param("ingrediantId") int ingrediantId);
 }
