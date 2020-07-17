@@ -105,7 +105,7 @@ public class MasterAPIController {
 			int res = tagService.getAssignItemDetailsById(tagId);
 			if(res>0) {
 				info.setError(false);
-				info.setMessage("Items Assigned. Can't Delete This Record.");
+				info.setMessage("Items Assigned To This Tag. Can't Delete This Record.");
 			}else {
 				info.setError(true);
 				info.setMessage(null);
@@ -249,7 +249,7 @@ public class MasterAPIController {
 			int res = tagService.getItemTasteDetails(ingerediantId);
 			if(res>0) {
 				info.setError(false);
-				info.setMessage("Items Assigned. Can't Delete This Record.");
+				info.setMessage("Items Assigned To This Ingredient. Can't Delete This Record.");
 			}else {
 				info.setError(true);
 				info.setMessage("Failed to Delete Ingerediant");
