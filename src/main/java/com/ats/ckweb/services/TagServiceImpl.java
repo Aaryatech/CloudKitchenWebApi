@@ -6,10 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.MCategory;
+import com.ats.ckweb.model.SubCategory;
+import com.ats.ckweb.model.SubCategoryRepository;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.repository.CategoryRepository;
+import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
@@ -25,6 +31,12 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired IngrediantRepo ingrediantRepo;
 	
 	@Autowired IngredientDetailListRepo ingDetailRepo;
+	
+	@Autowired GetAllConfiguredItemTagRepo itemTagListRepo;
+	
+	@Autowired CategoryRepository categoryRepository;
+	
+	@Autowired SubCategoryRepository subCategoryRepository;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -122,5 +134,18 @@ public class TagServiceImpl implements TagsServices {
 	}
 
 	
+
+	@Override
+	public List<GetAllConfiguredItemTag> getAllTagItemConfigListById(int tagId) {
+		List<GetAllConfiguredItemTag> list = itemTagListRepo.getAllItemTagsById(tagId);
+		return list;
+	}
+	
+	@Override
+	public List<MCategory> findAllCategory() {
+		List<MCategory> mCategoryList=categoryRepository.findByDelStatusOrderBySeqNoAsc(0);
+		return mCategoryList;
+	}
+
 
 }

@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.Tags;
 @Service
 public interface TagsServices {
@@ -41,6 +43,11 @@ public interface TagsServices {
 	int deleteIngerediantById(int ingerediantId);
 
 	List<IngredientDetailList> getAllIngrediantDetailList();
+
+	List<GetAllConfiguredItemTag> getAllTagItemConfigListById(int tagId);
+	
+	public List<MCategory> findAllCategory();
+
 
 	
 

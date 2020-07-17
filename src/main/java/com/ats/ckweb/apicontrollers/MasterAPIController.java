@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.model.Category;
+import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.services.TagsServices;
 
@@ -187,6 +190,7 @@ public class MasterAPIController {
 		return ingrediantList;
 		
 	}
+	
 	@RequestMapping(value = { "/getIngerediantById" }, method = RequestMethod.POST)
 	public @ResponseBody Ingrediant getIngerediantById(@RequestParam int ingrediantId){
 		
@@ -217,4 +221,29 @@ public class MasterAPIController {
 		}
 		return info;		
 	}
+	
+	/***********************************************/
+	@RequestMapping(value = { "/showAllCategory" }, method = RequestMethod.GET)
+
+	public @ResponseBody List<MCategory> showAllCategory() {
+
+		List<MCategory> categoryList = tagService.findAllCategory();
+	
+		return categoryList;
+	}
+	
+	
+	@RequestMapping(value = { "/getAllConfigTagItemsById" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetAllConfiguredItemTag> getAllConfigTagItems(@RequestParam int tagId){
+		
+		List<GetAllConfiguredItemTag> itemList = new ArrayList<GetAllConfiguredItemTag>();
+		try {
+			itemList = tagService.getAllTagItemConfigListById(tagId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return itemList;
+		
+	}
+	
 }
