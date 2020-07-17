@@ -48,6 +48,10 @@ public interface TagsServices {
 	
 	public List<MCategory> findAllCategory();
 
+	int getAssignItemDetailsById(int tagId);
+
+	int getItemTasteDetails(int ingerediantId);
+
 
 	
 

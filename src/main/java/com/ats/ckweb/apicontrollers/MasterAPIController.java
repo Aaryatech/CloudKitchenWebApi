@@ -97,6 +97,25 @@ public class MasterAPIController {
 		return info;		
 	}
 	
+	@RequestMapping(value = { "/isTagAssign" }, method = RequestMethod.POST)
+	public @ResponseBody Info isTagAssign(@RequestParam int tagId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.getAssignItemDetailsById(tagId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Items Assigned. Can't Delete This Record.");
+			}else {
+				info.setError(true);
+				info.setMessage(null);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
 	@RequestMapping(value = { "/saveNewIngrediantCategory" }, method = RequestMethod.POST)
 	public @ResponseBody IngrediantCategory saveNewIngrediantCategory(@RequestBody IngrediantCategory ingerediant){
 		System.err.println("ingerediant------------"+ingerediant);
@@ -221,6 +240,26 @@ public class MasterAPIController {
 		}
 		return info;		
 	}
+	
+	@RequestMapping(value = { "/isItemTasteAssign" }, method = RequestMethod.POST)
+	public @ResponseBody Info isItemTasteAssign(@RequestParam int ingerediantId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.getItemTasteDetails(ingerediantId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Items Assigned. Can't Delete This Record.");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Ingerediant");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
 	
 	/***********************************************/
 	@RequestMapping(value = { "/showAllCategory" }, method = RequestMethod.GET)

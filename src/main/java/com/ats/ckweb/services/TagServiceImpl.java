@@ -19,6 +19,7 @@ import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
+import com.ats.ckweb.repository.ItemDetailNewRepo;
 import com.ats.ckweb.repository.TagRepo;
 
 @Service
@@ -37,6 +38,8 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired CategoryRepository categoryRepository;
 	
 	@Autowired SubCategoryRepository subCategoryRepository;
+	
+	@Autowired ItemDetailNewRepo itemDetailNewRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -145,6 +148,18 @@ public class TagServiceImpl implements TagsServices {
 	public List<MCategory> findAllCategory() {
 		List<MCategory> mCategoryList=categoryRepository.findByDelStatusOrderBySeqNoAsc(0);
 		return mCategoryList;
+	}
+
+	@Override
+	public int getAssignItemDetailsById(int tagId) {
+		int dtl = itemDetailNewRepo.getItemDetailByTagId(tagId);
+		return dtl;
+	}
+
+	@Override
+	public int getItemTasteDetails(int ingerediantId) {
+		int res = itemDetailNewRepo.getItemTasteByid(ingerediantId);
+		return res;
 	}
 
 
