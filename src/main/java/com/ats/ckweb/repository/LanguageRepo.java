@@ -15,9 +15,9 @@ public interface LanguageRepo extends JpaRepository<Language, Integer> {
 
 	List<Language> findByDelStatusOrderByLangIdDesc(int del);
 
-	Language findByLangCode(String langCode);
+	Language findByLangCodeIgnoreCase(String langCode);
 	
-	Language findByLangCodeAndLangIdNot(String langCode, int langId);
+	Language findByLangCodeIgnoreCaseAndLangIdNot(String langCode, int langId);
 	
 	Language findByLangIdAndDelStatus(int langId, int del);
 	

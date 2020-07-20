@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.model.Area;
+import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
@@ -440,5 +442,91 @@ public class MasterAPIController {
 			e.printStackTrace();
 		}
 		return newCity;		
+	}
+	/**********************************************************/
+	@RequestMapping(value = { "/getAllAreas" }, method = RequestMethod.GET)
+	public @ResponseBody List<Area> getAllArea(){
+		
+		List<Area> areaList = new ArrayList<Area>();
+		try {
+			areaList = tagService.getAllArea();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return areaList;
+	}
+	
+	@RequestMapping(value = { "/getAllAreaCityList" }, method = RequestMethod.POST)
+	public @ResponseBody List<AreaCityList> getAllAreaCityList(@RequestParam int compId){
+		
+		List<AreaCityList> areaList = new ArrayList<AreaCityList>();
+		try {
+			areaList = tagService.getAllAreaCityList(compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return areaList;
+	}
+	
+	@RequestMapping(value = { "/getAreaById" }, method = RequestMethod.POST)
+	public @ResponseBody Area getAreaById(@RequestParam int areaId){
+		
+		Area area = new Area();
+		try {
+			area = tagService.getAreaById(areaId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return area;
+	}
+	
+	@RequestMapping(value = { "/getAreaByCode" }, method = RequestMethod.POST)
+	public @ResponseBody Area getAreaByCode(@RequestParam String code, @RequestParam int areaId){
+		
+		Area area = new Area();
+		try {
+			if(areaId==0) {
+				
+				area = tagService.getAreaByCode(code);
+			}else {
+				
+				area = tagService.getAreaByCodeInEdit(code, areaId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return area;		
+	}
+	
+	@RequestMapping(value = { "/deleteAreaById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteAreaById(@RequestParam int areaId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteAreaById(areaId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Area Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Area");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addArea" }, method = RequestMethod.POST)
+	public @ResponseBody Area addArea(@RequestBody Area area){
+		
+		Area newArea = new Area();
+		try {
+			newArea = tagService.insertArea(area);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newArea;		
 	}
 }

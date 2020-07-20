@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.Area;
+import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
@@ -77,6 +79,20 @@ public interface TagsServices {
 	int deleteCityById(int cityId);
 
 	City insertCity(City city);
+
+	List<Area> getAllArea();
+
+	Area getAreaById(int areaId);
+
+	Area getAreaByCode(String code);
+
+	Area getAreaByCodeInEdit(String code, int areaId);
+
+	int deleteAreaById(int areaId);
+
+	Area insertArea(Area area);
+
+	List<AreaCityList> getAllAreaCityList(int compId);
 	
 
 	

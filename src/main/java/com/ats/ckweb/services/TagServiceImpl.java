@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.Area;
+import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
@@ -16,6 +18,8 @@ import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.SubCategory;
 import com.ats.ckweb.model.SubCategoryRepository;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.repository.AreaCityListRepo;
+import com.ats.ckweb.repository.AreaRepo;
 import com.ats.ckweb.repository.CategoryRepository;
 import com.ats.ckweb.repository.CityRepo;
 import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
@@ -48,6 +52,10 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired LanguageRepo langRepo;
 	
 	@Autowired CityRepo cityRepo;
+	
+	@Autowired AreaRepo areaRepo;
+	
+	@Autowired AreaCityListRepo areaCityRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -196,13 +204,13 @@ public class TagServiceImpl implements TagsServices {
 
 	@Override
 	public Language getLanguageByCode(String code) {
-		Language lang = langRepo.findByLangCode(code);
+		Language lang = langRepo.findByLangCodeIgnoreCase(code);
 		return lang;
 	}
 
 	@Override
 	public Language getLanguageByCodeInEdit(String code, int langId) {
-		Language lang = langRepo.findByLangCodeAndLangIdNot(code, langId);
+		Language lang = langRepo.findByLangCodeIgnoreCaseAndLangIdNot(code, langId);
 		return lang;
 	}
 /**********************************************************************/
@@ -242,4 +250,49 @@ public class TagServiceImpl implements TagsServices {
 		City newCity = cityRepo.save(city); 
 		return newCity;
 	}
+/******************************************/
+	@Override
+	public List<Area> getAllArea() {
+		List<Area> areaList = areaRepo.findBydelStatusOrderByAreaIdDesc(0);
+		return areaList;
+	}
+
+	@Override
+	public Area getAreaById(int areaId) {
+		Area area = areaRepo.findByAreaIdAndDelStatus(areaId, 0);
+		return area;
+	}
+
+	@Override
+	public Area getAreaByCode(String code) {
+		Area area = areaRepo.findByAreaCodeIgnoreCase(code);
+		return area;
+	}
+
+	@Override
+	public Area getAreaByCodeInEdit(String code, int areaId) {
+		Area area = areaRepo.findByAreaCodeIgnoreCaseAndAreaIdNot(code, areaId);
+		return area;
+	}
+
+	@Override
+	public int deleteAreaById(int areaId) {
+		int areaDel = areaRepo.deleteArea(areaId);
+		return areaDel;
+	}
+
+	@Override
+	public Area insertArea(Area area) {
+		Area newArea = areaRepo.save(area);
+		return newArea;
+	}
+
+	@Override
+	public List<AreaCityList> getAllAreaCityList(int compId) {
+		List<AreaCityList> list = areaCityRepo.getAllAreaByCompId(1);
+		return list;
+	}
+
+	
+	/************************************************/
 }
