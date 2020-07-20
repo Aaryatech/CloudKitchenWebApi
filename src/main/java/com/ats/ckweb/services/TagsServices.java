@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.Tags;
 @Service
@@ -52,7 +54,29 @@ public interface TagsServices {
 
 	int getItemTasteDetails(int ingerediantId);
 
+	List<Language> getAllLanguages();
 
+	Language insertLanguage(Language lang);
+
+	Language getLanguageById(int langId);
+
+	int deleteLangById(int langId);
+
+	Language getLanguageByCode(String code);
+
+	Language getLanguageByCodeInEdit(String code, int langId);
+
+	List<City> getAllCities();
+
+	City getCityById(int cityId);
+
+	City getCityByCodeInEdit(String code, int cityId);
+
+	City getCityByCode(String code);
+
+	int deleteCityById(int cityId);
+
+	City insertCity(City city);
 	
 
 	

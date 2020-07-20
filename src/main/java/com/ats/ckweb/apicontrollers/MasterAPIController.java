@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.Category;
+import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.services.TagsServices;
@@ -285,4 +287,158 @@ public class MasterAPIController {
 		
 	}
 	
+	/********************************************************/
+	@RequestMapping(value = { "/getAllLanguages" }, method = RequestMethod.GET)
+	public @ResponseBody List<Language> getAllLanguages(){
+		
+		List<Language> langList = new ArrayList<Language>();
+		try {
+			langList = tagService.getAllLanguages();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return langList;
+		
+	}
+	
+	@RequestMapping(value = { "/getLanguageById" }, method = RequestMethod.POST)
+	public @ResponseBody Language getLanguageById(@RequestParam int langId){
+		
+		Language lang = new Language();
+		try {
+			lang = tagService.getLanguageById(langId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return lang;
+		
+	}
+	
+	@RequestMapping(value = { "/getLanguageByCode" }, method = RequestMethod.POST)
+	public @ResponseBody Language getLanguageByCode(@RequestParam String code, @RequestParam int langId){
+		
+		Language lang = new Language();
+		try {
+			if(langId==0) {
+				
+				lang = tagService.getLanguageByCode(code);
+			}else {
+				
+				lang = tagService.getLanguageByCodeInEdit(code, langId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return lang;
+		
+	}
+	
+	@RequestMapping(value = { "/deleteLanguageById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteLanguageById(@RequestParam int langId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteLangById(langId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Language Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Language");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addLanguage" }, method = RequestMethod.POST)
+	public @ResponseBody Language addLanguage(@RequestBody Language lang){
+		
+		Language newLang = new Language();
+		try {
+			newLang = tagService.insertLanguage(lang);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newLang;		
+	}
+	
+	/********************************************************/
+	@RequestMapping(value = { "/getAllCities" }, method = RequestMethod.GET)
+	public @ResponseBody List<City> getAllCities(){
+		
+		List<City> cityList = new ArrayList<City>();
+		try {
+			cityList = tagService.getAllCities();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cityList;
+		
+	}
+	
+	@RequestMapping(value = { "/getCityById" }, method = RequestMethod.POST)
+	public @ResponseBody City getCityById(@RequestParam int cityId){
+		
+		City city = new City();
+		try {
+			city = tagService.getCityById(cityId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return city;
+		
+	}
+	
+	@RequestMapping(value = { "/getCityByCode" }, method = RequestMethod.POST)
+	public @ResponseBody City getCityByCode(@RequestParam String code, @RequestParam int cityId){
+		
+		City city = new City();
+		try {
+			if(cityId==0) {
+				
+				city = tagService.getCityByCode(code);
+			}else {
+				
+				city = tagService.getCityByCodeInEdit(code, cityId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return city;		
+	}
+	
+	@RequestMapping(value = { "/deleteCityById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteCityById(@RequestParam int cityId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteCityById(cityId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("City Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete City");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addCity" }, method = RequestMethod.POST)
+	public @ResponseBody City addCity(@RequestBody City city){
+		
+		City newCity = new City();
+		try {
+			newCity = tagService.insertCity(city);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newCity;		
+	}
 }

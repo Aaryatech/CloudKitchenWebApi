@@ -6,20 +6,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.SubCategory;
 import com.ats.ckweb.model.SubCategoryRepository;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.repository.CategoryRepository;
+import com.ats.ckweb.repository.CityRepo;
 import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
+import com.ats.ckweb.repository.LanguageRepo;
 import com.ats.ckweb.repository.TagRepo;
 
 @Service
@@ -40,6 +44,10 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired SubCategoryRepository subCategoryRepository;
 	
 	@Autowired ItemDetailNewRepo itemDetailNewRepo;
+	
+	@Autowired LanguageRepo langRepo;
+	
+	@Autowired CityRepo cityRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -162,5 +170,76 @@ public class TagServiceImpl implements TagsServices {
 		return res;
 	}
 
+	@Override
+	public List<Language> getAllLanguages() {
+		 List<Language> lang=langRepo.findByDelStatusOrderByLangIdDesc(0);
+		return lang;
+	}
 
+	@Override
+	public Language insertLanguage(Language lang) {
+		Language newLang = langRepo.save(lang);
+		return newLang;
+	}
+
+	@Override
+	public Language getLanguageById(int langId) {
+		Language lang = langRepo.findByLangIdAndDelStatus(langId, 0);
+		return lang;
+	}
+
+	@Override
+	public int deleteLangById(int langId) {
+		int lang = langRepo.deleteLanguage(langId);
+		return lang;
+	}
+
+	@Override
+	public Language getLanguageByCode(String code) {
+		Language lang = langRepo.findByLangCode(code);
+		return lang;
+	}
+
+	@Override
+	public Language getLanguageByCodeInEdit(String code, int langId) {
+		Language lang = langRepo.findByLangCodeAndLangIdNot(code, langId);
+		return lang;
+	}
+/**********************************************************************/
+
+	@Override
+	public List<City> getAllCities() {
+		List<City> cityList = cityRepo.findByDelStatusOrderByCityIdDesc(0);
+		return cityList;
+	}
+
+	@Override
+	public City getCityById(int cityId) {
+		City city = cityRepo.findByCityId(cityId);
+		return city;
+	}
+
+	@Override
+	public City getCityByCodeInEdit(String code, int cityId) {
+		City city = cityRepo.findByCityCodeIgnoreCaseAndCityIdNot(code, cityId);
+		return city;
+	}
+
+	@Override
+	public City getCityByCode(String code) {
+		City city = cityRepo.findByCityCodeIgnoreCase(code);
+		return city;
+	}
+
+	@Override
+	public int deleteCityById(int cityId) {
+		int delCity = cityRepo.deleteCity(cityId);
+		return delCity;
+	}
+
+	@Override
+	public City insertCity(City city) {
+		City newCity = cityRepo.save(city); 
+		return newCity;
+	}
 }
