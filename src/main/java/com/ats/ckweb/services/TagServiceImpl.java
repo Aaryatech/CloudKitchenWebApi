@@ -11,6 +11,8 @@ import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GrievencesInstruction;
+import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
@@ -25,6 +27,8 @@ import com.ats.ckweb.repository.CategoryRepository;
 import com.ats.ckweb.repository.CityRepo;
 import com.ats.ckweb.repository.DeliveryInstructionRepo;
 import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
+import com.ats.ckweb.repository.GrievencesInstructionRepo;
+import com.ats.ckweb.repository.GrievencesTypeInstructnRepo;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
@@ -60,6 +64,10 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired AreaCityListRepo areaCityRepo;
 	
 	@Autowired DeliveryInstructionRepo delvInstuctRepo ;
+	
+	@Autowired GrievencesTypeInstructnRepo grievTypeInstructRepo;
+	
+	@Autowired GrievencesInstructionRepo grievanceRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -340,8 +348,83 @@ public class TagServiceImpl implements TagsServices {
 		DeliveryInstruction newDelvInstruct  = delvInstuctRepo.save(instructn);
 		return newDelvInstruct;
 	}
+	/****************************************************************************************/
+	
+	@Override
+	public List<GrievencesTypeInstructn> getAllGrievTypeList(int compId, int i) {
+		List<GrievencesTypeInstructn> list = grievTypeInstructRepo.findByDelStatusAndCompanyIdOrderByGrevTypeIdDesc(0, compId);
+		return list;
+	}
+
+	@Override
+	public GrievencesTypeInstructn getGrievTypeInstructById(int grievTypeId, int compId) {
+		GrievencesTypeInstructn griev = grievTypeInstructRepo.findByDelStatusAndGrevTypeIdAndCompanyId(0, grievTypeId, compId);
+		return griev;
+	}
+
+	@Override
+	public GrievencesTypeInstructn getGrievTypeInstructByCaptn(String caption, int compId) {
+		GrievencesTypeInstructn griev = grievTypeInstructRepo.findByCaptionIgnoreCaseAndCompanyId(caption, compId);
+		return griev;
+	}
+
+	@Override
+	public GrievencesTypeInstructn getGrievTypeInstructByCaptnAndId(String caption, int compId, int grievTypeId) {
+		GrievencesTypeInstructn griev = grievTypeInstructRepo.findByCaptionIgnoreCaseAndCompanyIdAndGrevTypeIdNot(caption, compId, grievTypeId);
+		return griev;
+	}
+
+
+	@Override
+	public GrievencesTypeInstructn insertGrievTypeInstruct(GrievencesTypeInstructn griev) {
+		GrievencesTypeInstructn newGriev = grievTypeInstructRepo.save(griev);
+		return newGriev;
+	}
+
+	@Override
+	public int deleteGrievTypeInstructById(int grievTypeId) {
+		int res = grievTypeInstructRepo.deleteGrievancTypeInst(grievTypeId);
+		return res;
+	}
+
+	/*****************************************************************************************/
+	@Override
+	public List<GrievencesInstruction> getAllGrievanceList(int compId) {
+		List<GrievencesInstruction> grievancelist = grievanceRepo.findByDelStatusAndCompanyIdOrderByGrievanceIdDesc(0, compId);
+		return grievancelist;
+	}
+
+	@Override
+	public GrievencesInstruction getGrievanceInstructById(int grievanceId, int compId) {
+		GrievencesInstruction grievance = grievanceRepo.findByGrievanceIdAndDelStatusAndCompanyId(grievanceId, 0, compId);
+		return grievance;
+	}
+
+	@Override
+	public GrievencesInstruction getGrievanceInstructnByCaptn(String caption, int compId) {
+		GrievencesInstruction grievance = grievanceRepo.findByCaptionIgnoreCaseAndCompanyId(caption, compId);
+		return grievance;
+	}
+
+	@Override
+	public GrievencesInstruction getGrievanceInstructnByCaptnAndId(String caption, int compId, int grievanceId) {
+		GrievencesInstruction grievance = grievanceRepo.findByCaptionIgnoreCaseAndCompanyIdAndGrievanceIdNot(caption, compId, grievanceId);
+		return grievance;
+	}
+
+	@Override
+	public int deleteGrievanceInstructnById(int grievanceId) {
+		int res = grievanceRepo.deleteGrievancesInstructn(grievanceId);
+		return res;
+	}
+
+	@Override
+	public GrievencesInstruction insertGrievanceInstructn(GrievencesInstruction grievance) {
+		GrievencesInstruction newGrievance = grievanceRepo.save(grievance);
+		return newGrievance;
+	}
 
 	
 	
-	/****************************************************************************************/
+	
 }

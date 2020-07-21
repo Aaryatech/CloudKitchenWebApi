@@ -17,6 +17,8 @@ import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GrievencesInstruction;
+import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
@@ -617,5 +619,156 @@ public class MasterAPIController {
 			e.printStackTrace();
 		}
 		return newinstructn;		
+	}
+	
+	/***********************************************************************************/
+	@RequestMapping(value = { "/getAllGrievTypeInstruct" }, method = RequestMethod.POST)
+	public @ResponseBody List<GrievencesTypeInstructn> getAllGrievTypeInstruct(@RequestParam int compId){
+		
+		List<GrievencesTypeInstructn> grievTypeList = new ArrayList<GrievencesTypeInstructn>();
+		try {
+			grievTypeList = tagService.getAllGrievTypeList(compId, 0);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return grievTypeList;
+	}
+	
+	@RequestMapping(value = { "/getGrievTypeInstructById" }, method = RequestMethod.POST)
+	public @ResponseBody GrievencesTypeInstructn getGrievTypeInstructById(@RequestParam int grievTypeId, @RequestParam int compId){
+		
+		GrievencesTypeInstructn griev = new GrievencesTypeInstructn();
+		try {
+			griev = tagService.getGrievTypeInstructById(grievTypeId, compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return griev;
+	}
+	
+	@RequestMapping(value = { "/getGrievTypeInstructByCaptn" }, method = RequestMethod.POST)
+	public @ResponseBody GrievencesTypeInstructn getGrievTypeInstructByCaptn(@RequestParam String caption, @RequestParam int compId, @RequestParam int grievTypeId){
+		
+		GrievencesTypeInstructn griev = new GrievencesTypeInstructn();
+		try {
+			if(grievTypeId==0) {
+				
+				griev = tagService.getGrievTypeInstructByCaptn(caption, compId);
+			}else {
+				
+				griev = tagService.getGrievTypeInstructByCaptnAndId(caption, compId, grievTypeId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return griev;		
+	}
+	
+	@RequestMapping(value = { "/deleteGrievTypeInstructById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteGrievTypeInstructById(@RequestParam int grievTypeId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteGrievTypeInstructById(grievTypeId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Delivery Type Instruction Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Delivery Type Instruction");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addGrievTypeInstruct" }, method = RequestMethod.POST)
+	public @ResponseBody GrievencesTypeInstructn addGrievTypeInstruct(@RequestBody GrievencesTypeInstructn griev){
+		
+		GrievencesTypeInstructn newGriev = new GrievencesTypeInstructn();
+		try {
+			newGriev = tagService.insertGrievTypeInstruct(griev);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newGriev;		
+	}
+	
+	/***************************************************************************************/
+	
+	@RequestMapping(value = { "/getAllGrievancesInstructns" }, method = RequestMethod.POST)
+	public @ResponseBody List<GrievencesInstruction> getAllGrievanceInstructn(@RequestParam int compId){
+		
+		List<GrievencesInstruction> grievList = new ArrayList<GrievencesInstruction>();
+		try {
+			grievList = tagService.getAllGrievanceList(compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return grievList;
+	}
+	
+	@RequestMapping(value = { "/getGrievanceInstructnById" }, method = RequestMethod.POST)
+	public @ResponseBody GrievencesInstruction getGrievanceInstructnById(@RequestParam int grievanceId, @RequestParam int compId){
+		
+		GrievencesInstruction grievance = new GrievencesInstruction();
+		try {
+			grievance = tagService.getGrievanceInstructById(grievanceId, compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return grievance;
+	}
+	
+	@RequestMapping(value = { "/getGrievancenstructnByCaptn" }, method = RequestMethod.POST)
+	public @ResponseBody GrievencesInstruction getGrievancenstructnByCaptn(@RequestParam String caption, @RequestParam int compId, @RequestParam int grievanceId){
+		
+		GrievencesInstruction grievance = new GrievencesInstruction();
+		try {
+			if(grievanceId==0) {
+				
+				grievance = tagService.getGrievanceInstructnByCaptn(caption, compId);
+			}else {
+				
+				grievance = tagService.getGrievanceInstructnByCaptnAndId(caption, compId, grievanceId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return grievance;		
+	}
+	
+	@RequestMapping(value = { "/deleteGrievanceInstructnById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteGrievanceInstructnById(@RequestParam int grievanceId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteGrievanceInstructnById(grievanceId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Grievance Instruction Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Grievance Instruction");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addGrievance" }, method = RequestMethod.POST)
+	public @ResponseBody GrievencesInstruction addGrievanceInstructn(@RequestBody GrievencesInstruction grievance){
+		
+		GrievencesInstruction newGrievance = new GrievencesInstruction();
+		try {
+			newGrievance = tagService.insertGrievanceInstructn(grievance);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newGrievance;		
 	}
 }

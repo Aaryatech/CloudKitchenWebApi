@@ -9,6 +9,8 @@ import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GrievencesInstruction;
+import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
@@ -108,6 +110,30 @@ public interface TagsServices {
 	DeliveryInstruction insertDeliveryInstrunctn(DeliveryInstruction instructn);
 
 	int getAreaCityById(int cityId);
+
+	List<GrievencesTypeInstructn> getAllGrievTypeList(int compId, int i);
+
+	GrievencesTypeInstructn getGrievTypeInstructById(int grievTypeId, int compId);
+
+	GrievencesTypeInstructn getGrievTypeInstructByCaptn(String caption, int compId);
+
+	GrievencesTypeInstructn getGrievTypeInstructByCaptnAndId(String caption, int compId, int grievTypeId);
+
+	int deleteGrievTypeInstructById(int grievTypeId);
+
+	GrievencesTypeInstructn insertGrievTypeInstruct(GrievencesTypeInstructn griev);
+
+	List<GrievencesInstruction> getAllGrievanceList(int compId);
+
+	GrievencesInstruction getGrievanceInstructById(int grievanceId, int compId);
+
+	GrievencesInstruction getGrievanceInstructnByCaptn(String caption, int compId);
+
+	GrievencesInstruction getGrievanceInstructnByCaptnAndId(String caption, int compId, int grievanceId);
+
+	int deleteGrievanceInstructnById(int grievanceId);
+
+	GrievencesInstruction insertGrievanceInstructn(GrievencesInstruction grievance);
 	
 
 	
