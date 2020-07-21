@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
+import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
@@ -56,17 +57,17 @@ public interface TagsServices {
 
 	int getItemTasteDetails(int ingerediantId);
 
-	List<Language> getAllLanguages();
+	List<Language> getAllLanguages(int compId);
 
 	Language insertLanguage(Language lang);
 
-	Language getLanguageById(int langId);
+	Language getLanguageById(int langId, int compId);
 
 	int deleteLangById(int langId);
 
-	Language getLanguageByCode(String code);
+	Language getLanguageByCode(String code, int compId);
 
-	Language getLanguageByCodeInEdit(String code, int langId);
+	Language getLanguageByCodeInEdit(String code, int langId, int compId);
 
 	List<City> getAllCities();
 
@@ -80,19 +81,33 @@ public interface TagsServices {
 
 	City insertCity(City city);
 
-	List<Area> getAllArea();
+	List<Area> getAllArea(int compId);
 
-	Area getAreaById(int areaId);
+	Area getAreaById(int areaId, int compId);
 
-	Area getAreaByCode(String code);
+	Area getAreaByCode(String code, int compId);
 
-	Area getAreaByCodeInEdit(String code, int areaId);
+	Area getAreaByCodeInEdit(String code, int areaId, int compId);
 
 	int deleteAreaById(int areaId);
 
 	Area insertArea(Area area);
 
 	List<AreaCityList> getAllAreaCityList(int compId);
+
+	List<DeliveryInstruction> getAllDelvryInstructn(int compId, int i);
+
+	DeliveryInstruction getDeliveryInstructionById(int instructId);
+
+	DeliveryInstruction getDeliveryInstructionByCaptn(String caption, int compId);
+
+	DeliveryInstruction getDeliveryInstructionByCaptnAndId(String caption, int compId, int instructId);
+
+	int deleteDelInstructnById(int instructId);
+
+	DeliveryInstruction insertDeliveryInstrunctn(DeliveryInstruction instructn);
+
+	int getAreaCityById(int cityId);
 	
 
 	

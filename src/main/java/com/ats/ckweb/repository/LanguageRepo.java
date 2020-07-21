@@ -13,13 +13,13 @@ import com.ats.ckweb.model.Language;
 
 public interface LanguageRepo extends JpaRepository<Language, Integer> {
 
-	List<Language> findByDelStatusOrderByLangIdDesc(int del);
+	List<Language> findByDelStatusAndCompanyId(int del, int compId);
 
-	Language findByLangCodeIgnoreCase(String langCode);
+	Language findByLangCodeIgnoreCaseAndCompanyId(String langCode, int compId);
 	
-	Language findByLangCodeIgnoreCaseAndLangIdNot(String langCode, int langId);
+	Language findByLangCodeIgnoreCaseAndCompanyIdAndLangIdNot(String langCode,int compId, int langId);
 	
-	Language findByLangIdAndDelStatus(int langId, int del);
+	Language findByLangIdAndDelStatusAndCompanyId(int langId, int del, int compId);
 	
 	@Transactional
 	@Modifying

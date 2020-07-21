@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
+import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
@@ -22,6 +23,7 @@ import com.ats.ckweb.repository.AreaCityListRepo;
 import com.ats.ckweb.repository.AreaRepo;
 import com.ats.ckweb.repository.CategoryRepository;
 import com.ats.ckweb.repository.CityRepo;
+import com.ats.ckweb.repository.DeliveryInstructionRepo;
 import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
@@ -56,6 +58,8 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired AreaRepo areaRepo;
 	
 	@Autowired AreaCityListRepo areaCityRepo;
+	
+	@Autowired DeliveryInstructionRepo delvInstuctRepo ;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -179,8 +183,8 @@ public class TagServiceImpl implements TagsServices {
 	}
 
 	@Override
-	public List<Language> getAllLanguages() {
-		 List<Language> lang=langRepo.findByDelStatusOrderByLangIdDesc(0);
+	public List<Language> getAllLanguages(int compId) {
+		 List<Language> lang=langRepo.findByDelStatusAndCompanyId(0, compId);
 		return lang;
 	}
 
@@ -191,8 +195,8 @@ public class TagServiceImpl implements TagsServices {
 	}
 
 	@Override
-	public Language getLanguageById(int langId) {
-		Language lang = langRepo.findByLangIdAndDelStatus(langId, 0);
+	public Language getLanguageById(int langId, int compId) {
+		Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(langId, 0, compId);
 		return lang;
 	}
 
@@ -203,14 +207,14 @@ public class TagServiceImpl implements TagsServices {
 	}
 
 	@Override
-	public Language getLanguageByCode(String code) {
-		Language lang = langRepo.findByLangCodeIgnoreCase(code);
+	public Language getLanguageByCode(String code, int compId) {
+		Language lang = langRepo.findByLangCodeIgnoreCaseAndCompanyId(code, compId);
 		return lang;
 	}
 
 	@Override
-	public Language getLanguageByCodeInEdit(String code, int langId) {
-		Language lang = langRepo.findByLangCodeIgnoreCaseAndLangIdNot(code, langId);
+	public Language getLanguageByCodeInEdit(String code, int langId, int compId) {
+		Language lang = langRepo.findByLangCodeIgnoreCaseAndCompanyIdAndLangIdNot(code, compId, langId);
 		return lang;
 	}
 /**********************************************************************/
@@ -250,28 +254,29 @@ public class TagServiceImpl implements TagsServices {
 		City newCity = cityRepo.save(city); 
 		return newCity;
 	}
-/******************************************/
+/********************************************************************/
+
 	@Override
-	public List<Area> getAllArea() {
-		List<Area> areaList = areaRepo.findBydelStatusOrderByAreaIdDesc(0);
+	public List<Area> getAllArea(int compId) {
+		List<Area> areaList = areaRepo.findByDelStatusAndCompanyIdOrderByAreaIdDesc(0, compId);
 		return areaList;
 	}
 
 	@Override
-	public Area getAreaById(int areaId) {
-		Area area = areaRepo.findByAreaIdAndDelStatus(areaId, 0);
+	public Area getAreaById(int areaId, int compId) {
+		Area area = areaRepo.findByAreaIdAndDelStatusAndCompanyId(areaId, 0, compId);
 		return area;
 	}
 
 	@Override
-	public Area getAreaByCode(String code) {
-		Area area = areaRepo.findByAreaCodeIgnoreCase(code);
+	public Area getAreaByCode(String code, int compId) {
+		Area area = areaRepo.findByAreaCodeIgnoreCaseAndCompanyId(code, compId);
 		return area;
 	}
 
 	@Override
-	public Area getAreaByCodeInEdit(String code, int areaId) {
-		Area area = areaRepo.findByAreaCodeIgnoreCaseAndAreaIdNot(code, areaId);
+	public Area getAreaByCodeInEdit(String code, int areaId, int compId) {
+		Area area = areaRepo.findByAreaCodeIgnoreCaseAndCompanyIdAndAreaIdNot(code, compId, areaId);
 		return area;
 	}
 
@@ -292,7 +297,51 @@ public class TagServiceImpl implements TagsServices {
 		List<AreaCityList> list = areaCityRepo.getAllAreaByCompId(1);
 		return list;
 	}
+	
+	@Override
+	public int getAreaCityById(int cityId) {
+		int res = areaRepo.getMaxCountAreaCode(cityId);
+		return res;
+	}
+
+	/******************************************************************/
+	@Override
+	public List<DeliveryInstruction> getAllDelvryInstructn(int compId, int i) {
+		List<DeliveryInstruction> delvList = delvInstuctRepo.findByDelStatusAndCompanyIdOrderByInstruIdDesc(0, compId);
+		return delvList;
+	}
+
+	@Override
+	public DeliveryInstruction getDeliveryInstructionById(int instructId) {
+		DeliveryInstruction delv = delvInstuctRepo.findByInstruIdAndDelStatus(instructId, 0);
+		return delv;
+	}
+
+	@Override
+	public DeliveryInstruction getDeliveryInstructionByCaptn(String caption, int compId) {
+		DeliveryInstruction delv = delvInstuctRepo.findByInstructnCaptionIgnoreCaseAndCompanyId(caption, compId);
+		return delv;
+	}
+
+	@Override
+	public DeliveryInstruction getDeliveryInstructionByCaptnAndId(String caption, int compId, int instructId) {
+		DeliveryInstruction delv = delvInstuctRepo.findByInstructnCaptionIgnoreCaseAndCompanyIdAndInstruIdNot(caption, compId, instructId);
+		return delv;
+	}
+
+	@Override
+	public int deleteDelInstructnById(int instructId) {
+		int res = delvInstuctRepo.deleteDelveryInstructnById(instructId);
+		return res;
+	}
+
+	@Override
+	public DeliveryInstruction insertDeliveryInstrunctn(DeliveryInstruction instructn) {
+		DeliveryInstruction newDelvInstruct  = delvInstuctRepo.save(instructn);
+		return newDelvInstruct;
+	}
 
 	
-	/************************************************/
+	
+	/****************************************************************************************/
 }

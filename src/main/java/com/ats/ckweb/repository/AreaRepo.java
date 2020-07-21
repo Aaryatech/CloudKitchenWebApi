@@ -14,16 +14,20 @@ import java.lang.String;
 
 public interface AreaRepo extends JpaRepository<Area, Integer> {
 
-	List<Area> findBydelStatusOrderByAreaIdDesc(int del);
+	List<Area> findByDelStatusAndCompanyIdOrderByAreaIdDesc(int del, int compId);
 	
-	Area findByAreaCodeIgnoreCase(String code);
+	Area findByAreaCodeIgnoreCaseAndCompanyId(String code, int compId);
 	
-	Area findByAreaCodeIgnoreCaseAndAreaIdNot(String code, int areaId);
+	Area findByAreaCodeIgnoreCaseAndCompanyIdAndAreaIdNot(String code,int compId, int areaId);
 	
-	Area findByAreaIdAndDelStatus(int areaId, int del);
+	Area findByAreaIdAndDelStatusAndCompanyId(int areaId, int del, int compId);
 	
 	@Transactional
 	@Modifying
 	@Query(value="UPDATE mn_area SET del_status=1 WHERE area_id=:areaId",nativeQuery=true)
 	public int deleteArea(@Param("areaId") int areaId);
+	
+	
+	@Query(value="SELECT COUNT(area_code) FROM `mn_area` WHERE city_id=:cityId",nativeQuery=true)
+	public int getMaxCountAreaCode(@Param("cityId") int cityId);
 }

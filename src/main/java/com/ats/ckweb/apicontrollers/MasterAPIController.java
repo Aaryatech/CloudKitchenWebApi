@@ -15,6 +15,7 @@ import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
+import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
@@ -290,12 +291,12 @@ public class MasterAPIController {
 	}
 	
 	/********************************************************/
-	@RequestMapping(value = { "/getAllLanguages" }, method = RequestMethod.GET)
-	public @ResponseBody List<Language> getAllLanguages(){
+	@RequestMapping(value = { "/getAllLanguages" }, method = RequestMethod.POST)
+	public @ResponseBody List<Language> getAllLanguages(@RequestParam int compId){
 		
 		List<Language> langList = new ArrayList<Language>();
 		try {
-			langList = tagService.getAllLanguages();
+			langList = tagService.getAllLanguages(compId);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -304,11 +305,11 @@ public class MasterAPIController {
 	}
 	
 	@RequestMapping(value = { "/getLanguageById" }, method = RequestMethod.POST)
-	public @ResponseBody Language getLanguageById(@RequestParam int langId){
+	public @ResponseBody Language getLanguageById(@RequestParam int langId, @RequestParam int compId){
 		
 		Language lang = new Language();
 		try {
-			lang = tagService.getLanguageById(langId);
+			lang = tagService.getLanguageById(langId, compId);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -317,16 +318,16 @@ public class MasterAPIController {
 	}
 	
 	@RequestMapping(value = { "/getLanguageByCode" }, method = RequestMethod.POST)
-	public @ResponseBody Language getLanguageByCode(@RequestParam String code, @RequestParam int langId){
+	public @ResponseBody Language getLanguageByCode(@RequestParam String code, @RequestParam int langId,  @RequestParam int compId){
 		
 		Language lang = new Language();
 		try {
 			if(langId==0) {
 				
-				lang = tagService.getLanguageByCode(code);
+				lang = tagService.getLanguageByCode(code, compId);
 			}else {
 				
-				lang = tagService.getLanguageByCodeInEdit(code, langId);
+				lang = tagService.getLanguageByCodeInEdit(code, langId, compId);
 			}
 			
 		}catch (Exception e) {
@@ -444,12 +445,12 @@ public class MasterAPIController {
 		return newCity;		
 	}
 	/**********************************************************/
-	@RequestMapping(value = { "/getAllAreas" }, method = RequestMethod.GET)
-	public @ResponseBody List<Area> getAllArea(){
+	@RequestMapping(value = { "/getAllAreas" }, method = RequestMethod.POST)
+	public @ResponseBody List<Area> getAllArea(@RequestParam int compId){
 		
 		List<Area> areaList = new ArrayList<Area>();
 		try {
-			areaList = tagService.getAllArea();
+			areaList = tagService.getAllArea(compId);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -469,11 +470,11 @@ public class MasterAPIController {
 	}
 	
 	@RequestMapping(value = { "/getAreaById" }, method = RequestMethod.POST)
-	public @ResponseBody Area getAreaById(@RequestParam int areaId){
+	public @ResponseBody Area getAreaById(@RequestParam int areaId, @RequestParam int compId){
 		
 		Area area = new Area();
 		try {
-			area = tagService.getAreaById(areaId);
+			area = tagService.getAreaById(areaId, compId);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -481,16 +482,16 @@ public class MasterAPIController {
 	}
 	
 	@RequestMapping(value = { "/getAreaByCode" }, method = RequestMethod.POST)
-	public @ResponseBody Area getAreaByCode(@RequestParam String code, @RequestParam int areaId){
+	public @ResponseBody Area getAreaByCode(@RequestParam String code, @RequestParam int areaId, @RequestParam int compId){
 		
 		Area area = new Area();
 		try {
 			if(areaId==0) {
 				
-				area = tagService.getAreaByCode(code);
+				area = tagService.getAreaByCode(code, compId);
 			}else {
 				
-				area = tagService.getAreaByCodeInEdit(code, areaId);
+				area = tagService.getAreaByCodeInEdit(code, areaId, compId);
 			}
 			
 		}catch (Exception e) {
@@ -528,5 +529,93 @@ public class MasterAPIController {
 			e.printStackTrace();
 		}
 		return newArea;		
+	}
+	
+	
+	@RequestMapping(value = { "/getAreaByCityId" }, method = RequestMethod.POST)
+	public @ResponseBody int getAreaByCityId(@RequestParam int cityId){
+		
+		int res = 0;
+		try {
+			res = tagService.getAreaCityById(cityId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	/*****************************************************************/
+	
+	@RequestMapping(value = { "/getAllDeliveryInstructions" }, method = RequestMethod.POST)
+	public @ResponseBody List<DeliveryInstruction> getAllDeliveryInstructions(@RequestParam int compId){
+		
+		List<DeliveryInstruction> instructnList = new ArrayList<DeliveryInstruction>();
+		try {
+			instructnList = tagService.getAllDelvryInstructn(compId, 0);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return instructnList;
+	}
+	
+	@RequestMapping(value = { "/getDeliveryInstructionById" }, method = RequestMethod.POST)
+	public @ResponseBody DeliveryInstruction getDeliveryInstructionById(@RequestParam int instructId){
+		
+		DeliveryInstruction del = new DeliveryInstruction();
+		try {
+			del = tagService.getDeliveryInstructionById(instructId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return del;
+	}
+	
+	@RequestMapping(value = { "/getDeliveryInstructionByCaptn" }, method = RequestMethod.POST)
+	public @ResponseBody DeliveryInstruction getDeliveryInstructionByCaptn(@RequestParam String caption, @RequestParam int compId, @RequestParam int instructId){
+		
+		DeliveryInstruction instruct = new DeliveryInstruction();
+		try {
+			if(instructId==0) {
+				
+				instruct = tagService.getDeliveryInstructionByCaptn(caption, compId);
+			}else {
+				
+				instruct = tagService.getDeliveryInstructionByCaptnAndId(caption, compId, instructId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return instruct;		
+	}
+	
+	@RequestMapping(value = { "/deleteDeliveryInstructnById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteDeliveryInstructnById(@RequestParam int instructId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteDelInstructnById(instructId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("Delivery Instruction Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Delivery Instruction");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addDeliveryInstrunctn" }, method = RequestMethod.POST)
+	public @ResponseBody DeliveryInstruction addDeliveryInstrunctn(@RequestBody DeliveryInstruction instructn){
+		
+		DeliveryInstruction newinstructn = new DeliveryInstruction();
+		try {
+			newinstructn = tagService.insertDeliveryInstrunctn(instructn);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newinstructn;		
 	}
 }
