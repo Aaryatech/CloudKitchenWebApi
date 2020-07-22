@@ -62,4 +62,18 @@ public interface MnUserRepo extends JpaRepository<MnUser, Integer> {
 	@Modifying
 	@Query(value="UPDATE mn_user SET del_status=1 WHERE user_id=:userId",nativeQuery=true)
 	public int deleteUserById(@Param("userId") int userId);
+	
+	@Query(value="SELECT\n" + 
+			"    *\n" + 
+			"FROM\n" + 
+			"    mn_user\n" + 
+			"WHERE\n" + 
+			"    user_mobile_no = :username AND PASSWORD = :password AND del_status = 0 AND is_active = 0 AND user_type IN(\n" + 
+			"    SELECT\n" + 
+			"        user_type_id\n" + 
+			"    FROM\n" + 
+			"        mn_user_type\n" + 
+			"    WHERE\n" + 
+			"        ex_int1 = :type)", nativeQuery=true)
+	public MnUser getUserCradentials(@Param("username") String username, @Param("password") String password, @Param("type") int type);
 }
