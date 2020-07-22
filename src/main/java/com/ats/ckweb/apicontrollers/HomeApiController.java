@@ -18,9 +18,9 @@ public class HomeApiController {
 	@RequestMapping(value = { "/login" }, method = RequestMethod.POST)
 	@ResponseBody
 	public LoginResponse loginUser(@RequestParam("username") String username,
-			@RequestParam("password") String password, @RequestParam("type") int type) {
+			@RequestParam("password") String password) {
 
-		LoginResponse loginResponse = userService.findUserByUsername(username, password, type);
+		LoginResponse loginResponse = userService.findUserByUsername(username, password);
 
 		return loginResponse;
 

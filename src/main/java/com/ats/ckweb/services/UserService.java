@@ -4,7 +4,7 @@ import com.ats.ckweb.model.LoginResponse;
 
 public interface UserService {
 
-	public LoginResponse findUserByUsername(String username,String password, int type);
+	public LoginResponse findUserByUsername(String username,String password);
 
 	
 }
