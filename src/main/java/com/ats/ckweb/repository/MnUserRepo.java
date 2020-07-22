@@ -78,6 +78,6 @@ public interface MnUserRepo extends JpaRepository<MnUser, Integer> {
 			"            FROM\n" + 
 			"                mn_user_type     \n" + 
 			"            WHERE\n" + 
-			"                ex_int1 IN (0,2))", nativeQuery=true)
-	public MnUser getUserCradentials(@Param("username") String username, @Param("password") String password);
+			"                ex_int1 IN (:type))", nativeQuery=true)
+	public MnUser getUserCradentials(@Param("username") String username, @Param("password") String password, @Param("type") int type);
 }

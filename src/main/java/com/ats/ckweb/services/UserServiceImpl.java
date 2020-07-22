@@ -21,13 +21,13 @@ public class UserServiceImpl implements UserService {
 	com.ats.ckweb.model.ErrorMessage errorMessage;
 
 	@Override
-	public LoginResponse findUserByUsername(String username, String password) {
+	public LoginResponse findUserByUsername(String username, String password, int type) {
 
 		String dbUsername = null;
 		String dbPassword = null;
         LoginResponse loginResponse=null;
 		try {
-			user = userRepository.getUserCradentials(username, password);
+			user = userRepository.getUserCradentials(username, password, type);
 			dbUsername = user.getUserMobileNo();
 			dbPassword = user.getPassword();
 		} catch (Exception e) {
