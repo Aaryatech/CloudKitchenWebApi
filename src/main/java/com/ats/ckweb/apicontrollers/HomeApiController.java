@@ -15,7 +15,7 @@ public class HomeApiController {
 	
 	@Autowired private UserService userService;
 
-	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/login" }, method = RequestMethod.POST)
 	@ResponseBody
 	public LoginResponse loginUser(@RequestParam("username") String username,
 			@RequestParam("password") String password, @RequestParam("type") int type) {
