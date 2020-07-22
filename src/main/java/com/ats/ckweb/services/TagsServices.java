@@ -153,6 +153,10 @@ public interface TagsServices {
 	List<Designation> getAllDesignations();
 
 	List<UserType> getAllUserTypes();
+
+	MnUser getMnUserDetailById(int userId, int i);
+
+	int updatePassword(int userId, String newPass);
 	
 
 	

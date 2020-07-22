@@ -484,4 +484,16 @@ public class TagServiceImpl implements TagsServices {
 		return list;
 	}
 
+	@Override
+	public MnUser getMnUserDetailById(int userId, int i) {
+		MnUser user = mnUserRepo.findByUserIdAndDelStatus(userId, i);
+		return user;
+	}
+
+	@Override
+	public int updatePassword(int userId, String newPass) {
+		int res = mnUserRepo.UpdateUserPassword(userId, newPass);
+		return res;
+	}
+
 }
