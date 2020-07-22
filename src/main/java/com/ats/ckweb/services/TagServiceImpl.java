@@ -10,6 +10,7 @@ import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
+import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
@@ -18,14 +19,16 @@ import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
+import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.SubCategory;
-import com.ats.ckweb.repository.SubCategoryRepository;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.model.UserType;
 import com.ats.ckweb.repository.AreaCityListRepo;
 import com.ats.ckweb.repository.AreaRepo;
 import com.ats.ckweb.repository.CategoryRepository;
 import com.ats.ckweb.repository.CityRepo;
 import com.ats.ckweb.repository.DeliveryInstructionRepo;
+import com.ats.ckweb.repository.DesignationRepo;
 import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
 import com.ats.ckweb.repository.GrievencesInstructionRepo;
 import com.ats.ckweb.repository.GrievencesTypeInstructnRepo;
@@ -34,7 +37,10 @@ import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
 import com.ats.ckweb.repository.LanguageRepo;
+import com.ats.ckweb.repository.MnUserRepo;
+import com.ats.ckweb.repository.SubCategoryRepository;
 import com.ats.ckweb.repository.TagRepo;
+import com.ats.ckweb.repository.UserTypeRepo;
 
 @Service
 public class TagServiceImpl implements TagsServices {
@@ -68,6 +74,12 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired GrievencesTypeInstructnRepo grievTypeInstructRepo;
 	
 	@Autowired GrievencesInstructionRepo grievanceRepo;
+	
+	@Autowired MnUserRepo mnUserRepo;
+	
+	@Autowired DesignationRepo desigRepo;
+	
+	@Autowired UserTypeRepo userTypeRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -423,8 +435,53 @@ public class TagServiceImpl implements TagsServices {
 		GrievencesInstruction newGrievance = grievanceRepo.save(grievance);
 		return newGrievance;
 	}
+/*************************************************************************/
+	@Override
+	public List<MnUser> getAllMnUserList(int compId) {
+		List<MnUser> userList = mnUserRepo.findByAllCompanyId(compId);
+		return userList;
+	}
 
-	
-	
-	
+	@Override
+	public MnUser getMnUserById(int userId, int compId) {
+		MnUser user = mnUserRepo.findByUserIdAndDelStatusAndCompanyId(userId, 0, compId);
+		return user;
+	}
+
+	@Override
+	public MnUser getMnUserByMobNo(String mobNo) {
+		MnUser user = mnUserRepo.findByUserMobileNoAndDelStatus(mobNo, 0);
+		return user;
+	}
+
+	@Override
+	public MnUser getMnUserByMobNoAndUserId(String mobNo, int userId) {
+		MnUser user = mnUserRepo.findByUserMobileNoAndDelStatusAndUserIdNot(mobNo, 0, userId);
+		return user;
+	}
+
+	@Override
+	public int deleteMnUserById(int userId) {
+		int res = mnUserRepo.deleteUserById(userId); 
+		return res;
+	}
+
+	@Override
+	public MnUser insertMnUser(MnUser user) {
+		MnUser newUser = mnUserRepo.save(user);
+		return newUser;
+	}
+
+	@Override
+	public List<Designation> getAllDesignations() {
+		List<Designation> list = desigRepo.findByDelStatusOrderByDesignationIdDesc(0);
+		return list;
+	}
+
+	@Override
+	public List<UserType> getAllUserTypes() {
+		List<UserType> list = userTypeRepo.findByDelStatus(0);
+		return list;
+	}
+
 }

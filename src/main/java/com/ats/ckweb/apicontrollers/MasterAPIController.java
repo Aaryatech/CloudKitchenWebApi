@@ -16,6 +16,7 @@ import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
+import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
@@ -25,7 +26,9 @@ import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
+import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.model.UserType;
 import com.ats.ckweb.services.TagsServices;
 
 @RestController
@@ -33,7 +36,33 @@ public class MasterAPIController {
 
 	@Autowired TagsServices tagService;
 	
+	@RequestMapping(value = { "/getDesignations" }, method = RequestMethod.GET)
+	public @ResponseBody List<Designation> getDesignations(){
+		
+		List<Designation> list = new ArrayList<Designation>();
+		try {
+			list = tagService.getAllDesignations();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+		
+	}
+	/********************************************************************************/
 	
+	@RequestMapping(value = { "/getAllUserTypes" }, method = RequestMethod.GET)
+	public @ResponseBody List<UserType> getAllUserTypes(){
+		
+		List<UserType> list = new ArrayList<UserType>();
+		try {
+			list = tagService.getAllUserTypes();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+		
+	}
+	/********************************************************************************/
 	@RequestMapping(value = { "/saveNewTag" }, method = RequestMethod.POST)
 	public @ResponseBody Tags saveNewTag(@RequestBody Tags tag){
 		System.err.println("tag------------"+tag);
@@ -770,5 +799,81 @@ public class MasterAPIController {
 			e.printStackTrace();
 		}
 		return newGrievance;		
+	}
+	
+/***************************************************************************************/
+	
+	@RequestMapping(value = { "/getAllMnUsers" }, method = RequestMethod.POST)
+	public @ResponseBody List<MnUser> getAllMnUsers(@RequestParam int compId){
+		
+		List<MnUser> userList = new ArrayList<MnUser>();
+		try {
+			userList = tagService.getAllMnUserList(compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userList;
+	}
+	
+	@RequestMapping(value = { "/getMnUserById" }, method = RequestMethod.POST)
+	public @ResponseBody MnUser getMnUserById(@RequestParam int userId, @RequestParam int compId){
+		
+		MnUser mnUser = new MnUser();
+		try {
+			mnUser = tagService.getMnUserById(userId, compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mnUser;
+	}
+	
+	@RequestMapping(value = { "/getMnUserByMobNo" }, method = RequestMethod.POST)
+	public @ResponseBody MnUser getMnUserByMobNo(@RequestParam String mobNo, @RequestParam int userId){
+		
+		MnUser user = new MnUser();
+		try {
+			if(userId==0) {
+				
+				user = tagService.getMnUserByMobNo(mobNo);
+			}else {
+				
+				user = tagService.getMnUserByMobNoAndUserId(mobNo, userId);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return user;		
+	}
+	
+	@RequestMapping(value = { "/deleteMnUserById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteMnUserById(@RequestParam int userId){
+		
+		Info info = new Info();
+		try {
+			int res = tagService.deleteMnUserById(userId);
+			if(res>0) {
+				info.setError(false);
+				info.setMessage("User Deleted Successfully");
+			}else {
+				info.setError(true);
+				info.setMessage("Failed to Delete User");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;		
+	}
+	
+	@RequestMapping(value = { "/addMnUser" }, method = RequestMethod.POST)
+	public @ResponseBody MnUser addMnUser(@RequestBody MnUser user){
+		
+		MnUser mnUser = new MnUser();
+		try {
+			mnUser = tagService.insertMnUser(user);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mnUser;		
 	}
 }

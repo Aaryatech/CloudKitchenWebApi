@@ -8,6 +8,7 @@ import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
+import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
@@ -16,7 +17,9 @@ import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
+import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.model.UserType;
 @Service
 public interface TagsServices {
 
@@ -134,6 +137,22 @@ public interface TagsServices {
 	int deleteGrievanceInstructnById(int grievanceId);
 
 	GrievencesInstruction insertGrievanceInstructn(GrievencesInstruction grievance);
+
+	List<MnUser> getAllMnUserList(int compId);
+
+	MnUser getMnUserById(int userId, int compId);
+
+	MnUser getMnUserByMobNo(String mobNo);
+
+	MnUser getMnUserByMobNoAndUserId(String mobNo, int userId);
+
+	int deleteMnUserById(int userId);
+
+	MnUser insertMnUser(MnUser user);
+
+	List<Designation> getAllDesignations();
+
+	List<UserType> getAllUserTypes();
 	
 
 	
