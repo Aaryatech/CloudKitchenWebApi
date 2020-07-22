@@ -80,4 +80,28 @@ public interface MnUserRepo extends JpaRepository<MnUser, Integer> {
 			"            WHERE\n" + 
 			"                ex_int1 IN (:type))", nativeQuery=true)
 	public MnUser getUserCradentials(@Param("username") String username, @Param("password") String password, @Param("type") int type);
+
+	@Query(value="SELECT\n" + 
+			"        * \n" + 
+			"    FROM\n" + 
+			"        mn_user \n" + 
+			"    WHERE\n" + 
+			"        (user_mobile_no = :username \n" + 
+			"        or user_email = :username) \n" + 
+			"        AND del_status = 0 \n" + 
+			"        AND is_active = 0 \n" + 
+			"        AND user_type IN(\n" + 
+			"            SELECT\n" + 
+			"                user_type_id     \n" + 
+			"            FROM\n" + 
+			"                mn_user_type     \n" + 
+			"            WHERE\n" + 
+			"                ex_int1 = :type\n" + 
+			"        )   ", nativeQuery=true)
+	MnUser forgotPassword(@Param("username") String username,  @Param("type") int type);
+	
+	@Transactional
+	@Modifying
+	@Query(value="UPDATE mn_user SET password=:password WHERE user_id=:userId",nativeQuery=true)
+	public int updatePassword(@Param("password") String password,@Param("userId") int userId);
 }
