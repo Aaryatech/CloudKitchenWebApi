@@ -19,7 +19,7 @@ import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.SubCategory;
-import com.ats.ckweb.model.SubCategoryRepository;
+import com.ats.ckweb.repository.SubCategoryRepository;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.repository.AreaCityListRepo;
 import com.ats.ckweb.repository.AreaRepo;
