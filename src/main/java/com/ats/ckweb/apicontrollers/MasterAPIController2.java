@@ -366,4 +366,23 @@ public class MasterAPIController2 {
 		return info;
 	}
 
+	// Author-Anmol Shirke Created On-23-07-2020
+	// Desc- Returns Customer object - save Customer.
+//	@RequestMapping(value = { "/saveOfferDetailList" }, method = RequestMethod.POST)
+//	public @ResponseBody Customer saveOfferDetailList(@RequestParam("offerDetailList") List<OfferDetail> offerDetailList) {
+//
+//		Info info = new Info();
+//
+//		List<OfferDetail> res = offerDetailRepo.saveAll(offerDetailList);
+//		if (res != null) {
+//			info.setError(false);
+//			info.setMessage("Success");
+//		} else {
+//			info.setError(true);
+//			info.setMessage("Failed");
+//		}
+//
+//		return info;
+//	}
+
 }

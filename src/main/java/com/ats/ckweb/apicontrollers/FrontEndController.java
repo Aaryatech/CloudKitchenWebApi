@@ -68,23 +68,23 @@ public class FrontEndController {
 			info.setMessage("Failed");
 		} else {
 
-			for (int i = 0; i < frData.size(); i++) {
-
-				List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.get(i).getFrId());
-				if (cityList == null) {
-					cityList = new ArrayList<>();
-				}
-
-				frData.get(i).setCityList(cityList);
-
-				List<AreaData> areaList = areaDataRepo.getAllAreasByFr(frData.get(i).getFrId());
-				if (areaList == null) {
-					areaList = new ArrayList<>();
-				}
-
-				frData.get(i).setAreaList(areaList);
-
-			}
+//			for (int i = 0; i < frData.size(); i++) {
+//
+//				List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.get(i).getFrId());
+//				if (cityList == null) {
+//					cityList = new ArrayList<>();
+//				}
+//
+//				frData.get(i).setCityList(cityList);
+//
+//				List<AreaData> areaList = areaDataRepo.getAllAreasByFr(frData.get(i).getFrId());
+//				if (areaList == null) {
+//					areaList = new ArrayList<>();
+//				}
+//
+//				frData.get(i).setAreaList(areaList);
+//
+//			}
 
 			info.setError(false);
 			info.setMessage("Success");
