@@ -96,7 +96,7 @@ public class FrontEndController {
 		return res;
 	}
 
-	@RequestMapping(value = { "/getFranchiseByFrId" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/getFranchiseByFrId" }, method = RequestMethod.POST)
 	public @ResponseBody FranchiseData getFranchiseByFrId(@RequestParam("frId") int frId) {
 
 		FranchiseData frData = null;
@@ -125,7 +125,7 @@ public class FrontEndController {
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns Category list with images
-	@RequestMapping(value = { "/getCategoryListByFr" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/getCategoryListByFr" }, method = RequestMethod.POST)
 	public @ResponseBody GetCategoryData getCategoryListByFr(@RequestParam("frId") int frId) {
 
 		GetCategoryData res = new GetCategoryData();
@@ -166,7 +166,7 @@ public class FrontEndController {
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns Category list with images
-	@RequestMapping(value = { "/getSubCategoryListByFr" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/getSubCategoryListByFr" }, method = RequestMethod.POST)
 	public @ResponseBody GetSubCategoryData getSubCategoryListByFr(@RequestParam("frId") int frId) {
 
 		GetSubCategoryData res = new GetSubCategoryData();
