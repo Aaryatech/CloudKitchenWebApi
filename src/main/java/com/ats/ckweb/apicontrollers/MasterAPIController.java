@@ -15,6 +15,7 @@ import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
+import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
@@ -29,12 +30,15 @@ import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
+import com.ats.ckweb.services.CompanyServices;
 import com.ats.ckweb.services.TagsServices;
 
 @RestController
 public class MasterAPIController {
 
 	@Autowired TagsServices tagService;
+	
+	@Autowired CompanyServices companyService;
 	
 	@RequestMapping(value = { "/getDesignations" }, method = RequestMethod.GET)
 	public @ResponseBody List<Designation> getDesignations(){
@@ -876,4 +880,61 @@ public class MasterAPIController {
 		}
 		return mnUser;		
 	}
+	
+	/************************************************************************/
+	
+	 @RequestMapping(value = { "/getAllMnCompanies" }, method = RequestMethod.GET)
+		public @ResponseBody List<Company> getAllMnCompany(){
+			
+			List<Company> compList = new ArrayList<Company>();
+			try {
+				compList = companyService.getAllMnCompanyDetaisList();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return compList;
+		}
+	 
+	 @RequestMapping(value = { "/getMnCompanyById" }, method = RequestMethod.POST)
+		public @ResponseBody Company getMnCompanyById(@RequestParam int compId){
+			
+		 Company company = new Company();
+			try {
+				company = companyService.getMnCompanyById(compId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return company;
+		}
+	 
+	 @RequestMapping(value = { "/deleteMnCompanyById" }, method = RequestMethod.POST)
+		public @ResponseBody Info deleteMnCompanyById(@RequestParam int compId){
+			
+			Info info = new Info();
+			try {
+				int res = companyService.deleteMnCompanyById(compId);
+				if(res>0) {
+					info.setError(false);
+					info.setMessage("Company Deleted Successfully");
+				}else {
+					info.setError(true);
+					info.setMessage("Failed to Delete Company");
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return info;		
+		}
+	 
+	 @RequestMapping(value = { "/saveMnCompany" }, method = RequestMethod.POST)
+		public @ResponseBody Company getMnCompanyById(@RequestBody Company company){
+			
+		 Company comp = new Company();
+			try {
+				comp = companyService.insertNewCompany(company);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return comp;
+		}
 }
