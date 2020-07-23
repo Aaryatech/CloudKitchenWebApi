@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.Category;
+import com.ats.ckweb.model.Customer;
+import com.ats.ckweb.model.CustomerAddress;
+import com.ats.ckweb.model.CustomerAddressDisplay;
+import com.ats.ckweb.model.CustomerDisplay;
 import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetItemForDetail;
 import com.ats.ckweb.model.GetItemsForConfig;
@@ -24,6 +28,10 @@ import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.ShowItemDetailNewList;
 import com.ats.ckweb.model.SubCategory;
+import com.ats.ckweb.repository.CustomerAddressDisplayRepo;
+import com.ats.ckweb.repository.CustomerAddressRepo;
+import com.ats.ckweb.repository.CustomerDisplayRepo;
+import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
 import com.ats.ckweb.repository.GetItemForDetailRepo;
 import com.ats.ckweb.repository.GetItemsForConfigRepo;
@@ -79,6 +87,18 @@ public class MasterAPIController2 {
 
 	@Autowired
 	OfferDetailRepo offerDetailRepo;
+
+	@Autowired
+	CustomerRepo customerRepo;
+
+	@Autowired
+	CustomerAddressRepo customerAddressRepo;
+
+	@Autowired
+	CustomerDisplayRepo customerDisplayRepo;
+
+	@Autowired
+	CustomerAddressDisplayRepo customerAddressDisplayRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -366,23 +386,86 @@ public class MasterAPIController2 {
 		return info;
 	}
 
+	// -----------------------CUSTOMER---------------------
+
 	// Author-Anmol Shirke Created On-23-07-2020
 	// Desc- Returns Customer object - save Customer.
-//	@RequestMapping(value = { "/saveOfferDetailList" }, method = RequestMethod.POST)
-//	public @ResponseBody Customer saveOfferDetailList(@RequestParam("offerDetailList") List<OfferDetail> offerDetailList) {
-//
-//		Info info = new Info();
-//
-//		List<OfferDetail> res = offerDetailRepo.saveAll(offerDetailList);
-//		if (res != null) {
-//			info.setError(false);
-//			info.setMessage("Success");
-//		} else {
-//			info.setError(true);
-//			info.setMessage("Failed");
-//		}
-//
-//		return info;
-//	}
+	@RequestMapping(value = { "/saveCustomer" }, method = RequestMethod.POST)
+	public @ResponseBody Customer saveCustomer(@RequestBody Customer customer) {
+
+		Customer res = new Customer();
+
+		res = customerRepo.save(customer);
+		if (res == null) {
+			res = new Customer();
+		}
+
+		return res;
+	}
+
+	// Author-Anmol Shirke Created On-23-07-2020
+	// Desc- Returns Customer object - save Customer.
+	@RequestMapping(value = { "/saveCustomerAddressList" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveCustomerAddressList(
+			@RequestParam("custAddressList") List<CustomerAddress> custAddressList) {
+
+		Info info = new Info();
+
+		List<CustomerAddress> res = customerAddressRepo.saveAll(custAddressList);
+		if (res != null) {
+			info.setError(false);
+			info.setMessage("Success");
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
+	// Author-Anmol Shirke Created On-22-07-2020
+	// Desc- Returns all Customer List
+	@RequestMapping(value = { "/getAllCustomer" }, method = RequestMethod.GET)
+	public @ResponseBody List<CustomerDisplay> getAllCustomer() {
+
+		List<CustomerDisplay> res = null;
+
+		res = customerDisplayRepo.getAllCustomer();
+
+		if (res == null) {
+			res = new ArrayList<CustomerDisplay>();
+		}
+		return res;
+	}
+
+	// Author-Anmol Shirke Created On-22-07-2020
+	// Desc- Returns Customer Object by cust id
+	@RequestMapping(value = { "/getCustomerById" }, method = RequestMethod.POST)
+	public @ResponseBody CustomerDisplay getCustomerById(@RequestParam("custId") int custId) {
+
+		CustomerDisplay res = null;
+
+		res = customerDisplayRepo.getCustomerById(custId);
+
+		if (res == null) {
+			res = new CustomerDisplay();
+		}
+		return res;
+	}
+
+	// Author-Anmol Shirke Created On-22-07-2020
+	// Desc- Returns all customer address List by cust Id
+	@RequestMapping(value = { "/getCustomerAddressList" }, method = RequestMethod.POST)
+	public @ResponseBody List<CustomerAddressDisplay> getCustomerAddressList(@RequestParam("custId") int custId) {
+
+		List<CustomerAddressDisplay> res = null;
+
+		res = customerAddressDisplayRepo.getCustomerAddressList(custId);
+
+		if (res == null) {
+			res = new ArrayList<CustomerAddressDisplay>();
+		}
+		return res;
+	}
 
 }

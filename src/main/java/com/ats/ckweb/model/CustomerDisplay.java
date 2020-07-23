@@ -1,137 +1,53 @@
 package com.ats.ckweb.model;
 
-import java.util.List;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
-@Table(name = "mn_customer")
-public class Customer {
+public class CustomerDisplay {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "cust_id")
 	private int custId;
-
-	@Column(name = "cust_name")
 	private String custName;
-
-	@Column(name = "phone_number")
 	private String phoneNumber;
-
-	@Column(name = "whatsapp_no")
 	private String whatsappNo;
-
-	@Column(name = "email_id")
 	private String emailId;
-
-	@Column(name = "profile_pic")
 	private String profilePic;
-
-	@Column(name = "gender")
 	private int gender;
-
-	@Column(name = "cust_dob")
 	private String custDob;
-
-	@Column(name = "age_group")
 	private String ageGroup;
-
-	@Column(name = "lang_id")
 	private int langId;
-
-	@Column(name = "comp_id")
 	private int compId;
-
-	@Column(name = "city_id")
 	private int cityId;
-
-	@Column(name = "fr_id")
 	private int frId;
-
-	@Column(name = "is_buiss_head")
 	private int isBuissHead;
-
-	@Column(name = "company_name")
 	private String companyName;
-
-	@Column(name = "gst_no")
 	private String gstNo;
-
-	@Column(name = "address")
 	private String address;
-
-	@Column(name = "is_active")
 	private int isActive;
-
-	@Column(name = "del_status")
 	private int del_status;
-
-	@Column(name = "cust_add_platform")
 	private int custAddPlatform;
-
-	@Column(name = "cust_add_datetime")
 	private String custAddDatetime;
-
-	@Column(name = "added_from_type")
 	private int addedFormType;
-
-	@Column(name = "user_id")
 	private int userId;
-
-	@Column(name = "is_premium_cust")
 	private int isPremiumCust;
-
-	@Column(name = "ex_int1")
 	private int exInt1;
-
-	@Column(name = "ex_int2")
 	private int exInt2;
-
-	@Column(name = "ex_int3")
 	private int exInt3;
-
-	@Column(name = "ex_int4")
 	private int exInt4;
-
-	@Column(name = "ex_int5")
 	private int exInt5;
-
-	@Column(name = "ex_var1")
 	private String exVar1;
-
-	@Column(name = "ex_var2")
 	private String exVar2;
-
-	@Column(name = "ex_var3")
 	private String exVar3;
-
-	@Column(name = "ex_var4")
 	private String exVar4;
-
-	@Column(name = "ex_var5")
 	private String exVar5;
-
-	@Column(name = "ex_float1")
 	private float exFloat1;
-
-	@Column(name = "ex_float2")
 	private float exFloat2;
-
-	@Column(name = "ex_float3")
 	private float exFloat3;
-
-	@Column(name = "ex_float4")
 	private float exFloat4;
-
-	@Column(name = "ex_float5")
 	private float exFloat5;
+	private String langName;
+	private String cityName;
 
 	public int getCustId() {
 		return custId;
@@ -155,6 +71,14 @@ public class Customer {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public String getWhatsappNo() {
+		return whatsappNo;
+	}
+
+	public void setWhatsappNo(String whatsappNo) {
+		this.whatsappNo = whatsappNo;
 	}
 
 	public String getEmailId() {
@@ -437,17 +361,25 @@ public class Customer {
 		this.exFloat5 = exFloat5;
 	}
 
-	public String getWhatsappNo() {
-		return whatsappNo;
+	public String getLangName() {
+		return langName;
 	}
 
-	public void setWhatsappNo(String whatsappNo) {
-		this.whatsappNo = whatsappNo;
+	public void setLangName(String langName) {
+		this.langName = langName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 
 	@Override
 	public String toString() {
-		return "Customer [custId=" + custId + ", custName=" + custName + ", phoneNumber=" + phoneNumber
+		return "CustomerDisplay [custId=" + custId + ", custName=" + custName + ", phoneNumber=" + phoneNumber
 				+ ", whatsappNo=" + whatsappNo + ", emailId=" + emailId + ", profilePic=" + profilePic + ", gender="
 				+ gender + ", custDob=" + custDob + ", ageGroup=" + ageGroup + ", langId=" + langId + ", compId="
 				+ compId + ", cityId=" + cityId + ", frId=" + frId + ", isBuissHead=" + isBuissHead + ", companyName="
@@ -457,7 +389,8 @@ public class Customer {
 				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exInt4=" + exInt4
 				+ ", exInt5=" + exInt5 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exVar5=" + exVar5 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2
-				+ ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", exFloat5=" + exFloat5 + "]";
+				+ ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", exFloat5=" + exFloat5 + ", langName="
+				+ langName + ", cityName=" + cityName + "]";
 	}
 
 }
