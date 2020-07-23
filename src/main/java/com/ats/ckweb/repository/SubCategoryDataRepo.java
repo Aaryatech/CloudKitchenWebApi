@@ -13,11 +13,13 @@ public interface SubCategoryDataRepo  extends JpaRepository<SubCategoryData, Int
 	@Query(value = "SELECT\r\n" + 
 			"    s.sub_cat_id,\r\n" + 
 			"    s.cat_id,\r\n" + 
+			"    c.cat_name,\r\n" + 
 			"    s.sub_cat_name\r\n" + 
 			"FROM\r\n" + 
-			"    m_cat_sub s\r\n" + 
+			"    m_cat_sub s,\r\n" + 
+			"    m_category c\r\n" + 
 			"WHERE\r\n" + 
-			"    s.del_status = 0 AND s.sub_cat_id IN(\r\n" + 
+			"    s.del_status = 0 AND c.del_status = 0 AND s.cat_id = c.cat_id AND s.sub_cat_id IN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        i.item_grp2\r\n" + 
 			"    FROM\r\n" + 

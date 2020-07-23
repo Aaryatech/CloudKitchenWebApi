@@ -93,9 +93,34 @@ public class FrontEndController {
 		res.setFranchise(frData);
 		res.setInfo(info);
 
-		System.err.println("RESULT = " + res);
-
 		return res;
+	}
+
+	@RequestMapping(value = { "/getFranchiseByFrId" }, method = RequestMethod.GET)
+	public @ResponseBody FranchiseData getFranchiseByFrId(@RequestParam("frId") int frId) {
+
+		FranchiseData frData = null;
+
+		frData = franchiseDataRepo.getFranchiseById(frId);
+
+		if (frData == null) {
+			frData = new FranchiseData();
+		} else {
+
+			List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.getFrId());
+			if (cityList == null) {
+				cityList = new ArrayList<>();
+			}
+			frData.setCityList(cityList);
+
+			List<AreaData> areaList = areaDataRepo.getAllAreasByFr(frData.getFrId());
+			if (areaList == null) {
+				areaList = new ArrayList<>();
+			}
+			frData.setAreaList(areaList);
+		}
+
+		return frData;
 	}
 
 	// Author-Anmol Shirke Created On-20-07-2020
@@ -136,8 +161,6 @@ public class FrontEndController {
 		res.setCategory(catData);
 		res.setInfo(info);
 
-		System.err.println("RESULT = " + res);
-
 		return res;
 	}
 
@@ -177,8 +200,6 @@ public class FrontEndController {
 
 		res.setSubCategory(subCatData);
 		res.setInfo(info);
-
-		System.err.println("RESULT = " + res);
 
 		return res;
 	}

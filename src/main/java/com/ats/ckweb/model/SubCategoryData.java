@@ -12,6 +12,7 @@ public class SubCategoryData {
 	@Id
 	private int subCatId;
 	private int catId;
+	private String catName;
 	private String subCatName;
 
 	@Transient
@@ -47,6 +48,20 @@ public class SubCategoryData {
 
 	public void setImageList(List<Images> imageList) {
 		this.imageList = imageList;
+	}
+
+	public String getCatName() {
+		return catName;
+	}
+
+	public void setCatName(String catName) {
+		this.catName = catName;
+	}
+
+	@Override
+	public String toString() {
+		return "SubCategoryData [subCatId=" + subCatId + ", catId=" + catId + ", catName=" + catName + ", subCatName="
+				+ subCatName + ", imageList=" + imageList + "]";
 	}
 
 }
