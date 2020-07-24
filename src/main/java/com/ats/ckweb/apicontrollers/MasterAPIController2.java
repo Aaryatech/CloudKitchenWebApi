@@ -24,6 +24,7 @@ import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.ItemConfigDetail;
 import com.ats.ckweb.model.ItemConfigHeader;
 import com.ats.ckweb.model.ItemDetailNew;
+import com.ats.ckweb.model.ItemListForOfferDetail;
 import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.ShowItemDetailNewList;
@@ -37,6 +38,7 @@ import com.ats.ckweb.repository.GetItemForDetailRepo;
 import com.ats.ckweb.repository.GetItemsForConfigRepo;
 import com.ats.ckweb.repository.ItemConfigDetailRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
+import com.ats.ckweb.repository.ItemListForOfferDetailRepo;
 import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.ShowItemDetailNewListRepo;
@@ -99,6 +101,9 @@ public class MasterAPIController2 {
 
 	@Autowired
 	CustomerAddressDisplayRepo customerAddressDisplayRepo;
+
+	@Autowired
+	ItemListForOfferDetailRepo itemListForOfferDetailRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -368,14 +373,57 @@ public class MasterAPIController2 {
 	}
 
 	// Author-Anmol Shirke Created On-22-07-2020
-	// Desc- Returns OfferHeader object - save OfferHeader.
 	@RequestMapping(value = { "/saveOfferDetailList" }, method = RequestMethod.POST)
-	public @ResponseBody Info saveOfferDetailList(@RequestParam("offerDetailList") List<OfferDetail> offerDetailList) {
+	public @ResponseBody Info saveOfferDetailList(@RequestBody List<OfferDetail> offerDetailList) {
 
 		Info info = new Info();
 
 		List<OfferDetail> res = offerDetailRepo.saveAll(offerDetailList);
 		if (res != null) {
+			info.setError(false);
+			info.setMessage("Success");
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
+	// Author-Anmol Shirke Created On-22-07-2020
+	// Desc- Returns OfferHeader object - save OfferHeader.
+	@RequestMapping(value = { "/getOfferHeaderById" }, method = RequestMethod.POST)
+	public @ResponseBody OfferHeader getOfferHeaderById(@RequestParam("offerId") int offerId) {
+
+		OfferHeader res = offerHeaderRepo.findByOfferId(offerId);
+
+		if (res == null) {
+			res = new OfferHeader();
+		}
+
+		return res;
+	}
+
+	// Author-Anmol Shirke Created On-22-07-2020
+	@RequestMapping(value = { "/getOfferDetailListByOfferId" }, method = RequestMethod.POST)
+	public @ResponseBody List<OfferDetail> getOfferDetailListByOfferId(@RequestParam("offerId") int offerId) {
+
+		List<OfferDetail> res = offerDetailRepo.findAllByOfferIdAndIsActiveAndDelStatus(offerId, 0, 0);
+
+		if (res == null) {
+			res = new ArrayList<>();
+		}
+
+		return res;
+	}
+
+	@RequestMapping(value = { "/updateOfferType" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateOfferType(@RequestParam("offerId") int offerId, @RequestParam("type") int type) {
+
+		Info info = new Info();
+
+		int res = offerHeaderRepo.updateOfferType(offerId, type);
+		if (res > 0) {
 			info.setError(false);
 			info.setMessage("Success");
 		} else {
@@ -464,6 +512,19 @@ public class MasterAPIController2 {
 
 		if (res == null) {
 			res = new ArrayList<CustomerAddressDisplay>();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/getItemListForOfferDetail" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemListForOfferDetail> getItemListForOfferDetail(@RequestParam("offerId") int offerId) {
+
+		List<ItemListForOfferDetail> res = null;
+
+		res = itemListForOfferDetailRepo.getAllItemList(offerId);
+
+		if (res == null) {
+			res = new ArrayList<ItemListForOfferDetail>();
 		}
 		return res;
 	}
