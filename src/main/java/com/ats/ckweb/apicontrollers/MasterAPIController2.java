@@ -21,6 +21,7 @@ import com.ats.ckweb.model.GetItemForDetail;
 import com.ats.ckweb.model.GetItemsForConfig;
 import com.ats.ckweb.model.Images;
 import com.ats.ckweb.model.Info;
+import com.ats.ckweb.model.ItemBuyGetFreeOffer;
 import com.ats.ckweb.model.ItemConfigDetail;
 import com.ats.ckweb.model.ItemConfigHeader;
 import com.ats.ckweb.model.ItemDetailNew;
@@ -37,6 +38,7 @@ import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
 import com.ats.ckweb.repository.GetItemForDetailRepo;
 import com.ats.ckweb.repository.GetItemsForConfigRepo;
+import com.ats.ckweb.repository.ItemBuyGetFreeOfferRepo;
 import com.ats.ckweb.repository.ItemConfigDetailRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
 import com.ats.ckweb.repository.ItemListForOfferDetailRepo;
@@ -106,9 +108,12 @@ public class MasterAPIController2 {
 
 	@Autowired
 	ItemListForOfferDetailRepo itemListForOfferDetailRepo;
-	
+
 	@Autowired
 	LanguageRepo langRepo;
+
+	@Autowired
+	ItemBuyGetFreeOfferRepo itemBuyGetFreeOfferRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -439,6 +444,63 @@ public class MasterAPIController2 {
 		return info;
 	}
 
+	@RequestMapping(value = { "/removeOfferDetailIds" }, method = RequestMethod.POST)
+	public @ResponseBody Info removeOfferDetailIds(@RequestParam("offerDetailIds") List<Integer> offerDetailIds) {
+
+		Info info = new Info();
+
+		int res = offerDetailRepo.deleteOfferDetails(offerDetailIds);
+		if (res > 0) {
+			info.setError(false);
+			info.setMessage("Success");
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
+	@RequestMapping(value = { "/getItemListForOfferDetail" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemListForOfferDetail> getItemListForOfferDetail(@RequestParam("offerId") int offerId) {
+
+		List<ItemListForOfferDetail> res = null;
+
+		res = itemListForOfferDetailRepo.getAllItemList(offerId);
+
+		if (res == null) {
+			res = new ArrayList<ItemListForOfferDetail>();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/getItemListForOfferDetailByCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemListForOfferDetail> getItemListForOfferDetailByCompId(
+			@RequestParam("compId") int compId) {
+
+		List<ItemListForOfferDetail> res = null;
+
+		res = itemListForOfferDetailRepo.getAllItemListByCompId(compId);
+
+		if (res == null) {
+			res = new ArrayList<ItemListForOfferDetail>();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/getBuyGetFreeOfferList" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemBuyGetFreeOffer> getBuyGetFreeOfferList(@RequestParam("offerId") int offerId) {
+
+		List<ItemBuyGetFreeOffer> res = null;
+
+		res = itemBuyGetFreeOfferRepo.getOfferDetailListForBuyGetFree(offerId);
+
+		if (res == null) {
+			res = new ArrayList<ItemBuyGetFreeOffer>();
+		}
+		return res;
+	}
+
 	// -----------------------CUSTOMER---------------------
 
 	// Author-Anmol Shirke Created On-23-07-2020
@@ -457,7 +519,7 @@ public class MasterAPIController2 {
 		} else {
 			res.setError(false);
 			res.setMessage("Success");
-			
+
 			Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
 			res.setLangName(lang.getLangName());
 		}
@@ -529,15 +591,16 @@ public class MasterAPIController2 {
 		return res;
 	}
 
-	@RequestMapping(value = { "/getItemListForOfferDetail" }, method = RequestMethod.POST)
-	public @ResponseBody List<ItemListForOfferDetail> getItemListForOfferDetail(@RequestParam("offerId") int offerId) {
+	@RequestMapping(value = { "/getCustomerAddressListById" }, method = RequestMethod.POST)
+	public @ResponseBody List<CustomerAddressDisplay> getCustomerAddressListById(
+			@RequestParam("custAddressId") int custAddressId) {
 
-		List<ItemListForOfferDetail> res = null;
+		List<CustomerAddressDisplay> res = null;
 
-		res = itemListForOfferDetailRepo.getAllItemList(offerId);
+		res = customerAddressDisplayRepo.getCustomerAddressListById(custAddressId);
 
 		if (res == null) {
-			res = new ArrayList<ItemListForOfferDetail>();
+			res = new ArrayList<CustomerAddressDisplay>();
 		}
 		return res;
 	}
