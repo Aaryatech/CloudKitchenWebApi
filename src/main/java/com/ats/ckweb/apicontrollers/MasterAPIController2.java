@@ -605,4 +605,22 @@ public class MasterAPIController2 {
 		return res;
 	}
 
+	@RequestMapping(value = { "/deleteCustAddress" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteCustAddress(@RequestParam("custAddressId") int custAddressId,
+			@RequestParam("status") int status) {
+
+		Info info = new Info();
+
+		int res = customerAddressRepo.deleteCustAddress(custAddressId, status);
+		if (res > 0) {
+			info.setError(false);
+			info.setMessage("Success");
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
 }
