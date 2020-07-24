@@ -19,6 +19,7 @@ import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Info;
@@ -578,6 +579,19 @@ public class MasterAPIController {
 		}
 		return res;
 	}
+	
+	@RequestMapping(value = { "/getAreaByCityAndCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<Area> getAreaByCityIdAndCopmId(@RequestParam int cityId, @RequestParam int compId){
+		
+		List<Area> list = new ArrayList<Area>();
+		
+		try {
+			list = tagService.getAreaCityAndCompById(cityId, compId);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 	/*****************************************************************/
 	
 	@RequestMapping(value = { "/getAllDeliveryInstructions" }, method = RequestMethod.POST)
@@ -937,4 +951,13 @@ public class MasterAPIController {
 			}
 			return comp;
 		}
+	 
+	 
+	 /************************************************************************/
+	 
+	 
+	 
+	 
+	 
+	 
 }

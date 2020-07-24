@@ -22,6 +22,8 @@ public interface AreaRepo extends JpaRepository<Area, Integer> {
 	
 	Area findByAreaIdAndDelStatusAndCompanyId(int areaId, int del, int compId);
 	
+	List<Area> findByCityIdAndCompanyIdAndDelStatus(int cityId, int compId, int del);
+	
 	@Transactional
 	@Modifying
 	@Query(value="UPDATE mn_area SET del_status=1 WHERE area_id=:areaId",nativeQuery=true)

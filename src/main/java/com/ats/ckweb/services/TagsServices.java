@@ -157,6 +157,8 @@ public interface TagsServices {
 	MnUser getMnUserDetailById(int userId, int i);
 
 	int updatePassword(int userId, String newPass);
+
+	List<Area> getAreaCityAndCompById(int cityId, int compId);
 	
 
 	

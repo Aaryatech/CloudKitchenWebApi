@@ -496,4 +496,10 @@ public class TagServiceImpl implements TagsServices {
 		return res;
 	}
 
+	@Override
+	public List<Area> getAreaCityAndCompById(int cityId, int compId) {
+		List<Area> list = areaRepo.findByCityIdAndCompanyIdAndDelStatus(cityId, compId, 0);
+		return list;
+	}
+
 }
