@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaData;
 import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
@@ -26,6 +27,7 @@ import com.ats.ckweb.repository.CityDataRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
 import com.ats.ckweb.repository.SubCategoryDataRepo;
 import com.ats.ckweb.services.ImagesService;
+import com.ats.ckweb.repository.AreaRepo;
 
 @Controller
 public class FrontEndController {
@@ -47,6 +49,9 @@ public class FrontEndController {
 
 	@Autowired
 	ImagesService imagesService;
+
+	@Autowired
+	AreaRepo areaRepo;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -202,6 +207,20 @@ public class FrontEndController {
 		res.setInfo(info);
 
 		return res;
+	}
+
+	@RequestMapping(value = { "/getAreaListByCity" }, method = RequestMethod.POST)
+	public @ResponseBody List<Area> getAreaListByCity(@RequestParam("cityId") int cityId) {
+
+		List<Area> arealist = new ArrayList<>();
+
+		try {
+			arealist = areaRepo.getarealistbycityid(cityId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return arealist;
 	}
 
 }

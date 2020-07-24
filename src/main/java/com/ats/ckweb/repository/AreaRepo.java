@@ -32,4 +32,7 @@ public interface AreaRepo extends JpaRepository<Area, Integer> {
 	
 	@Query(value="SELECT COUNT(area_code) FROM `mn_area` WHERE city_id=:cityId",nativeQuery=true)
 	public int getMaxCountAreaCode(@Param("cityId") int cityId);
+
+	@Query(value="SELECT * FROM mn_area WHERE city_id=:cityId and del_status=0",nativeQuery=true)
+	List<Area> getarealistbycityid(@Param("cityId") int cityId);
 }
