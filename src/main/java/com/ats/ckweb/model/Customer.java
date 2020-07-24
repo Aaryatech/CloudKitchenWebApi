@@ -139,6 +139,9 @@ public class Customer {
 	@Transient
 	private String message;
 
+	@Transient
+	private String langName;
+
 	public int getCustId() {
 		return custId;
 	}
@@ -467,6 +470,14 @@ public class Customer {
 		this.message = message;
 	}
 
+	public String getLangName() {
+		return langName;
+	}
+
+	public void setLangName(String langName) {
+		this.langName = langName;
+	}
+
 	@Override
 	public String toString() {
 		return "Customer [custId=" + custId + ", custName=" + custName + ", phoneNumber=" + phoneNumber
@@ -480,7 +491,7 @@ public class Customer {
 				+ ", exInt5=" + exInt5 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exVar5=" + exVar5 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2
 				+ ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", exFloat5=" + exFloat5 + ", error=" + error
-				+ ", message=" + message + "]";
+				+ ", message=" + message + ", langName=" + langName + "]";
 	}
 
 }

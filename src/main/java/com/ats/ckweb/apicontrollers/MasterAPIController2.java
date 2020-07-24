@@ -25,6 +25,7 @@ import com.ats.ckweb.model.ItemConfigDetail;
 import com.ats.ckweb.model.ItemConfigHeader;
 import com.ats.ckweb.model.ItemDetailNew;
 import com.ats.ckweb.model.ItemListForOfferDetail;
+import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.ShowItemDetailNewList;
@@ -39,6 +40,7 @@ import com.ats.ckweb.repository.GetItemsForConfigRepo;
 import com.ats.ckweb.repository.ItemConfigDetailRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
 import com.ats.ckweb.repository.ItemListForOfferDetailRepo;
+import com.ats.ckweb.repository.LanguageRepo;
 import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.ShowItemDetailNewListRepo;
@@ -104,6 +106,9 @@ public class MasterAPIController2 {
 
 	@Autowired
 	ItemListForOfferDetailRepo itemListForOfferDetailRepo;
+	
+	@Autowired
+	LanguageRepo langRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -448,9 +453,13 @@ public class MasterAPIController2 {
 			res = new Customer();
 			res.setError(true);
 			res.setMessage("Failed");
+			res.setLangName("");
 		} else {
 			res.setError(false);
 			res.setMessage("Success");
+			
+			Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
+			res.setLangName(lang.getLangName());
 		}
 
 		return res;
