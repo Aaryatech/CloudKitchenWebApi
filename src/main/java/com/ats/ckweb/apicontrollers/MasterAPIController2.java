@@ -446,6 +446,11 @@ public class MasterAPIController2 {
 		res = customerRepo.save(customer);
 		if (res == null) {
 			res = new Customer();
+			res.setError(true);
+			res.setMessage("Failed");
+		} else {
+			res.setError(false);
+			res.setMessage("Success");
 		}
 
 		return res;

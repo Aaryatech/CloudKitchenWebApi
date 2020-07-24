@@ -133,6 +133,12 @@ public class Customer {
 	@Column(name = "ex_float5")
 	private float exFloat5;
 
+	@Transient
+	private boolean error;
+
+	@Transient
+	private String message;
+
 	public int getCustId() {
 		return custId;
 	}
@@ -445,6 +451,22 @@ public class Customer {
 		this.whatsappNo = whatsappNo;
 	}
 
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
 	@Override
 	public String toString() {
 		return "Customer [custId=" + custId + ", custName=" + custName + ", phoneNumber=" + phoneNumber
@@ -457,7 +479,8 @@ public class Customer {
 				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exInt4=" + exInt4
 				+ ", exInt5=" + exInt5 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exVar5=" + exVar5 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2
-				+ ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", exFloat5=" + exFloat5 + "]";
+				+ ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", exFloat5=" + exFloat5 + ", error=" + error
+				+ ", message=" + message + "]";
 	}
 
 }
