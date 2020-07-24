@@ -454,8 +454,7 @@ public class MasterAPIController2 {
 	// Author-Anmol Shirke Created On-23-07-2020
 	// Desc- Returns Customer object - save Customer.
 	@RequestMapping(value = { "/saveCustomerAddressList" }, method = RequestMethod.POST)
-	public @ResponseBody Info saveCustomerAddressList(
-			@RequestParam("custAddressList") List<CustomerAddress> custAddressList) {
+	public @ResponseBody Info saveCustomerAddressList(@RequestBody List<CustomerAddress> custAddressList) {
 
 		Info info = new Info();
 
