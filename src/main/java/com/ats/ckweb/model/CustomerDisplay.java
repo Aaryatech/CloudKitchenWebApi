@@ -25,10 +25,10 @@ public class CustomerDisplay {
 	private String gstNo;
 	private String address;
 	private int isActive;
-	private int del_status;
+	private int delStatus;
 	private int custAddPlatform;
 	private String custAddDatetime;
-	private int addedFormType;
+	private int addedFromType;
 	private int userId;
 	private int isPremiumCust;
 	private int exInt1;
@@ -193,12 +193,14 @@ public class CustomerDisplay {
 		this.isActive = isActive;
 	}
 
-	public int getDel_status() {
-		return del_status;
+	 
+
+	public int getDelStatus() {
+		return delStatus;
 	}
 
-	public void setDel_status(int del_status) {
-		this.del_status = del_status;
+	public void setDelStatus(int delStatus) {
+		this.delStatus = delStatus;
 	}
 
 	public int getCustAddPlatform() {
@@ -217,12 +219,14 @@ public class CustomerDisplay {
 		this.custAddDatetime = custAddDatetime;
 	}
 
-	public int getAddedFormType() {
-		return addedFormType;
+	 
+
+	public int getAddedFromType() {
+		return addedFromType;
 	}
 
-	public void setAddedFormType(int addedFormType) {
-		this.addedFormType = addedFormType;
+	public void setAddedFromType(int addedFromType) {
+		this.addedFromType = addedFromType;
 	}
 
 	public int getUserId() {
@@ -383,9 +387,9 @@ public class CustomerDisplay {
 				+ ", whatsappNo=" + whatsappNo + ", emailId=" + emailId + ", profilePic=" + profilePic + ", gender="
 				+ gender + ", custDob=" + custDob + ", ageGroup=" + ageGroup + ", langId=" + langId + ", compId="
 				+ compId + ", cityId=" + cityId + ", frId=" + frId + ", isBuissHead=" + isBuissHead + ", companyName="
-				+ companyName + ", gstNo=" + gstNo + ", address=" + address + ", isActive=" + isActive + ", del_status="
-				+ del_status + ", custAddPlatform=" + custAddPlatform + ", custAddDatetime=" + custAddDatetime
-				+ ", addedFormType=" + addedFormType + ", userId=" + userId + ", isPremiumCust=" + isPremiumCust
+				+ companyName + ", gstNo=" + gstNo + ", address=" + address + ", isActive=" + isActive + ", delStatus="
+				+ delStatus + ", custAddPlatform=" + custAddPlatform + ", custAddDatetime=" + custAddDatetime
+				+ ", addedFromType=" + addedFromType + ", userId=" + userId + ", isPremiumCust=" + isPremiumCust
 				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exInt4=" + exInt4
 				+ ", exInt5=" + exInt5 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exVar5=" + exVar5 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2

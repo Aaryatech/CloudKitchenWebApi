@@ -26,15 +26,18 @@ public interface CustomerDisplayRepo extends JpaRepository<CustomerDisplay, Inte
 	
 	
 	@Query(value = "SELECT\r\n" + 
-			"    c.*,\r\n" + 
-			"    l.lang_name,\r\n" + 
-			"    ct.city_name\r\n" + 
-			"FROM\r\n" + 
-			"    mn_customer c,\r\n" + 
-			"    mn_language l,\r\n" + 
-			"    mn_city ct\r\n" + 
-			"WHERE\r\n" + 
-			"    c.is_active = 0 AND c.del_status = 0 AND l.del_status = 0 AND c.lang_id = l.lang_id AND ct.del_status = 0 AND c.city_id = ct.city_id AND c.cust_id=:custId", nativeQuery = true)
+			"        c.*,\r\n" + 
+			"        l.lang_name,\r\n" + 
+			"        '' as city_name  \r\n" + 
+			"    FROM\r\n" + 
+			"        mn_customer c,\r\n" + 
+			"        mn_language l \r\n" + 
+			"    WHERE\r\n" + 
+			"        c.is_active = 0 \r\n" + 
+			"        AND c.del_status = 0 \r\n" + 
+			"        AND l.del_status = 0 \r\n" + 
+			"        AND c.lang_id = l.lang_id  \r\n" + 
+			"        AND c.cust_id=:custId", nativeQuery = true)
 	public CustomerDisplay getCustomerById(@Param("custId") int custId);
 	
 	
