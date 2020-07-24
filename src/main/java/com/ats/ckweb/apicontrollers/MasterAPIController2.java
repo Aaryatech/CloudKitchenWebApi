@@ -592,15 +592,15 @@ public class MasterAPIController2 {
 	}
 
 	@RequestMapping(value = { "/getCustomerAddressListById" }, method = RequestMethod.POST)
-	public @ResponseBody List<CustomerAddressDisplay> getCustomerAddressListById(
+	public @ResponseBody CustomerAddressDisplay getCustomerAddressById(
 			@RequestParam("custAddressId") int custAddressId) {
 
-		List<CustomerAddressDisplay> res = null;
+		CustomerAddressDisplay res = null;
 
-		res = customerAddressDisplayRepo.getCustomerAddressListById(custAddressId);
+		res = customerAddressDisplayRepo.getCustomerAddressById(custAddressId);
 
 		if (res == null) {
-			res = new ArrayList<CustomerAddressDisplay>();
+			res = new CustomerAddressDisplay();
 		}
 		return res;
 	}

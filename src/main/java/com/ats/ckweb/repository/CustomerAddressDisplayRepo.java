@@ -35,6 +35,6 @@ public interface CustomerAddressDisplayRepo extends JpaRepository<CustomerAddres
 			"    mn_city ct\r\n" + 
 			"WHERE\r\n" + 
 			"    c.del_status = 0 AND a.del_status = 0 AND c.area_id = a.area_id  AND c.city_id = ct.city_id AND c.cust_address_Id = :custAddressId", nativeQuery = true)
-	public List<CustomerAddressDisplay> getCustomerAddressListById(@Param("custAddressId") int custAddressId);
+	public CustomerAddressDisplay getCustomerAddressById(@Param("custAddressId") int custAddressId);
 	
 }
