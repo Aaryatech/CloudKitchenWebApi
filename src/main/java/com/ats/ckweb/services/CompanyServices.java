@@ -28,4 +28,6 @@ public interface CompanyServices {
 
 	List<GetFrConfigList> getAllFrConfigList();
 
+	List<Company> getAllActiveCompanyList();
+
 }

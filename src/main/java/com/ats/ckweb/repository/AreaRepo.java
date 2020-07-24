@@ -14,7 +14,7 @@ import java.lang.String;
 
 public interface AreaRepo extends JpaRepository<Area, Integer> {
 
-	List<Area> findByDelStatusAndCompanyIdOrderByAreaIdDesc(int del, int compId);
+	List<Area> findByDelStatusAndCompanyIdAndIsActiveOrderByAreaIdDesc(int del, int compId, int status);
 	
 	Area findByAreaCodeIgnoreCaseAndCompanyId(String code, int compId);
 	

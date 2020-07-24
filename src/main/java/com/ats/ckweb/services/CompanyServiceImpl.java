@@ -75,4 +75,10 @@ public class CompanyServiceImpl implements CompanyServices{
 		return list;
 	}
 
+	@Override
+	public List<Company> getAllActiveCompanyList() {
+		List<Company> list = compRepo.findByDelStatusAndIsUsed(0, 0);
+		return list;
+	}
+
 }

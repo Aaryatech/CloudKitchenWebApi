@@ -14,7 +14,7 @@ import java.lang.String;
 
 public interface CityRepo extends JpaRepository<City, Integer> {
 
-	List<City> findByDelStatusOrderByCityIdDesc(int del);
+	List<City> findByDelStatusAndIsActiveOrderByCityIdDesc(int del, int i);
 	
 	City findByCityCodeIgnoreCase(String cityCode);
 	

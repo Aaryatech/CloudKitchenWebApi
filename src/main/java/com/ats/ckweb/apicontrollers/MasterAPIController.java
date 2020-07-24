@@ -897,6 +897,19 @@ public class MasterAPIController {
 	
 	/************************************************************************/
 	
+	
+	@RequestMapping(value = { "/getAllActiveCompany" }, method = RequestMethod.GET)
+	public @ResponseBody List<Company> getAllActiveCompany(){
+		
+		List<Company> compList = new ArrayList<Company>();
+		try {
+			compList = companyService.getAllActiveCompanyList();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return compList;
+	}
+	
 	 @RequestMapping(value = { "/getAllMnCompanies" }, method = RequestMethod.GET)
 		public @ResponseBody List<Company> getAllMnCompany(){
 			

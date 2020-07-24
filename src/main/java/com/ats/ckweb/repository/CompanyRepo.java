@@ -56,4 +56,7 @@ public interface CompanyRepo extends JpaRepository<Company, Integer> {
 	@Modifying
 	@Query(value="UPDATE mn_company SET del_status=1 WHERE company_id=:compId", nativeQuery=true)
 	int deleteCompanyById(@Param("compId") int compId);
+	
+	List<Company> findByDelStatusAndIsUsed(int del, int isUsed);
+	
 }

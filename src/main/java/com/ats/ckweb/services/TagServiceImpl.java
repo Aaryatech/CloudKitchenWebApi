@@ -241,7 +241,7 @@ public class TagServiceImpl implements TagsServices {
 
 	@Override
 	public List<City> getAllCities() {
-		List<City> cityList = cityRepo.findByDelStatusOrderByCityIdDesc(0);
+		List<City> cityList = cityRepo.findByDelStatusAndIsActiveOrderByCityIdDesc(0, 0);
 		return cityList;
 	}
 
@@ -278,7 +278,7 @@ public class TagServiceImpl implements TagsServices {
 
 	@Override
 	public List<Area> getAllArea(int compId) {
-		List<Area> areaList = areaRepo.findByDelStatusAndCompanyIdOrderByAreaIdDesc(0, compId);
+		List<Area> areaList = areaRepo.findByDelStatusAndCompanyIdAndIsActiveOrderByAreaIdDesc(0, compId, 0);
 		return areaList;
 	}
 
