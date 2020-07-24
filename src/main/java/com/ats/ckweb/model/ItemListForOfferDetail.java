@@ -1,5 +1,6 @@
 package com.ats.ckweb.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -7,6 +8,7 @@ import javax.persistence.Id;
 public class ItemListForOfferDetail {
 
 	@Id
+	@Column(name = "item_d_id")
 	private int itemDId;
 	private int itemId;
 	private String itemName;
@@ -14,6 +16,7 @@ public class ItemListForOfferDetail {
 	private int catId;
 	private int offerDetailId;
 	private float disc;
+	private int checked;
 
 	public int getItemDId() {
 		return itemDId;
@@ -71,11 +74,19 @@ public class ItemListForOfferDetail {
 		this.disc = disc;
 	}
 
+	public int getChecked() {
+		return checked;
+	}
+
+	public void setChecked(int checked) {
+		this.checked = checked;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemListForOfferDetail [itemDId=" + itemDId + ", itemId=" + itemId + ", itemName=" + itemName
 				+ ", itemDesc=" + itemDesc + ", catId=" + catId + ", offerDetailId=" + offerDetailId + ", disc=" + disc
-				+ "]";
+				+ ", checked=" + checked + "]";
 	}
 
 }

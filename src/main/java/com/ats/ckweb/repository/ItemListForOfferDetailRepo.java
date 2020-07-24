@@ -13,8 +13,10 @@ import com.ats.ckweb.model.ItemListForOfferDetail;
 public interface ItemListForOfferDetailRepo extends JpaRepository<ItemListForOfferDetail, Integer> {
 
 	@Query(value="SELECT\r\n" + 
-			"    t1.*,COALESCE(t2.offer_detail_id,0) AS offer_detail_id,\r\n" + 
-			"    COALESCE(t2.disc_per, 0) AS disc\r\n" + 
+			"    t1.*,\r\n" + 
+			"    COALESCE(t2.offer_detail_id, 0) AS offer_detail_id,\r\n" + 
+			"    COALESCE(t2.disc_per, 0) AS disc,\r\n" + 
+			"    COALESCE(t2.checked, 0) AS checked\r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
@@ -30,14 +32,34 @@ public interface ItemListForOfferDetailRepo extends JpaRepository<ItemListForOff
 			"        d.del_status = 0 AND d.is_used = 0 AND i.del_status = 0 AND d.item_id = i.id\r\n" + 
 			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
-			"    SELECT *\r\n" + 
+			"    SELECT\r\n" + 
+			"        *,\r\n" + 
+			"        1 AS checked\r\n" + 
 			"    FROM\r\n" + 
 			"        mn_offer_detail d\r\n" + 
 			"    WHERE\r\n" + 
-			"        d.del_status = 0 AND d.offer_id = :offerId \r\n" + 
+			"        d.del_status = 0 AND d.offer_id = :offerId\r\n" + 
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.item_id = t2.primary_item_id", nativeQuery=true)
 	List<ItemListForOfferDetail> getAllItemList(@Param("offerId") int offerId);
+	
+	
+	@Query(value="SELECT\r\n" + 
+			"    d.item_d_id,\r\n" + 
+			"    d.item_id,\r\n" + 
+			"    d.item_desc,\r\n" + 
+			"    i.item_name,\r\n" + 
+			"    i.item_grp1 AS cat_id,\r\n" + 
+			"    0 AS offer_detail_id,\r\n" + 
+			"    0 AS disc,\r\n" + 
+			"    0 AS checked\r\n" + 
+			"FROM\r\n" + 
+			"    mn_detail d,\r\n" + 
+			"    m_item i\r\n" + 
+			"WHERE\r\n" + 
+			"    d.del_status = 0 AND d.is_used = 0 AND i.del_status = 0 AND d.item_id = i.id AND d.ex_int1 = :compId", nativeQuery=true)
+	List<ItemListForOfferDetail> getAllItemListByCompId(@Param("compId") int compId);
+	
 
 }
