@@ -23,6 +23,7 @@ public interface OfferHeaderRepo extends JpaRepository<OfferHeader, Integer> {
 	public int updateOfferType(@Param("offerId") int offerId,@Param("type") int type);
 	
 	List<OfferHeader> findByCompIdAndDelStatusAndIsActive(int i,int j,int k);
-
+	
+	List<OfferHeader> findByCompIdAndDelStatusOrderByOfferIdDesc(int compId, int del);
 	
 }
