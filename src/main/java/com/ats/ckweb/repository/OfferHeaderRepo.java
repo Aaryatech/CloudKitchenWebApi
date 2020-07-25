@@ -21,6 +21,8 @@ public interface OfferHeaderRepo extends JpaRepository<OfferHeader, Integer> {
 	@Modifying
 	@Query(value="UPDATE mn_offer_header SET offer_type=:type WHERE offer_id =:offerId",nativeQuery=true)
 	public int updateOfferType(@Param("offerId") int offerId,@Param("type") int type);
+	
+	List<OfferHeader> findByCompIdAndDelStatusAndIsActive(int i,int j,int k);
 
 	
 }

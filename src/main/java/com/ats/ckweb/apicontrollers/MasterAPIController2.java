@@ -414,6 +414,19 @@ public class MasterAPIController2 {
 		return res;
 	}
 
+	// Author-Anmol Shirke Created On-24-07-2020
+	@RequestMapping(value = { "/getAllOfferHeaderListByCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<OfferHeader> getAllOfferHeaderListByCompId(@RequestParam("compId") int compId) {
+
+		List<OfferHeader> res = offerHeaderRepo.findByCompIdAndDelStatusAndIsActive(compId, 0, 0);
+
+		if (res == null) {
+			res = new ArrayList<>();
+		}
+
+		return res;
+	}
+
 	// Author-Anmol Shirke Created On-22-07-2020
 	@RequestMapping(value = { "/getOfferDetailListByOfferId" }, method = RequestMethod.POST)
 	public @ResponseBody List<OfferDetail> getOfferDetailListByOfferId(@RequestParam("offerId") int offerId) {
