@@ -18,7 +18,9 @@ import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
+import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
@@ -29,6 +31,7 @@ import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.MnUser;
+import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
 import com.ats.ckweb.services.CompanyServices;
@@ -968,7 +971,29 @@ public class MasterAPIController {
 	 
 	 /************************************************************************/
 	 
-	 
+	 @RequestMapping(value = { "/getAllOfferHeads" }, method = RequestMethod.POST)
+		public @ResponseBody List<OfferHeader> getAllFranchise(@RequestParam int compId){
+			
+			List<OfferHeader> frOfferList = new ArrayList<OfferHeader>();
+			try {
+				frOfferList = companyService.getFrOfferConfigList(compId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return frOfferList;
+		}
+	 /**************************Fr Offer Config********************************/
+	 @RequestMapping(value = { "/getConfigureOfferList" }, method = RequestMethod.POST)
+		public @ResponseBody List<GetConfigureOfferList> getConfigureOfferList(@RequestParam int offerId){
+			
+			List<GetConfigureOfferList> frOfferList = new ArrayList<GetConfigureOfferList>();
+			try {
+				frOfferList = companyService.getConfigureOfferListById(offerId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return frOfferList;
+		}
 	 
 	 
 	 

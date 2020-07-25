@@ -7,10 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.FrConfig;
+import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.repository.CompanyRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
+import com.ats.ckweb.repository.GetConfigureOfferListRepo;
 import com.ats.ckweb.repository.GetFrConfigListRepo;
+import com.ats.ckweb.repository.ItemRepository;
+import com.ats.ckweb.repository.OfferHeaderRepo;
 
 @Service
 public class CompanyServiceImpl implements CompanyServices{
@@ -20,6 +25,11 @@ public class CompanyServiceImpl implements CompanyServices{
 	
 	@Autowired GetFrConfigListRepo frConfigListRepo;
 	
+	@Autowired ItemRepository itemRepository;
+	
+	@Autowired OfferHeaderRepo offerHeadRepo;
+	
+	@Autowired GetConfigureOfferListRepo configureFrOfferList;
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -78,6 +88,18 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Override
 	public List<Company> getAllActiveCompanyList() {
 		List<Company> list = compRepo.findByDelStatusAndIsUsed(0, 0);
+		return list;
+	}
+
+	@Override
+	public List<OfferHeader> getFrOfferConfigList(int compId) {
+		List<OfferHeader> offerList = offerHeadRepo.findByCompIdAndDelStatusOrderByOfferIdDesc(compId, 0);
+		return offerList;
+	}
+
+	@Override
+	public List<GetConfigureOfferList> getConfigureOfferListById(int offerId) {
+		List<GetConfigureOfferList> list = configureFrOfferList.getConfigureOferList(offerId);
 		return list;
 	}
 
