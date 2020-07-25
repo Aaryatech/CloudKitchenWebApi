@@ -414,6 +414,24 @@ public class MasterAPIController2 {
 		return res;
 	}
 
+	@RequestMapping(value = { "/deleteOfferHeaderById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteOfferHeaderById(@RequestParam("offerId") int offerId,
+			@RequestParam("status") int status) {
+
+		Info info = new Info();
+
+		int res = offerHeaderRepo.deleteOfferHeader(offerId, status);
+		if (res > 0) {
+			info.setError(false);
+			info.setMessage("Success");
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
 	// Author-Anmol Shirke Created On-24-07-2020
 	@RequestMapping(value = { "/getAllOfferHeaderListByCompId" }, method = RequestMethod.POST)
 	public @ResponseBody List<OfferHeader> getAllOfferHeaderListByCompId(@RequestParam("compId") int compId) {

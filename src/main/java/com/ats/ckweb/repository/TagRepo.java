@@ -45,4 +45,27 @@ public interface TagRepo extends JpaRepository<Tags, Integer> {
 	@Query(value="UPDATE mn_tags SET tag_delete_status = 1 WHERE tag_id=:tagId",nativeQuery=true)
 	public int deleteTagById(@Param("tagId") int tagId);
 	
+	
+	@Query(value="SELECT\n" + 
+			"    t.*\n" + 
+			"FROM\n" + 
+			"    mn_tags t\n" + 
+			"INNER JOIN(\n" + 
+			"    SELECT\n" + 
+			"        h.fr_id,\n" + 
+			"        i.tag_ids\n" + 
+			"    FROM\n" + 
+			"        tn_item_config_header h,\n" + 
+			"        tn_item_config_detail d,\n" + 
+			"        mn_detail i\n" + 
+			"    WHERE\n" + 
+			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND d.del_status = 0 AND i.del_status = 0 AND i.is_used = 0 AND i.item_id = d.item_id AND h.fr_id = :frId AND h.config_type = :type\n" + 
+			") t1\n" + 
+			"ON\n" + 
+			"    FIND_IN_SET(t.tag_id, t1.tag_ids) > 0 AND t.tag_is_active = 0 AND t.tag_delete_status = 0\n" + 
+			"GROUP BY\n" + 
+			"    t.tag_id",nativeQuery=true)
+	public List<Tags> getTagListByFr(@Param("frId") int frId, @Param("type") int type);
+	
+	
 }
