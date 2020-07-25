@@ -31,6 +31,7 @@ import com.ats.ckweb.model.IngredientDetailList;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.MnUser;
+import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
@@ -996,6 +997,29 @@ public class MasterAPIController {
 		}
 	 
 	 
+	 @RequestMapping(value = { "/getOfferInfoByOfferId" }, method = RequestMethod.POST)
+		public @ResponseBody OfferConfig getOfferInfoByOfferId(@RequestParam int offerId){
+			
+		 OfferConfig offer = new OfferConfig();
+			try {
+				offer = companyService.getConfigureFrOfferDetailById(offerId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return offer;
+		}
 	 
+	 
+	 @RequestMapping(value = { "/addFrOfferConfiguration" }, method = RequestMethod.POST)
+		public @ResponseBody OfferConfig addFrOfferConfiguration(@RequestBody OfferConfig offer){
+			
+		 OfferConfig saveOffer = new OfferConfig();
+			try {
+				saveOffer = companyService.insertFrOfferConfig(offer);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return saveOffer;
+		}
 	 
 }

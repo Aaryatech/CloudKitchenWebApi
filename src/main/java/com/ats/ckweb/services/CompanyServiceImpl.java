@@ -9,12 +9,14 @@ import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.repository.CompanyRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
 import com.ats.ckweb.repository.GetConfigureOfferListRepo;
 import com.ats.ckweb.repository.GetFrConfigListRepo;
 import com.ats.ckweb.repository.ItemRepository;
+import com.ats.ckweb.repository.OfferConfigRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 
 @Service
@@ -30,6 +32,8 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Autowired OfferHeaderRepo offerHeadRepo;
 	
 	@Autowired GetConfigureOfferListRepo configureFrOfferList;
+	
+	@Autowired OfferConfigRepo frOfferConfig;
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -101,6 +105,18 @@ public class CompanyServiceImpl implements CompanyServices{
 	public List<GetConfigureOfferList> getConfigureOfferListById(int offerId) {
 		List<GetConfigureOfferList> list = configureFrOfferList.getConfigureOferList(offerId);
 		return list;
+	}
+
+	@Override
+	public OfferConfig getConfigureFrOfferDetailById(int offerId) {
+		OfferConfig frOffer = frOfferConfig.findByOfferIdAndDelStatus(offerId, 0);
+		return frOffer;
+	}
+
+	@Override
+	public OfferConfig insertFrOfferConfig(OfferConfig offer) {
+		OfferConfig frOffer = frOfferConfig.save(offer);
+		return frOffer;
 	}
 
 }

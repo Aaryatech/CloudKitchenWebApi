@@ -8,6 +8,7 @@ import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 @Service
 public interface CompanyServices {
@@ -35,5 +36,9 @@ public interface CompanyServices {
 	List<OfferHeader> getFrOfferConfigList(int compId);
 
 	List<GetConfigureOfferList> getConfigureOfferListById(int offerId);
+
+	OfferConfig getConfigureFrOfferDetailById(int offerId);
+
+	OfferConfig insertFrOfferConfig(OfferConfig offer);
 
 }
