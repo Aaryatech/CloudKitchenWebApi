@@ -10,6 +10,7 @@ import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
+import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.repository.CompanyRepo;
@@ -38,6 +39,8 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Autowired OfferConfigRepo frOfferConfig;
 	
 	@Autowired GetOfferFrConfiguredListRepo configFrOfferListRepo;
+	
+	@Autowired ItemRepository itemRepo;
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -139,6 +142,18 @@ public class CompanyServiceImpl implements CompanyServices{
 	public int deleteFrOfferConfig(int frOfferConfigId) {
 		int res = frOfferConfig.deleteOfferConfigurationById(frOfferConfigId);
 		return res;
+	}
+
+	@Override
+	public List<Item> getAllProductItems() {
+		List<Item> itemList = itemRepo.getAllItems();
+		return itemList;
+	}
+
+	@Override
+	public List<Item> getAllProductItemsById(int itemId) {
+		List<Item> itemList = itemRepo.getAllItemsById(itemId);
+		return itemList;
 	}
 
 }

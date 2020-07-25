@@ -29,6 +29,7 @@ import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.IngrediantCategory;
 import com.ats.ckweb.model.IngredientDetailList;
+import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.MnUser;
@@ -1075,5 +1076,33 @@ public class MasterAPIController {
 			}
 			return offerList;
 		}
+	 
+	 /****************************************************************************/	 
+	 
+	 @RequestMapping(value = { "/getAllItems" }, method = RequestMethod.GET)
+		public @ResponseBody List<Item> getAllItems(){
+			
+		 List<Item> itemList = new ArrayList<Item>();
+			try {
+				itemList = companyService.getAllProductItems();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return itemList;
+		}
+	 
+	 @RequestMapping(value = { "/getAllItemsByitemId" }, method = RequestMethod.POST)
+		public @ResponseBody List<Item> getAllItemsByitemId(@RequestParam int itemId){
+			
+		 List<Item> itemList = new ArrayList<Item>();
+			try {
+				itemList = companyService.getAllProductItemsById(itemId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return itemList;
+		}
+	 
+	 
 	 
 }

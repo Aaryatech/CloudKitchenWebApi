@@ -9,6 +9,7 @@ import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
+import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 @Service
@@ -47,5 +48,9 @@ public interface CompanyServices {
 	int udateFrOfferConfig(String frIdStr, int offerId, String updtTime, int userId);
 
 	int deleteFrOfferConfig(int frOfferConfigId);
+
+	List<Item> getAllProductItems();
+
+	List<Item> getAllProductItemsById(int itemId);
 
 }
