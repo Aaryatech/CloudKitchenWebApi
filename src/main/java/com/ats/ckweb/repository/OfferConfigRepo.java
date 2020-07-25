@@ -22,6 +22,6 @@ public interface OfferConfigRepo extends JpaRepository<OfferConfig, Integer> {
 
 	@Transactional
 	@Modifying
-	@Query(value="UPDATE mn_offer_config SET fr_id=:frIdStr, maker_user_id=:userId, updated_date_time=:updtTime WHERE offer_id=:frOffer",nativeQuery=true)
-	int updateFrOfferConfig(String frIdStr, int frOffer, String updtTime, int userId);
+	@Query(value="UPDATE mn_offer_config SET fr_id=:frIdStr, maker_user_id=:userId, updated_date_time=:updtTime WHERE offer_id=:offerId",nativeQuery=true)
+	int updateFrOfferConfig(String frIdStr, int offerId, String updtTime, int userId);
 }

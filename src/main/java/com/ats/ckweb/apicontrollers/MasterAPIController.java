@@ -22,6 +22,7 @@ import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.GetOfferFrConfiguredList;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Info;
@@ -1020,6 +1021,59 @@ public class MasterAPIController {
 				e.printStackTrace();
 			}
 			return saveOffer;
+		}
+	 
+	 @RequestMapping(value = { "/updateFrOfferConfig" }, method = RequestMethod.POST)
+		public @ResponseBody Info updateFrOfferConfig(@RequestParam String frIdStr, @RequestParam int offerId, @RequestParam String updtTime, 
+				@RequestParam int userId){
+			
+			Info info = new Info();
+			try {
+				int res = companyService.udateFrOfferConfig(frIdStr, offerId, updtTime, userId);
+				if(res>0) {
+					info.setError(false);
+					info.setMessage("Update Franchisee Offer Configuration Successfully");
+				}else {
+					info.setError(true);
+					info.setMessage("Failed Update Franchisee Offer Configuration");
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return info;		
+		}
+	 
+	 
+	 @RequestMapping(value = { "/deleteFrOfferConfigById" }, method = RequestMethod.POST)
+		public @ResponseBody Info deleteFrOfferConfigById(@RequestParam int frOfferConfigId){
+			
+			Info info = new Info();
+			try {
+				int res = companyService.deleteFrOfferConfig(frOfferConfigId);
+				if(res>0) {
+					info.setError(false);
+					info.setMessage("Delete Franchisee Offer Configuration Successfully");
+				}else {
+					info.setError(true);
+					info.setMessage("Failed To Delete Franchisee Offer Configuration");
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return info;		
+		}
+	 
+	 
+	 @RequestMapping(value = { "/getAllOfferFrConfiguredList" }, method = RequestMethod.GET)
+		public @ResponseBody List<GetOfferFrConfiguredList> getAllOfferFrConfiguredList(){
+			
+		 List<GetOfferFrConfiguredList> offerList = new ArrayList<GetOfferFrConfiguredList>();
+			try {
+				offerList = companyService.getOfferFrConfiguredList();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return offerList;
 		}
 	 
 }

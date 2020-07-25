@@ -9,12 +9,14 @@ import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.GetOfferFrConfiguredList;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.repository.CompanyRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
 import com.ats.ckweb.repository.GetConfigureOfferListRepo;
 import com.ats.ckweb.repository.GetFrConfigListRepo;
+import com.ats.ckweb.repository.GetOfferFrConfiguredListRepo;
 import com.ats.ckweb.repository.ItemRepository;
 import com.ats.ckweb.repository.OfferConfigRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
@@ -34,6 +36,8 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Autowired GetConfigureOfferListRepo configureFrOfferList;
 	
 	@Autowired OfferConfigRepo frOfferConfig;
+	
+	@Autowired GetOfferFrConfiguredListRepo configFrOfferListRepo;
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -117,6 +121,24 @@ public class CompanyServiceImpl implements CompanyServices{
 	public OfferConfig insertFrOfferConfig(OfferConfig offer) {
 		OfferConfig frOffer = frOfferConfig.save(offer);
 		return frOffer;
+	}
+
+	@Override
+	public List<GetOfferFrConfiguredList> getOfferFrConfiguredList() {
+		List<GetOfferFrConfiguredList> list = configFrOfferListRepo.getConfiguredOfferFrList();
+		return list;
+	}
+
+	@Override
+	public int udateFrOfferConfig(String frIdStr, int offerId, String updtTime, int userId) {
+		int res = frOfferConfig.updateFrOfferConfig(frIdStr, offerId, updtTime, userId);
+		return res;
+	}
+
+	@Override
+	public int deleteFrOfferConfig(int frOfferConfigId) {
+		int res = frOfferConfig.deleteOfferConfigurationById(frOfferConfigId);
+		return res;
 	}
 
 }
