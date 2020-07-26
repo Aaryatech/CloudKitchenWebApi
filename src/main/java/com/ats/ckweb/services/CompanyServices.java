@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ats.ckweb.model.Company;
+import com.ats.ckweb.model.ConfigRelatedProduct;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
@@ -52,5 +53,11 @@ public interface CompanyServices {
 	List<Item> getAllProductItems();
 
 	List<Item> getAllProductItemsById(int itemId);
+
+	ConfigRelatedProduct getProductById(int itemId);
+
+	ConfigRelatedProduct insertRelatedProductConfig(ConfigRelatedProduct product);
+
+	int udateRelatedProductConfig(String relatedItemIds, int productId, String updateDatTime, int userId);
 
 }

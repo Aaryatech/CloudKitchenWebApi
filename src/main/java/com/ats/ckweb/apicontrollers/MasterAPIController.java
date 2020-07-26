@@ -16,6 +16,7 @@ import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.Company;
+import com.ats.ckweb.model.ConfigRelatedProduct;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.Franchisee;
@@ -1104,5 +1105,51 @@ public class MasterAPIController {
 		}
 	 
 	 
+	 
+	 @RequestMapping(value = { "/getProductInfoById" }, method = RequestMethod.POST)
+		public @ResponseBody ConfigRelatedProduct getProductInfoById(@RequestParam int itemId){
+			
+		 ConfigRelatedProduct item = new ConfigRelatedProduct();
+			try {
+				item = companyService.getProductById(itemId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return item;
+		}
+	 
+	 
+	 
+	 @RequestMapping(value = { "/addRelatedProductConfig" }, method = RequestMethod.POST)
+		public @ResponseBody ConfigRelatedProduct addRelatedProductConfig(@RequestBody ConfigRelatedProduct product){
+			
+		 ConfigRelatedProduct saveRelatedProduct = new ConfigRelatedProduct();
+			try {
+				saveRelatedProduct = companyService.insertRelatedProductConfig(product);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return saveRelatedProduct;
+		}
+	 
+	 @RequestMapping(value = { "/updateRelatedProductConfig" }, method = RequestMethod.POST)
+		public @ResponseBody Info updateRelatedProductConfig(@RequestParam String relatedItemIds, @RequestParam int productId, @RequestParam String updateDatTime, 
+				@RequestParam int userId){
+			
+			Info info = new Info();
+			try {
+				int res = companyService.udateRelatedProductConfig(relatedItemIds, productId, updateDatTime, userId);
+				if(res>0) {
+					info.setError(false);
+					info.setMessage("Update Related Product Configuration Successfully");
+				}else {
+					info.setError(true);
+					info.setMessage("Failed Update Related Product Configuration");
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return info;		
+		}
 	 
 }

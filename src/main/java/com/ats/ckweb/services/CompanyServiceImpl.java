@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ats.ckweb.model.Company;
+import com.ats.ckweb.model.ConfigRelatedProduct;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
@@ -14,6 +15,7 @@ import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.repository.CompanyRepo;
+import com.ats.ckweb.repository.ConfigRelatedProductRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
 import com.ats.ckweb.repository.GetConfigureOfferListRepo;
 import com.ats.ckweb.repository.GetFrConfigListRepo;
@@ -41,6 +43,8 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Autowired GetOfferFrConfiguredListRepo configFrOfferListRepo;
 	
 	@Autowired ItemRepository itemRepo;
+	
+	@Autowired ConfigRelatedProductRepo configProductRepo;
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -154,6 +158,24 @@ public class CompanyServiceImpl implements CompanyServices{
 	public List<Item> getAllProductItemsById(int itemId) {
 		List<Item> itemList = itemRepo.getAllItemsById(itemId);
 		return itemList;
+	}
+
+	@Override
+	public ConfigRelatedProduct getProductById(int itemId) {
+		ConfigRelatedProduct item = configProductRepo.findByProductIdAndDelStatus(itemId, 0);
+		return item;
+	}
+
+	@Override
+	public ConfigRelatedProduct insertRelatedProductConfig(ConfigRelatedProduct product) {
+		ConfigRelatedProduct res = configProductRepo.save(product);
+		return res;
+	}
+
+	@Override
+	public int udateRelatedProductConfig(String relatedItemIds, int productId, String updateDatTime, int userId) {
+		int res = configProductRepo.updateConfigRelateProduct(productId, relatedItemIds, userId, updateDatTime);
+		return res;
 	}
 
 }
