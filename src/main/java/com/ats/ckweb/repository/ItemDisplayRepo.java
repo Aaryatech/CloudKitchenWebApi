@@ -21,7 +21,25 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"    t1.sgst_per,\r\n" + 
 			"    t1.igst_per,\r\n" + 
 			"    t1.hsncd,\r\n" + 
-			"    COALESCE(t5.rel_item_ids, '') AS rel_item_ids\r\n" + 
+			"    COALESCE(t5.rel_item_ids, '') AS rel_item_ids,\r\n" + 
+			"    COALESCE(t6.disc_per, 0) AS disc_per,\r\n" + 
+			"    ROUND(\r\n" + 
+			"        (\r\n" + 
+			"            COALESCE(t1.mrp_amt, 0) -(\r\n" + 
+			"                COALESCE(t1.mrp_amt, 0) *(COALESCE(t6.disc_per, 0) / 100)\r\n" + 
+			"            )\r\n" + 
+			"        ),\r\n" + 
+			"        2\r\n" + 
+			"    ) AS mrp_disc_amt,\r\n" + 
+			"    ROUND(\r\n" + 
+			"        (\r\n" + 
+			"            COALESCE(t1.sp_rate_amt, 0) -(\r\n" + 
+			"                COALESCE(t1.sp_rate_amt, 0) *(COALESCE(t6.disc_per, 0) / 100)\r\n" + 
+			"            )\r\n" + 
+			"        ),\r\n" + 
+			"        2\r\n" + 
+			"    ) AS sp_disc_amt,\r\n" + 
+			"    COALESCE(t7.offer_ids, '') AS offer_ids\r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
@@ -38,7 +56,7 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"        tn_item_config_header h,\r\n" + 
 			"        tn_item_config_detail d\r\n" + 
 			"    WHERE\r\n" + 
-			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND h.is_active = 0 AND d.del_status = 0 AND h.fr_id =:frId AND d.status = 0 AND h.config_type =:type\r\n" + 
+			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND h.is_active = 0 AND d.del_status = 0 AND h.fr_id = :frId AND d.status = 0 AND h.config_type = :type\r\n" + 
 			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
@@ -114,8 +132,86 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			") t5\r\n" + 
 			"ON\r\n" + 
 			"    t2.item_id = t5.item_id\r\n" + 
-			"ORDER BY\r\n" + 
-			"    t2.item_sort_id", nativeQuery = true)
-	public List<ItemDisplay> getAllItemByFr(@Param("frId") int frId,@Param("type") int type);
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        h.offer_id,\r\n" + 
+			"        d.primary_item_id AS item_id,\r\n" + 
+			"        d.disc_per\r\n" + 
+			"    FROM\r\n" + 
+			"        mn_offer_header h,\r\n" + 
+			"        mn_offer_detail d\r\n" + 
+			"    WHERE\r\n" + 
+			"        h.offer_id = d.offer_id AND d.del_status = 0 AND h.offer_id IN(\r\n" + 
+			"        SELECT\r\n" + 
+			"            c.offer_id\r\n" + 
+			"        FROM\r\n" + 
+			"            mn_offer_config c\r\n" + 
+			"        WHERE\r\n" + 
+			"            FIND_IN_SET(:frId, c.fr_id) AND del_status = 0\r\n" + 
+			"    ) AND h.type = :type AND h.offer_type = 2 AND d.offer_sub_type = 1 AND IF(\r\n" + 
+			"        h.frequency_type = 1,\r\n" + 
+			"        IF(\r\n" + 
+			"            FIND_IN_SET(\r\n" + 
+			"                DAYOFWEEK(CURDATE()),\r\n" + 
+			"                h.frequency),\r\n" + 
+			"                1,\r\n" + 
+			"                0\r\n" + 
+			"            ),\r\n" + 
+			"            0\r\n" + 
+			"        ) = 1 OR IF(\r\n" + 
+			"            h.frequency_type = 2,\r\n" + 
+			"            IF(\r\n" + 
+			"                CURDATE() BETWEEN h.from_date AND h.to_date, 1, 0),\r\n" + 
+			"                0\r\n" + 
+			"            ) = 1 AND CURTIME() BETWEEN h.from_time AND h.to_time AND FIND_IN_SET(:applicableFor, h.applicable_for)\r\n" + 
+			"        GROUP BY\r\n" + 
+			"            d.primary_item_id) t6\r\n" + 
+			"        ON\r\n" + 
+			"            t2.item_id = t6.item_id\r\n" + 
+			"        LEFT JOIN(\r\n" + 
+			"            SELECT\r\n" + 
+			"                d.offer_detail_id,\r\n" + 
+			"                d.primary_item_id AS item_id,\r\n" + 
+			"                GROUP_CONCAT(d.offer_id) AS offer_ids\r\n" + 
+			"            FROM\r\n" + 
+			"                mn_offer_detail d\r\n" + 
+			"            WHERE\r\n" + 
+			"                d.is_active = 0 AND d.del_status = 0 AND d.offer_id IN(\r\n" + 
+			"                SELECT\r\n" + 
+			"                    h.offer_id\r\n" + 
+			"                FROM\r\n" + 
+			"                    mn_offer_header h\r\n" + 
+			"                WHERE\r\n" + 
+			"                    IF(\r\n" + 
+			"                        h.frequency_type = 1,\r\n" + 
+			"                        IF(\r\n" + 
+			"                            FIND_IN_SET(\r\n" + 
+			"                                DAYOFWEEK(CURDATE()),\r\n" + 
+			"                                h.frequency),\r\n" + 
+			"                                1,\r\n" + 
+			"                                0\r\n" + 
+			"                            ),\r\n" + 
+			"                            0\r\n" + 
+			"                        ) = 1 OR IF(\r\n" + 
+			"                            h.frequency_type = 2,\r\n" + 
+			"                            IF(\r\n" + 
+			"                                CURDATE() BETWEEN h.from_date AND h.to_date, 1, 0),\r\n" + 
+			"                                0\r\n" + 
+			"                            ) = 1 AND CURTIME() BETWEEN h.from_time AND h.to_time AND h.offer_id IN(\r\n" + 
+			"                            SELECT\r\n" + 
+			"                                c.offer_id\r\n" + 
+			"                            FROM\r\n" + 
+			"                                mn_offer_config c\r\n" + 
+			"                            WHERE\r\n" + 
+			"                                FIND_IN_SET(:frId, c.fr_id) AND c.del_status = 0\r\n" + 
+			"                        ) AND h.offer_type = :type AND FIND_IN_SET(:applicableFor, h.applicable_for))\r\n" + 
+			"                        GROUP BY\r\n" + 
+			"                            d.primary_item_id\r\n" + 
+			"                        ) t7\r\n" + 
+			"                    ON\r\n" + 
+			"                        t2.item_id = t7.item_id\r\n" + 
+			"                    ORDER BY\r\n" + 
+			"                        t2.item_sort_id", nativeQuery = true)
+	public List<ItemDisplay> getAllItemByFr(@Param("frId") int frId,@Param("type") int type,@Param("applicableFor") int applicableFor);
 	
 }

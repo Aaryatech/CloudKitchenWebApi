@@ -1,5 +1,6 @@
 package com.ats.ckweb.apicontrollers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.SubCategoryDataRepo;
 import com.ats.ckweb.repository.TagRepo;
 import com.ats.ckweb.services.ImagesService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ats.ckweb.repository.AreaRepo;
 
 @Controller
@@ -350,7 +352,7 @@ public class FrontEndController {
 			res.setTagsData(tagsData);
 
 			// ------------ITEM DATA----------------
-			itemData = itemDisplayRepo.getAllItemByFr(frId, type);
+			itemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
 
 			if (itemData == null) {
 				itemData = new ArrayList<ItemDisplay>();
@@ -384,7 +386,8 @@ public class FrontEndController {
 
 							ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
 									itemData.get(t).getItemName(), itemData.get(t).getCatId(),
-									itemData.get(t).getCatName(), itemData.get(t).getItemSortId(),
+									itemData.get(t).getCatName(), itemData.get(t).getSubCatId(),
+									itemData.get(t).getSubCatName(), itemData.get(t).getItemSortId(),
 									itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
 									itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
 									itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
@@ -396,7 +399,9 @@ public class FrontEndController {
 									itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
 									itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
 									itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
-									itemData.get(t).getRelItemIds());
+									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
+									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
+									itemData.get(t).getOfferIds());
 
 							// ----Related Item Images-----
 							List<Images> relItemImgList = new ArrayList<>();
@@ -456,6 +461,18 @@ public class FrontEndController {
 
 					}
 					itemData.get(i).setTasteList(taseList);
+					
+					
+					ObjectMapper Obj = new ObjectMapper(); 
+					  
+			        try { 
+			  
+			            String jsonStr = Obj.writeValueAsString(itemData.get(i)); 
+			            itemData.get(i).setJsonStr(jsonStr);
+			        } 
+			        catch (IOException e) { 
+			        } 
+					
 
 				}
 			}

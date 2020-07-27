@@ -40,22 +40,44 @@ public class ItemDisplay {
 	private float igstPer;
 	private String hsncd;
 	private String relItemIds;
+	private float discPer;
+	private float mrpDiscAmt;
+	private float spDiscAmt;
+	private String offerIds;
+
+	@Transient
+	private String jsonStr;
+
+	@Transient
+	List<Tags> tagList;
+
+	@Transient
+	List<Ingrediant> tasteList;
+
+	@Transient
+	List<Images> imageList;
+
+	@Transient
+	List<ItemDisplay> relItemList;
 
 	public ItemDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public ItemDisplay(int itemId, String itemName, int catId, String catName, float itemSortId, int isDecimal,
-			String itemUom, int uomId, String itemDesc, int productType, String productStatus, int productCategory,
-			String productCategoryName, String preperationTime, int showInOrder, float rating, String tagIds,
-			String tasteTypeIds, String tagName, String tasteName, float rateAmt, float mrpAmt, float spRateAmt,
-			float cgstPer, float sgstPer, float igstPer, String hsncd, String relItemIds) {
+	public ItemDisplay(int itemId, String itemName, int catId, String catName, int subCatId, String subCatName,
+			float itemSortId, int isDecimal, String itemUom, int uomId, String itemDesc, int productType,
+			String productStatus, int productCategory, String productCategoryName, String preperationTime,
+			int showInOrder, float rating, String tagIds, String tasteTypeIds, String tagName, String tasteName,
+			float rateAmt, float mrpAmt, float spRateAmt, float cgstPer, float sgstPer, float igstPer, String hsncd,
+			String relItemIds, float discPer, float mrpDiscAmt, float spDiscAmt, String offerIds) {
 		super();
 		this.itemId = itemId;
 		this.itemName = itemName;
 		this.catId = catId;
 		this.catName = catName;
+		this.subCatId = subCatId;
+		this.subCatName = subCatName;
 		this.itemSortId = itemSortId;
 		this.isDecimal = isDecimal;
 		this.itemUom = itemUom;
@@ -80,19 +102,11 @@ public class ItemDisplay {
 		this.igstPer = igstPer;
 		this.hsncd = hsncd;
 		this.relItemIds = relItemIds;
+		this.discPer = discPer;
+		this.mrpDiscAmt = mrpDiscAmt;
+		this.spDiscAmt = spDiscAmt;
+		this.offerIds = offerIds;
 	}
-
-	@Transient
-	List<Tags> tagList;
-
-	@Transient
-	List<Ingrediant> tasteList;
-
-	@Transient
-	List<Images> imageList;
-
-	@Transient
-	List<ItemDisplay> relItemList;
 
 	public int getItemId() {
 		return itemId;
@@ -366,6 +380,46 @@ public class ItemDisplay {
 		this.subCatName = subCatName;
 	}
 
+	public float getDiscPer() {
+		return discPer;
+	}
+
+	public void setDiscPer(float discPer) {
+		this.discPer = discPer;
+	}
+
+	public float getMrpDiscAmt() {
+		return mrpDiscAmt;
+	}
+
+	public void setMrpDiscAmt(float mrpDiscAmt) {
+		this.mrpDiscAmt = mrpDiscAmt;
+	}
+
+	public float getSpDiscAmt() {
+		return spDiscAmt;
+	}
+
+	public void setSpDiscAmt(float spDiscAmt) {
+		this.spDiscAmt = spDiscAmt;
+	}
+
+	public String getOfferIds() {
+		return offerIds;
+	}
+
+	public void setOfferIds(String offerIds) {
+		this.offerIds = offerIds;
+	}
+
+	public String getJsonStr() {
+		return jsonStr;
+	}
+
+	public void setJsonStr(String jsonStr) {
+		this.jsonStr = jsonStr;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemDisplay [itemId=" + itemId + ", itemName=" + itemName + ", catId=" + catId + ", catName=" + catName
@@ -376,9 +430,10 @@ public class ItemDisplay {
 				+ preperationTime + ", showInOrder=" + showInOrder + ", rating=" + rating + ", tagIds=" + tagIds
 				+ ", tasteTypeIds=" + tasteTypeIds + ", tagName=" + tagName + ", tasteName=" + tasteName + ", rateAmt="
 				+ rateAmt + ", mrpAmt=" + mrpAmt + ", spRateAmt=" + spRateAmt + ", cgstPer=" + cgstPer + ", sgstPer="
-				+ sgstPer + ", igstPer=" + igstPer + ", hsncd=" + hsncd + ", relItemIds=" + relItemIds + ", tagList="
-				+ tagList + ", tasteList=" + tasteList + ", imageList=" + imageList + ", relItemList=" + relItemList
-				+ "]";
+				+ sgstPer + ", igstPer=" + igstPer + ", hsncd=" + hsncd + ", relItemIds=" + relItemIds + ", discPer="
+				+ discPer + ", mrpDiscAmt=" + mrpDiscAmt + ", spDiscAmt=" + spDiscAmt + ", offerIds=" + offerIds
+				+ ", jsonStr=" + jsonStr + ", tagList=" + tagList + ", tasteList=" + tasteList + ", imageList="
+				+ imageList + ", relItemList=" + relItemList + "]";
 	}
 
 }
