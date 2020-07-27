@@ -2,6 +2,8 @@ package com.ats.ckweb.apicontrollers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,17 +17,27 @@ import com.ats.ckweb.model.AreaData;
 import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
 import com.ats.ckweb.model.FranchiseData;
+import com.ats.ckweb.model.GetAllDataByFr;
 import com.ats.ckweb.model.GetCategoryData;
 import com.ats.ckweb.model.GetFranchiseData;
 import com.ats.ckweb.model.GetSubCategoryData;
 import com.ats.ckweb.model.Images;
 import com.ats.ckweb.model.Info;
+import com.ats.ckweb.model.Ingrediant;
+import com.ats.ckweb.model.ItemDisplay;
+import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.SubCategoryData;
+import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.repository.AreaDataRepo;
 import com.ats.ckweb.repository.CategoryDataRepo;
 import com.ats.ckweb.repository.CityDataRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
+import com.ats.ckweb.repository.ImagesRepo;
+import com.ats.ckweb.repository.IngrediantRepo;
+import com.ats.ckweb.repository.ItemDisplayRepo;
+import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.SubCategoryDataRepo;
+import com.ats.ckweb.repository.TagRepo;
 import com.ats.ckweb.services.ImagesService;
 import com.ats.ckweb.repository.AreaRepo;
 
@@ -52,6 +64,21 @@ public class FrontEndController {
 
 	@Autowired
 	AreaRepo areaRepo;
+
+	@Autowired
+	ImagesRepo imagesRepo;
+
+	@Autowired
+	OfferHeaderRepo offerHeaderRepo;
+
+	@Autowired
+	TagRepo tagRepo;
+
+	@Autowired
+	ItemDisplayRepo itemDisplayRepo;
+
+	@Autowired
+	IngrediantRepo ingrediantRepo;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -221,6 +248,233 @@ public class FrontEndController {
 		}
 
 		return arealist;
+	}
+
+	// ---------ALL DATA BY FR-----------
+	@RequestMapping(value = { "/getAllDataByFr" }, method = RequestMethod.POST)
+	public @ResponseBody GetAllDataByFr getAllDataByFr(@RequestParam("frId") int frId, @RequestParam("type") int type,
+			@RequestParam("applicableFor") int applicableFor) {
+
+		GetAllDataByFr res = new GetAllDataByFr();
+
+		Info info = new Info();
+
+		List<CategoryData> catData = null;
+		List<SubCategoryData> subCatData = null;
+		List<OfferHeader> offerData = null;
+		List<Tags> tagsData = null;
+		List<ItemDisplay> itemData = null;
+
+		try {
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Tags> allTagList = tagRepo.findByTagDeleteStatusOrderByTagIdDesc(0);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+
+			// -------CATEGORY LIST---------------
+			catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
+
+			if (catData == null) {
+				catData = new ArrayList<CategoryData>();
+			} else {
+
+				for (int i = 0; i < catData.size(); i++) {
+
+					List<Images> catImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == catData.get(i).getCatId() && image.getDocType() == 1) {
+								catImgList.add(image);
+							}
+						}
+					}
+					catData.get(i).setImageList(catImgList);
+				}
+			}
+			res.setCategoryData(catData);
+
+			// --------SUB CATEGORY LIST-------------
+			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
+
+			if (subCatData == null) {
+				subCatData = new ArrayList<SubCategoryData>();
+			} else {
+
+				for (int i = 0; i < subCatData.size(); i++) {
+
+					List<Images> subCatImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == subCatData.get(i).getSubCatId() && image.getDocType() == 2) {
+								subCatImgList.add(image);
+							}
+						}
+					}
+					subCatData.get(i).setImageList(subCatImgList);
+
+				}
+			}
+			res.setSubCategoryData(subCatData);
+
+			// ---------OFFER DATA--------------
+			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+
+			if (offerData == null) {
+				offerData = new ArrayList<OfferHeader>();
+			} else {
+
+				for (int i = 0; i < offerData.size(); i++) {
+
+					List<Images> offerImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+								offerImgList.add(image);
+							}
+						}
+					}
+					offerData.get(i).setImageList(offerImgList);
+
+				}
+			}
+			res.setOfferData(offerData);
+
+			// ------------Tag DATA--------------------
+			tagsData = tagRepo.getTagListByFr(frId, type);
+
+			if (tagsData == null) {
+				tagsData = new ArrayList<Tags>();
+			}
+			res.setTagsData(tagsData);
+
+			// ------------ITEM DATA----------------
+			itemData = itemDisplayRepo.getAllItemByFr(frId, type);
+
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
+							}
+						}
+					}
+					itemData.get(i).setImageList(itemImgList);
+
+					// -----------RELATED PRODUCTS---------------
+					List<ItemDisplay> relItemData = new ArrayList<>();
+					List<Integer> relItemIdsList = new ArrayList<>();
+					try {
+						relItemIdsList = Stream.of(itemData.get(i).getRelItemIds().split(",")).map(Integer::parseInt)
+								.collect(Collectors.toList());
+					} catch (Exception e) {
+					}
+
+					for (int t = 0; t < itemData.size(); t++) {
+						if (relItemIdsList.contains(itemData.get(t).getItemId())) {
+
+							ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
+									itemData.get(t).getItemName(), itemData.get(t).getCatId(),
+									itemData.get(t).getCatName(), itemData.get(t).getItemSortId(),
+									itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
+									itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
+									itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
+									itemData.get(t).getProductCategory(), itemData.get(t).getProductCategoryName(),
+									itemData.get(t).getPreperationTime(), itemData.get(t).getShowInOrder(),
+									itemData.get(t).getRating(), itemData.get(t).getTagIds(),
+									itemData.get(t).getTasteTypeIds(), itemData.get(t).getTagName(),
+									itemData.get(t).getTasteName(), itemData.get(t).getRateAmt(),
+									itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
+									itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
+									itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
+									itemData.get(t).getRelItemIds());
+
+							// ----Related Item Images-----
+							List<Images> relItemImgList = new ArrayList<>();
+
+							if (imgList != null) {
+								for (Images image : imgList) {
+									if (image.getDocId() == relItem.getItemId() && image.getDocType() == 3) {
+										relItemImgList.add(image);
+									}
+								}
+							}
+							relItem.setImageList(relItemImgList);
+
+							relItemData.add(relItem);
+						}
+					}
+					itemData.get(i).setRelItemList(relItemData);
+
+					// ----------ITEM TAGS------------
+					List<Tags> tagList = new ArrayList<>();
+
+					if (allTagList != null) {
+
+						List<Integer> tagIdsList = new ArrayList<>();
+						try {
+							tagIdsList = Stream.of(itemData.get(i).getTagIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTagList.size(); t++) {
+							if (tagIdsList.contains(allTagList.get(t).getTagId())) {
+								tagList.add(allTagList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTagList(tagList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+				}
+			}
+			res.setItemData(itemData);
+
+			info.setError(false);
+			info.setMessage("Success");
+
+			res.setInfo(info);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
 	}
 
 }

@@ -15,7 +15,7 @@ public class ShowItemDetailNewList {
 	private String itemName;
 	private int productType;
 	private int productCategory;
-	private int productStatus;
+	private String productStatus;
 	private int productShowIn;
 
 	public int getItemDId() {
@@ -58,11 +58,11 @@ public class ShowItemDetailNewList {
 		this.productCategory = productCategory;
 	}
 
-	public int getProductStatus() {
+	public String getProductStatus() {
 		return productStatus;
 	}
 
-	public void setProductStatus(int productStatus) {
+	public void setProductStatus(String productStatus) {
 		this.productStatus = productStatus;
 	}
 

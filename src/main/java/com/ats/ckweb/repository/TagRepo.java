@@ -67,5 +67,15 @@ public interface TagRepo extends JpaRepository<Tags, Integer> {
 			"    t.tag_id",nativeQuery=true)
 	public List<Tags> getTagListByFr(@Param("frId") int frId, @Param("type") int type);
 	
+	@Query(value="SELECT\n" + 
+			"    t.*\n" + 
+			"FROM\n" + 
+			"    mn_tags t\n" + 
+			"INNER JOIN mn_detail d ON\n" + 
+			"    FIND_IN_SET(t.tag_id, d.taste_type_ids) > 0 AND d.item_id = 327\n" + 
+			"GROUP BY\n" + 
+			"    t.tag_id",nativeQuery=true)
+	public List<Tags> getTagListByItem(@Param("itemId") int itemId);
+	
 	
 }

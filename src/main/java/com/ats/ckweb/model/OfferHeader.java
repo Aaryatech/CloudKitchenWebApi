@@ -1,11 +1,14 @@
 package com.ats.ckweb.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "mn_offer_header")
@@ -102,6 +105,9 @@ public class OfferHeader {
 
 	@Column(name = "ex_float4")
 	private float exFloat4;
+
+	@Transient
+	List<Images> imageList;
 
 	public int getOfferId() {
 		return offerId;
@@ -343,6 +349,14 @@ public class OfferHeader {
 		this.exFloat4 = exFloat4;
 	}
 
+	public List<Images> getImageList() {
+		return imageList;
+	}
+
+	public void setImageList(List<Images> imageList) {
+		this.imageList = imageList;
+	}
+
 	@Override
 	public String toString() {
 		return "OfferHeader [offerId=" + offerId + ", offerName=" + offerName + ", offerDesc=" + offerDesc + ", type="
@@ -353,7 +367,7 @@ public class OfferHeader {
 				+ isActive + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3="
 				+ exInt3 + ", exInt4=" + exInt4 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3
-				+ ", exFloat4=" + exFloat4 + "]";
+				+ ", exFloat4=" + exFloat4 + ", imageList=" + imageList + "]";
 	}
 
 }

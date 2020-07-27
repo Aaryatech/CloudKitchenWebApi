@@ -22,4 +22,6 @@ public interface ImagesRepo extends JpaRepository<Images, Integer> {
 	@Query(value="delete from mn_images WHERE images_id=:imageId",nativeQuery=true)
 	public int deleteByImageId(@Param("imageId") int imageId);
 	
+	public List<Images> findAllByDelStatus(int del);
+	
 }

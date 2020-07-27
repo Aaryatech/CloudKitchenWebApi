@@ -23,4 +23,17 @@ public interface IngrediantRepo extends JpaRepository<Ingrediant, Integer> {
 	@Modifying
 	@Query(value="UPDATE mn_ingrediant SET del_status=1 WHERE ingrediant_id=:ingrediantId",nativeQuery=true)
 	int deleteIngerediantById(@Param("ingrediantId") int ingrediantId);
+	
+	@Query(value = "SELECT\n" + 
+			"    i.*\n" + 
+			"FROM\n" + 
+			"    mn_ingrediant i\n" + 
+			"INNER JOIN mn_detail d ON\n" + 
+			"    FIND_IN_SET(\n" + 
+			"        i.ingrediant_id,\n" + 
+			"        d.taste_type_ids\n" + 
+			"    ) > 0 AND d.item_id = :itemId\n" + 
+			"GROUP BY\n" + 
+			"    i.ingrediant_id", nativeQuery = true)
+	public List<Ingrediant> getTasteListByItem(@Param("itemId") int itemId);
 }

@@ -26,7 +26,7 @@ public class ItemDetailNew {
 	private int productType;
 
 	@Column(name = "product_status")
-	private int productStatus;
+	private String productStatus;
 
 	@Column(name = "product_category")
 	private int productCategory;
@@ -123,11 +123,11 @@ public class ItemDetailNew {
 		this.productType = productType;
 	}
 
-	public int getProductStatus() {
+	public String getProductStatus() {
 		return productStatus;
 	}
 
-	public void setProductStatus(int productStatus) {
+	public void setProductStatus(String productStatus) {
 		this.productStatus = productStatus;
 	}
 

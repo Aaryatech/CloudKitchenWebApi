@@ -19,4 +19,6 @@ public interface ImagesService {
 	Info deletImageById(int imageId);
 	
 	
+	
+	
 }
