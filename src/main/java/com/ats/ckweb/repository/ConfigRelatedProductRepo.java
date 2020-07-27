@@ -28,12 +28,12 @@ public interface ConfigRelatedProductRepo extends JpaRepository<ConfigRelatedPro
 	@Transactional
 	@Modifying
 	@Query(value="UPDATE\n" + 
-			"    `tn_config_related_product`\n" + 
+			"    tn_config_related_product\n" + 
 			"SET\n" + 
 			"	del_status=1\n" + 
 			"WHERE\n" + 
-			"    product_id=:productId",nativeQuery=true)
-	public int deleteRelateProductById(@RequestParam("productId") int productId);
+			"    related_product_id=:relatedProductId",nativeQuery=true)
+	public int deleteRelateProductById(@RequestParam("relatedProductId") int relatedProductId);
 	
 	ConfigRelatedProduct findByProductIdAndDelStatus(int itemId, int del);
 }

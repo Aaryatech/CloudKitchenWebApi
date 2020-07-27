@@ -24,6 +24,7 @@ import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
+import com.ats.ckweb.model.GetProductRelatedList;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Info;
@@ -1150,6 +1151,38 @@ public class MasterAPIController {
 				e.printStackTrace();
 			}
 			return info;		
+		}
+	 
+	 
+	 @RequestMapping(value = { "/deleteRelatedProductById" }, method = RequestMethod.POST)
+		public @ResponseBody Info deleteRelatedProductById(@RequestParam int relatedProductId){
+			
+			Info info = new Info();
+			try {
+				int res = companyService.deleteRelProductConfig(relatedProductId);
+				if(res>0) {
+					info.setError(false);
+					info.setMessage("Delete Related Product Configuration Successfully");
+				}else {
+					info.setError(true);
+					info.setMessage("Failed To Delete  Related Product Configuration");
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return info;		
+		}
+	 
+	 @RequestMapping(value = { "/getAllRelatedProducts" }, method = RequestMethod.POST)
+		public @ResponseBody List<GetProductRelatedList> getAllRelatedProducts(@RequestParam int compId){
+			
+		 List<GetProductRelatedList> productList = new ArrayList<GetProductRelatedList>();
+			try {
+				productList = companyService.getAllRelatedProductsByCompId(compId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return productList;
 		}
 	 
 }

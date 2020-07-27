@@ -73,7 +73,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 				"        FIND_IN_SET(\n" + 
 				"            dtl.item_id,\n" + 
 				"            itm.configr_related_product_ids\n" + 
-				"        ) > 0 AND dtl.del_status = 0 AND dtl.is_used = 0 AND itm.del_status = 0\n" + 
+				"        ) > 0 AND dtl.del_status = 0 AND dtl.is_used = 0 AND itm.del_status = 0  AND itm.product_id=:itemId\n" + 
 				"    GROUP BY\n" + 
 				"        dtl.item_id\n" + 
 				") t2\n" + 

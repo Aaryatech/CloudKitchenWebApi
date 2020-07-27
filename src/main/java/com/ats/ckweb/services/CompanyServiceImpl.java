@@ -11,6 +11,7 @@ import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
+import com.ats.ckweb.model.GetProductRelatedList;
 import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
@@ -20,6 +21,7 @@ import com.ats.ckweb.repository.FrConfigRepo;
 import com.ats.ckweb.repository.GetConfigureOfferListRepo;
 import com.ats.ckweb.repository.GetFrConfigListRepo;
 import com.ats.ckweb.repository.GetOfferFrConfiguredListRepo;
+import com.ats.ckweb.repository.GetProductRelatedListRepo;
 import com.ats.ckweb.repository.ItemRepository;
 import com.ats.ckweb.repository.OfferConfigRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
@@ -45,6 +47,8 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Autowired ItemRepository itemRepo;
 	
 	@Autowired ConfigRelatedProductRepo configProductRepo;
+	
+	@Autowired GetProductRelatedListRepo getRelatedProductListRepo;
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -177,5 +181,19 @@ public class CompanyServiceImpl implements CompanyServices{
 		int res = configProductRepo.updateConfigRelateProduct(productId, relatedItemIds, userId, updateDatTime);
 		return res;
 	}
+
+	@Override
+	public int deleteRelProductConfig(int relatedProductId) {
+		int res = configProductRepo.deleteRelateProductById(relatedProductId);
+		return res;
+	}
+	
+	@Override
+	public List<GetProductRelatedList> getAllRelatedProductsByCompId(int compId) {
+		List<GetProductRelatedList> list = getRelatedProductListRepo.getAllConfigureRelatedProducts(compId);
+		return list;
+	}
+
+	
 
 }

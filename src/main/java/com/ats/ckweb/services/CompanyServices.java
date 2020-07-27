@@ -10,6 +10,7 @@ import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
+import com.ats.ckweb.model.GetProductRelatedList;
 import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
@@ -59,5 +60,9 @@ public interface CompanyServices {
 	ConfigRelatedProduct insertRelatedProductConfig(ConfigRelatedProduct product);
 
 	int udateRelatedProductConfig(String relatedItemIds, int productId, String updateDatTime, int userId);
+
+	List<GetProductRelatedList> getAllRelatedProductsByCompId(int compId);
+
+	int deleteRelProductConfig(int relatedProductId);
 
 }
