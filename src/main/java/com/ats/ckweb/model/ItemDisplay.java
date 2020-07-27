@@ -14,6 +14,8 @@ public class ItemDisplay {
 	private String itemName;
 	private int catId;
 	private String catName;
+	private int subCatId;
+	private String subCatName;
 	private float itemSortId;
 	private int isDecimal;
 	private String itemUom;
@@ -38,16 +40,12 @@ public class ItemDisplay {
 	private float igstPer;
 	private String hsncd;
 	private String relItemIds;
-	
-	
 
 	public ItemDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	
-	
 	public ItemDisplay(int itemId, String itemName, int catId, String catName, float itemSortId, int isDecimal,
 			String itemUom, int uomId, String itemDesc, int productType, String productStatus, int productCategory,
 			String productCategoryName, String preperationTime, int showInOrder, float rating, String tagIds,
@@ -83,8 +81,6 @@ public class ItemDisplay {
 		this.hsncd = hsncd;
 		this.relItemIds = relItemIds;
 	}
-
-
 
 	@Transient
 	List<Tags> tagList;
@@ -354,18 +350,35 @@ public class ItemDisplay {
 		this.relItemList = relItemList;
 	}
 
+	public int getSubCatId() {
+		return subCatId;
+	}
+
+	public void setSubCatId(int subCatId) {
+		this.subCatId = subCatId;
+	}
+
+	public String getSubCatName() {
+		return subCatName;
+	}
+
+	public void setSubCatName(String subCatName) {
+		this.subCatName = subCatName;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemDisplay [itemId=" + itemId + ", itemName=" + itemName + ", catId=" + catId + ", catName=" + catName
-				+ ", itemSortId=" + itemSortId + ", isDecimal=" + isDecimal + ", itemUom=" + itemUom + ", uomId="
-				+ uomId + ", itemDesc=" + itemDesc + ", productType=" + productType + ", productStatus=" + productStatus
-				+ ", productCategory=" + productCategory + ", productCategoryName=" + productCategoryName
-				+ ", preperationTime=" + preperationTime + ", showInOrder=" + showInOrder + ", rating=" + rating
-				+ ", tagIds=" + tagIds + ", tasteTypeIds=" + tasteTypeIds + ", tagName=" + tagName + ", tasteName="
-				+ tasteName + ", rateAmt=" + rateAmt + ", mrpAmt=" + mrpAmt + ", spRateAmt=" + spRateAmt + ", cgstPer="
-				+ cgstPer + ", sgstPer=" + sgstPer + ", igstPer=" + igstPer + ", hsncd=" + hsncd + ", relItemIds="
-				+ relItemIds + ", tagList=" + tagList + ", tasteList=" + tasteList + ", imageList=" + imageList
-				+ ", relItemList=" + relItemList + "]";
+				+ ", subCatId=" + subCatId + ", subCatName=" + subCatName + ", itemSortId=" + itemSortId
+				+ ", isDecimal=" + isDecimal + ", itemUom=" + itemUom + ", uomId=" + uomId + ", itemDesc=" + itemDesc
+				+ ", productType=" + productType + ", productStatus=" + productStatus + ", productCategory="
+				+ productCategory + ", productCategoryName=" + productCategoryName + ", preperationTime="
+				+ preperationTime + ", showInOrder=" + showInOrder + ", rating=" + rating + ", tagIds=" + tagIds
+				+ ", tasteTypeIds=" + tasteTypeIds + ", tagName=" + tagName + ", tasteName=" + tasteName + ", rateAmt="
+				+ rateAmt + ", mrpAmt=" + mrpAmt + ", spRateAmt=" + spRateAmt + ", cgstPer=" + cgstPer + ", sgstPer="
+				+ sgstPer + ", igstPer=" + igstPer + ", hsncd=" + hsncd + ", relItemIds=" + relItemIds + ", tagList="
+				+ tagList + ", tasteList=" + tasteList + ", imageList=" + imageList + ", relItemList=" + relItemList
+				+ "]";
 	}
 
 }
