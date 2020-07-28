@@ -12,7 +12,7 @@ public class ItemWiseOfferData {
 	private String offerName;
 	private String offerDesc;
 	private int type;
-	private int applicableFor;
+	private String applicableFor;
 	private int offerType;
 	private int frequencyType;
 	private String frequency;
@@ -23,7 +23,7 @@ public class ItemWiseOfferData {
 	private int offerSubType;
 	private int primaryItemId;
 	private String primaryItemName;
-	private int primaryQty;
+	private float primaryQty;
 	private float discPer;
 	private float offerLimit;
 	private String couponCode;
@@ -71,11 +71,11 @@ public class ItemWiseOfferData {
 		this.type = type;
 	}
 
-	public int getApplicableFor() {
+	public String getApplicableFor() {
 		return applicableFor;
 	}
 
-	public void setApplicableFor(int applicableFor) {
+	public void setApplicableFor(String applicableFor) {
 		this.applicableFor = applicableFor;
 	}
 
@@ -159,11 +159,11 @@ public class ItemWiseOfferData {
 		this.primaryItemName = primaryItemName;
 	}
 
-	public int getPrimaryQty() {
+	public float getPrimaryQty() {
 		return primaryQty;
 	}
 
-	public void setPrimaryQty(int primaryQty) {
+	public void setPrimaryQty(float primaryQty) {
 		this.primaryQty = primaryQty;
 	}
 

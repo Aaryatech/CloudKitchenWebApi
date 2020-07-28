@@ -2,7 +2,10 @@ package com.ats.ckweb.apicontrollers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +29,9 @@ import com.ats.ckweb.model.Images;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Ingrediant;
 import com.ats.ckweb.model.ItemDisplay;
+import com.ats.ckweb.model.ItemWiseOfferData;
+import com.ats.ckweb.model.ItemWiseOfferDetailDisplay;
+import com.ats.ckweb.model.ItemWiseOfferHeaderDisplay;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.SubCategoryData;
 import com.ats.ckweb.model.Tags;
@@ -36,6 +42,7 @@ import com.ats.ckweb.repository.FranchiseDataRepo;
 import com.ats.ckweb.repository.ImagesRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.ItemDisplayRepo;
+import com.ats.ckweb.repository.ItemWiseOfferDataRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.SubCategoryDataRepo;
 import com.ats.ckweb.repository.TagRepo;
@@ -81,6 +88,9 @@ public class FrontEndController {
 
 	@Autowired
 	IngrediantRepo ingrediantRepo;
+
+	@Autowired
+	ItemWiseOfferDataRepo itemWiseOfferDataRepo;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -272,6 +282,61 @@ public class FrontEndController {
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusOrderByTagIdDesc(0);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
 
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
+					}
+				}
+
+				for (int i = 0; i < offerDisplayList.size(); i++) {
+
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
+
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
+
+						detailList.add(detail);
+
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
+
+			}
+
 			// -------CATEGORY LIST---------------
 			catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
 
@@ -461,18 +526,35 @@ public class FrontEndController {
 
 					}
 					itemData.get(i).setTasteList(taseList);
-					
-					
-					ObjectMapper Obj = new ObjectMapper(); 
-					  
-			        try { 
-			  
-			            String jsonStr = Obj.writeValueAsString(itemData.get(i)); 
-			            itemData.get(i).setJsonStr(jsonStr);
-			        } 
-			        catch (IOException e) { 
-			        } 
-					
+
+					// ------------JSON STRING------------------------------
+					ObjectMapper Obj = new ObjectMapper();
+
+					try {
+						String jsonStr = Obj.writeValueAsString(itemData.get(i));
+						itemData.get(i).setJsonStr(jsonStr);
+					} catch (IOException e) {
+					}
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
 
 				}
 			}

@@ -60,6 +60,9 @@ public class ItemDisplay {
 	@Transient
 	List<ItemDisplay> relItemList;
 
+	@Transient
+	List<ItemWiseOfferHeaderDisplay> offerList;
+
 	public ItemDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -420,6 +423,14 @@ public class ItemDisplay {
 		this.jsonStr = jsonStr;
 	}
 
+	public List<ItemWiseOfferHeaderDisplay> getOfferList() {
+		return offerList;
+	}
+
+	public void setOfferList(List<ItemWiseOfferHeaderDisplay> offerList) {
+		this.offerList = offerList;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemDisplay [itemId=" + itemId + ", itemName=" + itemName + ", catId=" + catId + ", catName=" + catName
@@ -433,7 +444,7 @@ public class ItemDisplay {
 				+ sgstPer + ", igstPer=" + igstPer + ", hsncd=" + hsncd + ", relItemIds=" + relItemIds + ", discPer="
 				+ discPer + ", mrpDiscAmt=" + mrpDiscAmt + ", spDiscAmt=" + spDiscAmt + ", offerIds=" + offerIds
 				+ ", jsonStr=" + jsonStr + ", tagList=" + tagList + ", tasteList=" + tasteList + ", imageList="
-				+ imageList + ", relItemList=" + relItemList + "]";
+				+ imageList + ", relItemList=" + relItemList + ", offerList=" + offerList + "]";
 	}
 
 }

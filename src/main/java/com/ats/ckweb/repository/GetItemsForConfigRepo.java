@@ -24,15 +24,14 @@ public interface GetItemsForConfigRepo extends JpaRepository<GetItemsForConfig, 
 			"t1.tax1,\r\n" + 
 			"t1.tax2,\r\n" + 
 			"t1.tax3,\r\n" + 
-			"COALESCE(t2.status, 0) AS\r\n" + 
-			"STATUS\r\n" + 
-			"    ,\r\n" + 
-			"    COALESCE(t2.checked, 0) AS checked, COALESCE(t2.item_config_id, 0) AS item_config_id,\r\n" + 
-			"    COALESCE(t2.item_config_detail_id, 0) AS item_config_detail_id \r\n" + 
+			"COALESCE(t2.status, 0) AS status,\r\n" + 
+			"    COALESCE(t2.checked, 0) AS checked,\r\n" + 
+			"    COALESCE(t2.item_config_id, 0) AS item_config_id,\r\n" + 
+			"    COALESCE(t2.item_config_detail_id, 0) AS item_config_detail_id\r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
-			"        i.id AS item_id,\r\n" + 
+			"        d.item_id,\r\n" + 
 			"        i.item_name,\r\n" + 
 			"        i.item_mrp1 AS mrp,\r\n" + 
 			"        i.item_tax1 AS tax1,\r\n" + 
@@ -40,10 +39,11 @@ public interface GetItemsForConfigRepo extends JpaRepository<GetItemsForConfig, 
 			"        i.item_tax3 AS tax3,\r\n" + 
 			"        sup.item_hsncd AS hsncd\r\n" + 
 			"    FROM\r\n" + 
+			"        mn_detail d,\r\n" + 
 			"        m_item i,\r\n" + 
 			"        m_item_sup sup\r\n" + 
 			"    WHERE\r\n" + 
-			"        i.del_status = 0 AND sup.del_status = 0 AND i.id = sup.item_id\r\n" + 
+			"        i.del_status = 0 AND sup.del_status = 0 AND i.id = sup.item_id AND d.item_id = i.id AND d.del_status = 0 AND d.is_used = 0 AND d.ex_int1 = :compId\r\n" + 
 			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
@@ -53,7 +53,7 @@ public interface GetItemsForConfigRepo extends JpaRepository<GetItemsForConfig, 
 			"        tn_item_config_header ch,\r\n" + 
 			"        tn_item_config_detail cd\r\n" + 
 			"    WHERE\r\n" + 
-			"        ch.item_config_id = cd.item_config_id AND ch.del_status = 0 AND cd.del_status = 0 AND ch.fr_id = :frId AND ch.config_type=:configType AND ch.comp_id = :compId\r\n" + 
+			"        ch.item_config_id = cd.item_config_id AND ch.del_status = 0 AND cd.del_status = 0 AND ch.fr_id = :frId AND ch.config_type = :configType AND ch.comp_id = :compId\r\n" + 
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.item_id = t2.item_id",nativeQuery=true)
