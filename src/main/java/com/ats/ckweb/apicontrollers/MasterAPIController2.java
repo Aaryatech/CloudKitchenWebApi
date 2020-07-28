@@ -23,6 +23,7 @@ import com.ats.ckweb.model.Images;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.ItemBuyGetFreeOffer;
 import com.ats.ckweb.model.ItemConfigDetail;
+import com.ats.ckweb.model.ItemConfigDisplay;
 import com.ats.ckweb.model.ItemConfigHeader;
 import com.ats.ckweb.model.ItemDetailNew;
 import com.ats.ckweb.model.ItemListForOfferDetail;
@@ -40,6 +41,8 @@ import com.ats.ckweb.repository.GetItemForDetailRepo;
 import com.ats.ckweb.repository.GetItemsForConfigRepo;
 import com.ats.ckweb.repository.ItemBuyGetFreeOfferRepo;
 import com.ats.ckweb.repository.ItemConfigDetailRepo;
+import com.ats.ckweb.repository.ItemConfigDisplayRepo;
+import com.ats.ckweb.repository.ItemConfigHeaderRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
 import com.ats.ckweb.repository.ItemListForOfferDetailRepo;
 import com.ats.ckweb.repository.LanguageRepo;
@@ -114,6 +117,9 @@ public class MasterAPIController2 {
 
 	@Autowired
 	ItemBuyGetFreeOfferRepo itemBuyGetFreeOfferRepo;
+
+	@Autowired
+	ItemConfigDisplayRepo itemConfigDisplayRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -652,6 +658,19 @@ public class MasterAPIController2 {
 		}
 
 		return info;
+	}
+
+	@RequestMapping(value = { "/getAllItemConfigListByComp" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemConfigDisplay> getAllItemConfigListByComp(@RequestParam("compId") int compId) {
+
+		List<ItemConfigDisplay> res = null;
+
+		res = itemConfigDisplayRepo.getAllConfigByComp(compId);
+
+		if (res == null) {
+			res = new ArrayList<ItemConfigDisplay>();
+		}
+		return res;
 	}
 
 }

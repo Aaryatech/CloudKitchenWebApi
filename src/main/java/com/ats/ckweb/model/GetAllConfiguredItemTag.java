@@ -19,7 +19,7 @@ public class GetAllConfiguredItemTag {
 	
 	private String itemDesc;
 	private int productType;
-	private int productStatus;
+	private String productStatus;
 	private int productCategory;
 	private int productShowIn;
 	private String preperationTime;
@@ -91,10 +91,10 @@ public class GetAllConfiguredItemTag {
 	public void setProductType(int productType) {
 		this.productType = productType;
 	}
-	public int getProductStatus() {
+	public String getProductStatus() {
 		return productStatus;
 	}
-	public void setProductStatus(int productStatus) {
+	public void setProductStatus(String productStatus) {
 		this.productStatus = productStatus;
 	}
 	public int getProductCategory() {

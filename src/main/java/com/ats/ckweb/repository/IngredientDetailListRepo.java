@@ -11,12 +11,7 @@ import com.ats.ckweb.model.IngredientDetailList;
 public interface IngredientDetailListRepo extends JpaRepository<IngredientDetailList, Integer> {
 
 	@Query(value="SELECT\n" + 
-			"    ing.ingrediant_id,\n" + 
-			"    ing.ingrediant_name,\n" + 
-			"    ing.is_active,\n" + 
-			"    ing.ingrediant_desc,\n" + 
-			"    ing.ex_int1,\n" + 
-			"    ing.ex_var1,\n" + 
+			"    ing.*,\n" + 
 			"    cat.ingrediant_cat_name\n" + 
 			"FROM\n" + 
 			"    mn_ingrediant ing,\n" + 
@@ -27,4 +22,31 @@ public interface IngredientDetailListRepo extends JpaRepository<IngredientDetail
 			"    ing.ingrediant_id\n" + 
 			"DESC",nativeQuery=true)
 	public List<IngredientDetailList> getIngredientDetail();
+	
+
+	@Query(value="SELECT\n" + 
+			"    i.ingrediant_id,\n" + 
+			"    i.ingrediant_cat_id,\n" + 
+			"    i.ingrediant_name,\n" + 
+			"    c.ex_int2 AS del_status,\n" + 
+			"    i.is_active,\n" + 
+			"    i.ingrediant_image,\n" + 
+			"    i.ex_int1,\n" + 
+			"    i.ex_int2,\n" + 
+			"    i.ex_var1,\n" + 
+			"    i.ex_var2,\n" + 
+			"    i.ex_float1,\n" + 
+			"    i.ex_float2,\n" + 
+			"    i.last_opration_datetime,\n" + 
+			"    i.ingrediant_desc,\n" + 
+			"    c.ingrediant_cat_name\n" + 
+			"FROM\n" + 
+			"    mn_ingrediant i,\n" + 
+			"    mn_ingrediant_category c\n" + 
+			"WHERE\n" + 
+			"    i.del_status = 0 AND c.del_status = 0 AND i.ingrediant_cat_id = c.ingrediant_cat_id\n" + 
+			"ORDER BY\n" + 
+			"    i.ingrediant_id\n" + 
+			"DESC",nativeQuery=true)
+	public List<IngredientDetailList> getTasteListForAddItemDetail();
 }
