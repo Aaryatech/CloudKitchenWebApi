@@ -87,8 +87,8 @@ public class OrderApiController {
 
 				for (int j = 0; j < detailListbystatus.size(); j++) {
 
-					if (listbystatus.get(i).getOrderId() == detailListbystatus.get(i).getOrderId()) {
-						detail.add(detailListbystatus.get(i));
+					if (listbystatus.get(i).getOrderId() == detailListbystatus.get(j).getOrderId()) {
+						detail.add(detailListbystatus.get(j));
 					}
 				}
 				listbystatus.get(i).setDetailList(detail);
@@ -98,8 +98,9 @@ public class OrderApiController {
 
 			Date dt = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-			
-			List<GetOrderHeaderList> listbydate = getOrderHeaderListRepository.getOrderListByStatusAndDate(sf.format(dt));
+
+			List<GetOrderHeaderList> listbydate = getOrderHeaderListRepository
+					.getOrderListByStatusAndDate(sf.format(dt));
 
 			List<GetOrderDetailList> detailListbydate = getOrderDetailListRepository
 					.getOrderDetailListByStatusAndDate(sf.format(dt));
@@ -109,8 +110,8 @@ public class OrderApiController {
 
 				for (int j = 0; j < detailListbydate.size(); j++) {
 
-					if (listbydate.get(i).getOrderId() == detailListbydate.get(i).getOrderId()) {
-						detail.add(detailListbydate.get(i));
+					if (listbydate.get(i).getOrderId() == detailListbydate.get(j).getOrderId()) {
+						detail.add(detailListbydate.get(j));
 					}
 				}
 				listbydate.get(i).setDetailList(detail);

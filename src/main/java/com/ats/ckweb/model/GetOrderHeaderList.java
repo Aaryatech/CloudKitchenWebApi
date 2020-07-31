@@ -181,7 +181,7 @@ public class GetOrderHeaderList {
 
 	@Column(name = "city_name")
 	private String cityName;
-	
+
 	@Column(name = "cust_name")
 	private String custName;
 
@@ -190,7 +190,16 @@ public class GetOrderHeaderList {
 
 	@Column(name = "delivery_km")
 	private float deliveryKm;
-	
+
+	@Column(name = "delivery_charges")
+	private float deliveryCharges;
+
+	@Column(name = "payment_sub_mode")
+	private int paymentSubMode;
+
+	@Column(name = "is_agent")
+	private int isAgent;
+
 	@Transient
 	private List<GetOrderDetailList> detailList;
 
@@ -669,6 +678,30 @@ public class GetOrderHeaderList {
 		this.deliveryKm = deliveryKm;
 	}
 
+	public float getDeliveryCharges() {
+		return deliveryCharges;
+	}
+
+	public void setDeliveryCharges(float deliveryCharges) {
+		this.deliveryCharges = deliveryCharges;
+	}
+
+	public int getPaymentSubMode() {
+		return paymentSubMode;
+	}
+
+	public void setPaymentSubMode(int paymentSubMode) {
+		this.paymentSubMode = paymentSubMode;
+	}
+
+	public int getIsAgent() {
+		return isAgent;
+	}
+
+	public void setIsAgent(int isAgent) {
+		this.isAgent = isAgent;
+	}
+
 	@Override
 	public String toString() {
 		return "GetOrderHeaderList [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate
@@ -688,7 +721,8 @@ public class GetOrderHeaderList {
 				+ billingAddress + ", customerGstnNo=" + customerGstnNo + ", deliveryInstText=" + deliveryInstText
 				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", areaName=" + areaName
 				+ ", cityName=" + cityName + ", custName=" + custName + ", frName=" + frName + ", deliveryKm="
-				+ deliveryKm + ", detailList=" + detailList + "]";
+				+ deliveryKm + ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode
+				+ ", isAgent=" + isAgent + ", detailList=" + detailList + "]";
 	}
 
 }

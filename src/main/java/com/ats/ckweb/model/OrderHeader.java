@@ -175,6 +175,15 @@ public class OrderHeader {
 	@Column(name = "delivery_km")
 	private float deliveryKm;
 	
+	@Column(name = "delivery_charges")
+	private float deliveryCharges;
+	
+	@Column(name = "payment_sub_mode")
+	private int paymentSubMode;
+	
+	@Column(name = "is_agent")
+	private int isAgent;
+	
 	public int getOrderId() {
 		return orderId;
 	}
@@ -607,6 +616,30 @@ public class OrderHeader {
 		this.deliveryKm = deliveryKm;
 	}
 
+	public float getDeliveryCharges() {
+		return deliveryCharges;
+	}
+
+	public void setDeliveryCharges(float deliveryCharges) {
+		this.deliveryCharges = deliveryCharges;
+	}
+
+	public int getPaymentSubMode() {
+		return paymentSubMode;
+	}
+
+	public void setPaymentSubMode(int paymentSubMode) {
+		this.paymentSubMode = paymentSubMode;
+	}
+
+	public int getIsAgent() {
+		return isAgent;
+	}
+
+	public void setIsAgent(int isAgent) {
+		this.isAgent = isAgent;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderHeader [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate + ", frId="
@@ -625,6 +658,7 @@ public class OrderHeader {
 				+ exDate1 + ", exDate2=" + exDate2 + ", billingName=" + billingName + ", billingAddress="
 				+ billingAddress + ", customerGstnNo=" + customerGstnNo + ", deliveryInstText=" + deliveryInstText
 				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", deliveryKm=" + deliveryKm
+				+ ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode + ", isAgent=" + isAgent
 				+ "]";
 	}
 
