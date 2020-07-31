@@ -1,6 +1,8 @@
 package com.ats.ckweb.apicontrollers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.OrderDetail;
 import com.ats.ckweb.model.OrderHeader;
+import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
@@ -69,32 +72,56 @@ public class OrderApiController {
 	}
 
 	@RequestMapping(value = { "/getOrderListByStatus" }, method = RequestMethod.POST)
-	public @ResponseBody List<GetOrderHeaderList> getOrderListByStatus(@RequestParam("status") List<Integer> sts) {
+	public @ResponseBody OrderListData getOrderListByStatus(@RequestParam("status") List<Integer> sts) {
 
-		List<GetOrderHeaderList> list = new ArrayList<>();
+		OrderListData orderListData = new OrderListData();
 
 		try {
 
-			list = getOrderHeaderListRepository.getOrderListByStatus(sts);
+			List<GetOrderHeaderList> listbystatus = getOrderHeaderListRepository.getOrderListByStatus(sts);
 
-			List<GetOrderDetailList> detailList = getOrderDetailListRepository.getOrderDetailListByStatus(sts);
+			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderDetailListByStatus(sts);
 
-			for (int i = 0; i < list.size(); i++) {
+			for (int i = 0; i < listbystatus.size(); i++) {
 				List<GetOrderDetailList> detail = new ArrayList<>();
 
-				for (int j = 0; j < detailList.size(); j++) {
+				for (int j = 0; j < detailListbystatus.size(); j++) {
 
-					if (list.get(i).getOrderId() == detailList.get(i).getOrderId()) {
-						detail.add(detailList.get(i));
+					if (listbystatus.get(i).getOrderId() == detailListbystatus.get(i).getOrderId()) {
+						detail.add(detailListbystatus.get(i));
 					}
 				}
-				list.get(i).setDetailList(detail);
+				listbystatus.get(i).setDetailList(detail);
 			}
+
+			orderListData.setOrderListByStatus(listbystatus);
+
+			Date dt = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+			
+			List<GetOrderHeaderList> listbydate = getOrderHeaderListRepository.getOrderListByStatusAndDate(sf.format(dt));
+
+			List<GetOrderDetailList> detailListbydate = getOrderDetailListRepository
+					.getOrderDetailListByStatusAndDate(sf.format(dt));
+
+			for (int i = 0; i < listbydate.size(); i++) {
+				List<GetOrderDetailList> detail = new ArrayList<>();
+
+				for (int j = 0; j < detailListbydate.size(); j++) {
+
+					if (listbydate.get(i).getOrderId() == detailListbydate.get(i).getOrderId()) {
+						detail.add(detailListbydate.get(i));
+					}
+				}
+				listbydate.get(i).setDetailList(detail);
+			}
+
+			orderListData.setOrderListByStatusAndDate(listbydate);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return list;
+		return orderListData;
 	}
 
 }

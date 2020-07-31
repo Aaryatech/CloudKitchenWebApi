@@ -104,6 +104,9 @@ public class GetOrderDetailList {
 	@Column(name = "ex_float4")
 	private float exFloat4;
 
+	@Column(name = "item_name")
+	private String itemName;
+	
 	public int getOrderDetailId() {
 		return orderDetailId;
 	}
@@ -352,6 +355,14 @@ public class GetOrderDetailList {
 		this.exFloat4 = exFloat4;
 	}
 
+	public String getItemName() {
+		return itemName;
+	}
+
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
+
 	@Override
 	public String toString() {
 		return "GetOrderDetailList [orderDetailId=" + orderDetailId + ", orderId=" + orderId + ", itemId=" + itemId
@@ -361,7 +372,8 @@ public class GetOrderDetailList {
 				+ taxAmt + ", totalAmt=" + totalAmt + ", delStatus=" + delStatus + ", remark=" + remark + ", exInt1="
 				+ exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exInt4=" + exInt4 + ", exVar1=" + exVar1
 				+ ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + ", exVar4=" + exVar4 + ", exFloat1=" + exFloat1
-				+ ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + "]";
+				+ ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", itemName="
+				+ itemName + "]";
 	}
 	
 	

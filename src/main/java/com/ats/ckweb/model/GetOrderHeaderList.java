@@ -181,7 +181,16 @@ public class GetOrderHeaderList {
 
 	@Column(name = "city_name")
 	private String cityName;
+	
+	@Column(name = "cust_name")
+	private String custName;
 
+	@Column(name = "fr_name")
+	private String frName;
+
+	@Column(name = "delivery_km")
+	private float deliveryKm;
+	
 	@Transient
 	private List<GetOrderDetailList> detailList;
 
@@ -636,6 +645,30 @@ public class GetOrderHeaderList {
 		this.detailList = detailList;
 	}
 
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getFrName() {
+		return frName;
+	}
+
+	public void setFrName(String frName) {
+		this.frName = frName;
+	}
+
+	public float getDeliveryKm() {
+		return deliveryKm;
+	}
+
+	public void setDeliveryKm(float deliveryKm) {
+		this.deliveryKm = deliveryKm;
+	}
+
 	@Override
 	public String toString() {
 		return "GetOrderHeaderList [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate
@@ -654,7 +687,8 @@ public class GetOrderHeaderList {
 				+ exDate1 + ", exDate2=" + exDate2 + ", billingName=" + billingName + ", billingAddress="
 				+ billingAddress + ", customerGstnNo=" + customerGstnNo + ", deliveryInstText=" + deliveryInstText
 				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", areaName=" + areaName
-				+ ", cityName=" + cityName + ", detailList=" + detailList + "]";
+				+ ", cityName=" + cityName + ", custName=" + custName + ", frName=" + frName + ", deliveryKm="
+				+ deliveryKm + ", detailList=" + detailList + "]";
 	}
 
 }

@@ -172,6 +172,9 @@ public class OrderHeader {
 	@Column(name = "delivery_inst_id")
 	private int deliveryInstId;
 
+	@Column(name = "delivery_km")
+	private float deliveryKm;
+	
 	public int getOrderId() {
 		return orderId;
 	}
@@ -596,6 +599,14 @@ public class OrderHeader {
 		this.deliveryInstId = deliveryInstId;
 	}
 
+	public float getDeliveryKm() {
+		return deliveryKm;
+	}
+
+	public void setDeliveryKm(float deliveryKm) {
+		this.deliveryKm = deliveryKm;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderHeader [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate + ", frId="
@@ -613,7 +624,8 @@ public class OrderHeader {
 				+ ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3 + ", exFloat4=" + exFloat4 + ", exDate1="
 				+ exDate1 + ", exDate2=" + exDate2 + ", billingName=" + billingName + ", billingAddress="
 				+ billingAddress + ", customerGstnNo=" + customerGstnNo + ", deliveryInstText=" + deliveryInstText
-				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + "]";
+				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", deliveryKm=" + deliveryKm
+				+ "]";
 	}
 
 }
