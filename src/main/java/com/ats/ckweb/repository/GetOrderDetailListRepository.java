@@ -18,4 +18,18 @@ public interface GetOrderDetailListRepository extends JpaRepository<GetOrderDeta
 			+ "and oh.order_status in(5,6,7,8) and od.order_id=oh.order_id and i.id=od.item_id", nativeQuery = true)
 	List<GetOrderDetailList> getOrderDetailListByStatusAndDate(@Param("date") String date);
 
+	@Query(value = "select\n" + 
+			"        od.*,\n" + 
+			"        i.item_name \n" + 
+			"    from\n" + 
+			"        tn_order_header oh,\n" + 
+			"        tn_order_detail od,\n" + 
+			"        m_item i \n" + 
+			"    where\n" + 
+			"        oh.del_status=0 \n" + 
+			"        and oh.cust_id=:custId \n" + 
+			"        and od.order_id=oh.order_id \n" + 
+			"        and i.id=od.item_id", nativeQuery = true)
+	List<GetOrderDetailList> getOrderListByCustomerId(@Param("custId")int custId);
+
 }

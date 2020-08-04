@@ -78,7 +78,8 @@ public class OrderApiController {
 
 	@RequestMapping(value = { "/changeStatusByOrderId" }, method = RequestMethod.POST)
 	public @ResponseBody Info changeStatusByOrderId(@RequestParam("status") int status,
-			@RequestParam("userId") int userId, @RequestParam("orderId") int orderId, @RequestParam("remark") String remark) {
+			@RequestParam("userId") int userId, @RequestParam("orderId") int orderId,
+			@RequestParam("remark") String remark) {
 
 		Info info = new Info();
 
@@ -158,6 +159,35 @@ public class OrderApiController {
 			e.printStackTrace();
 		}
 		return orderListData;
+	}
+
+	@RequestMapping(value = { "/getOrderListByCustomerId" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetOrderHeaderList> getOrderListByCustomerId(@RequestParam("custId") int custId) {
+
+		List<GetOrderHeaderList> listbystatus = new ArrayList<>();
+
+		try {
+
+			listbystatus = getOrderHeaderListRepository.getOrderListByCustomerId(custId);
+
+			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderListByCustomerId(custId);
+
+			for (int i = 0; i < listbystatus.size(); i++) {
+				List<GetOrderDetailList> detail = new ArrayList<>();
+
+				for (int j = 0; j < detailListbystatus.size(); j++) {
+
+					if (listbystatus.get(i).getOrderId() == detailListbystatus.get(j).getOrderId()) {
+						detail.add(detailListbystatus.get(j));
+					}
+				}
+				listbystatus.get(i).setDetailList(detail);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listbystatus;
 	}
 
 	@RequestMapping(value = { "/getCustomerByMobileNo" }, method = RequestMethod.POST)
