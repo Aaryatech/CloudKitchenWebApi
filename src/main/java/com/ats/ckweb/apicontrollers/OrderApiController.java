@@ -76,6 +76,36 @@ public class OrderApiController {
 		return info;
 	}
 
+	@RequestMapping(value = { "/changeStatusByOrderId" }, method = RequestMethod.POST)
+	public @ResponseBody Info changeStatusByOrderId(@RequestParam("status") int status,
+			@RequestParam("userId") int userId, @RequestParam("orderId") int orderId, @RequestParam("remark") String remark) {
+
+		Info info = new Info();
+
+		try {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date dt = new Date();
+
+			int update = orderHeaderRepository.updateStatus(status, orderId);
+
+			OrderTrail orderTrail = new OrderTrail();
+			orderTrail.setOrderId(orderId);
+			orderTrail.setActionByUserId(userId);
+			orderTrail.setActionDateTime(sf.format(dt));
+			orderTrail.setStatus(status);
+			orderTrail.setExVar1(remark);
+			OrderTrail orderRes = orderTrailRepository.save(orderTrail);
+
+			info.setError(false);
+			info.setMessage("updated");
+
+		} catch (Exception e) {
+			info.setError(true);
+			e.printStackTrace();
+		}
+		return info;
+	}
+
 	@RequestMapping(value = { "/getOrderListByStatus" }, method = RequestMethod.POST)
 	public @ResponseBody OrderListData getOrderListByStatus(@RequestParam("status") List<Integer> sts) {
 
@@ -137,7 +167,7 @@ public class OrderApiController {
 		try {
 
 			res = customerDisplayRepo.getCustomerByMobileNo(mobileNo);
- 
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
