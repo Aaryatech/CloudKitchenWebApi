@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.model.CustomerDisplay;
 import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.Info;
@@ -21,6 +22,7 @@ import com.ats.ckweb.model.OrderHeader;
 import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
+import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.OrderDetailRepository;
@@ -44,6 +46,9 @@ public class OrderApiController {
 
 	@Autowired
 	GetOrderDetailListRepository getOrderDetailListRepository;
+
+	@Autowired
+	CustomerDisplayRepo customerDisplayRepo;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -123,6 +128,21 @@ public class OrderApiController {
 			e.printStackTrace();
 		}
 		return orderListData;
+	}
+
+	@RequestMapping(value = { "/getCustomerByMobileNo" }, method = RequestMethod.POST)
+	public @ResponseBody List<CustomerDisplay> getCustomerByMobileNo(@RequestParam("mobileNo") String mobileNo) {
+
+		List<CustomerDisplay> res = new ArrayList<>();
+		try {
+
+			res = customerDisplayRepo.getCustomerByMobileNo(mobileNo);
+ 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
 	}
 
 }

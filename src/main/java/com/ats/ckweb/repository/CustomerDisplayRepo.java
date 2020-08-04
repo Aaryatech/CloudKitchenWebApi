@@ -39,6 +39,19 @@ public interface CustomerDisplayRepo extends JpaRepository<CustomerDisplay, Inte
 			"        AND c.lang_id = l.lang_id  \r\n" + 
 			"        AND c.cust_id=:custId", nativeQuery = true)
 	public CustomerDisplay getCustomerById(@Param("custId") int custId);
+
+	@Query(value = "SELECT\r\n" + 
+			"        c.*,\r\n" + 
+			"        l.lang_name,\r\n" + 
+			"        '' as city_name  \r\n" + 
+			"    FROM\r\n" + 
+			"        mn_customer c,\r\n" + 
+			"        mn_language l \r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0  \r\n" + 
+			"        AND c.lang_id = l.lang_id  \r\n" + 
+			"        AND c.phone_number=:mobileNo", nativeQuery = true)
+	public List<CustomerDisplay> getCustomerByMobileNo(@Param("mobileNo")String mobileNo);
 	
 	
 }
