@@ -413,7 +413,7 @@ public class GetOrderHeaderList {
 		this.deliveryTime = deliveryTime;
 	}
 
-	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss a")
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss aa")
 	public Date getInsertDateTime() {
 		return insertDateTime;
 	}
