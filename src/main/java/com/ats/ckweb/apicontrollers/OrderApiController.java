@@ -18,6 +18,7 @@ import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.OrderDetail;
+import com.ats.ckweb.model.OrderFeedback;
 import com.ats.ckweb.model.OrderHeader;
 import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
@@ -26,6 +27,7 @@ import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.OrderDetailRepository;
+import com.ats.ckweb.repository.OrderFeedbackRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
 import com.ats.ckweb.repository.OrderTrailRepository;
 
@@ -49,6 +51,9 @@ public class OrderApiController {
 
 	@Autowired
 	CustomerDisplayRepo customerDisplayRepo;
+
+	@Autowired
+	OrderFeedbackRepo orderFeedbackRepo;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -216,6 +221,21 @@ public class OrderApiController {
 		try {
 
 			res = customerDisplayRepo.getCustomerByMobileNo(mobileNo);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	@RequestMapping(value = { "/saveFeedBackOfOrder" }, method = RequestMethod.POST)
+	public @ResponseBody OrderFeedback saveFeedBackOfOrder(@RequestBody OrderFeedback feedback) {
+
+		OrderFeedback res = new OrderFeedback();
+		try {
+
+			res = orderFeedbackRepo.save(feedback);
 
 		} catch (Exception e) {
 			e.printStackTrace();
