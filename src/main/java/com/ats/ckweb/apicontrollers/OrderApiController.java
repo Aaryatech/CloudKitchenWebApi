@@ -190,6 +190,25 @@ public class OrderApiController {
 		return listbystatus;
 	}
 
+	@RequestMapping(value = { "/getOrderOrderId" }, method = RequestMethod.POST)
+	public @ResponseBody GetOrderHeaderList getOrderOrderId(@RequestParam("orderId") int orderId) {
+
+		GetOrderHeaderList getOrderHeaderList = new GetOrderHeaderList();
+
+		try {
+
+			getOrderHeaderList = getOrderHeaderListRepository.getOrderOrderId(orderId);
+
+			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderDetailOrderId(orderId);
+
+			getOrderHeaderList.setDetailList(detailListbystatus);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return getOrderHeaderList;
+	}
+
 	@RequestMapping(value = { "/getCustomerByMobileNo" }, method = RequestMethod.POST)
 	public @ResponseBody List<CustomerDisplay> getCustomerByMobileNo(@RequestParam("mobileNo") String mobileNo) {
 
