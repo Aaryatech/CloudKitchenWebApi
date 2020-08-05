@@ -19,6 +19,8 @@ import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.OrderDetail;
 import com.ats.ckweb.model.OrderFeedback;
+import com.ats.ckweb.model.OrderGrievance;
+import com.ats.ckweb.model.OrderGrievanceTrail;
 import com.ats.ckweb.model.OrderHeader;
 import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
@@ -28,6 +30,8 @@ import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.OrderDetailRepository;
 import com.ats.ckweb.repository.OrderFeedbackRepo;
+import com.ats.ckweb.repository.OrderGrievanceRepo;
+import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
 import com.ats.ckweb.repository.OrderTrailRepository;
 
@@ -54,6 +58,12 @@ public class OrderApiController {
 
 	@Autowired
 	OrderFeedbackRepo orderFeedbackRepo;
+
+	@Autowired
+	OrderGrievanceRepo orderGrievanceRepo;
+
+	@Autowired
+	OrderGrievanceTrailRepo orderGrievanceTrailRepo;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -239,6 +249,26 @@ public class OrderApiController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	@RequestMapping(value = { "/saveGrievanceOfOrder" }, method = RequestMethod.POST)
+	public @ResponseBody OrderGrievance saveFeedBackOfOrder(@RequestBody OrderGrievance orderGrievance) {
+
+		OrderGrievance res = new OrderGrievance();
+		try {
+
+			res = orderGrievanceRepo.save(orderGrievance);
+			orderGrievance.getOrderGrievanceTrail().setGrievencesId(res.getGrieveId());
+
+			OrderGrievanceTrail orderGrievanceTrailres = orderGrievanceTrailRepo
+					.save(orderGrievance.getOrderGrievanceTrail());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
 		}
 
 		return res;
