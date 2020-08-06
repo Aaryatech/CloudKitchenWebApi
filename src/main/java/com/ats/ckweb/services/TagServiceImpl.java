@@ -12,6 +12,7 @@ import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GetItemTagDetails;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Ingrediant;
@@ -30,6 +31,7 @@ import com.ats.ckweb.repository.CityRepo;
 import com.ats.ckweb.repository.DeliveryInstructionRepo;
 import com.ats.ckweb.repository.DesignationRepo;
 import com.ats.ckweb.repository.GetAllConfiguredItemTagRepo;
+import com.ats.ckweb.repository.GetItemTagDetailsRepo;
 import com.ats.ckweb.repository.GrievencesInstructionRepo;
 import com.ats.ckweb.repository.GrievencesTypeInstructnRepo;
 import com.ats.ckweb.repository.IngrediantCategoryRepo;
@@ -80,6 +82,8 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired DesignationRepo desigRepo;
 	
 	@Autowired UserTypeRepo userTypeRepo;
+	
+	@Autowired GetItemTagDetailsRepo itmTagDtlRepo;
 	
 	@Override
 	public List<Tags> getAllOfferTags() {
@@ -506,6 +510,12 @@ public class TagServiceImpl implements TagsServices {
 	public int getIngredientCnt(int ingerediantCatId) {
 		int cnt = ingrediantRepo.getIngredientCnt(ingerediantCatId);
 		return cnt;
+	}
+
+	@Override
+	public List<GetItemTagDetails> getItemTagDtl(int tagId, int compId) {
+		List<GetItemTagDetails> list = itmTagDtlRepo.getItemTagDtls(tagId, compId);
+		return list;
 	}
 
 }
