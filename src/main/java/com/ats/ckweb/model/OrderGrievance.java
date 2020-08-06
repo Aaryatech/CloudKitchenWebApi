@@ -62,6 +62,9 @@ public class OrderGrievance {
 	@Column(name = "platform")
 	private int platform;
 	
+	@Column(name = "grievencce_no")
+	private String grievencceNo;
+	
 	@Transient
 	private OrderGrievanceTrail orderGrievanceTrail;
 
@@ -202,6 +205,14 @@ public class OrderGrievance {
 		this.orderId = orderId;
 	}
 
+	public String getGrievencceNo() {
+		return grievencceNo;
+	}
+
+	public void setGrievencceNo(String grievencceNo) {
+		this.grievencceNo = grievencceNo;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderGrievance [grieveId=" + grieveId + ", orderId=" + orderId + ", grievenceTypeId=" + grievenceTypeId
@@ -209,8 +220,8 @@ public class OrderGrievance {
 				+ currentStatus + ", insertDateTime=" + insertDateTime + ", insertById=" + insertById
 				+ ", grievenceTypeName=" + grievenceTypeName + ", grievenceSubtypeName=" + grievenceSubtypeName
 				+ ", date=" + date + ", extraInt1=" + extraInt1 + ", extraInt2=" + extraInt2 + ", extraVar1="
-				+ extraVar1 + ", extraVar2=" + extraVar2 + ", platform=" + platform + ", orderGrievanceTrail="
-				+ orderGrievanceTrail + "]";
+				+ extraVar1 + ", extraVar2=" + extraVar2 + ", platform=" + platform + ", grievencceNo=" + grievencceNo
+				+ ", orderGrievanceTrail=" + orderGrievanceTrail + "]";
 	}
 	
 	
