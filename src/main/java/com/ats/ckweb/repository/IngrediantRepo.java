@@ -36,4 +36,7 @@ public interface IngrediantRepo extends JpaRepository<Ingrediant, Integer> {
 			"GROUP BY\n" + 
 			"    i.ingrediant_id", nativeQuery = true)
 	public List<Ingrediant> getTasteListByItem(@Param("itemId") int itemId);
+	
+	@Query(value="SELECT COUNT(ingrediant_id) FROM `mn_ingrediant` WHERE ingrediant_cat_id=:ingerediantCatId",nativeQuery=true)
+	public int getIngredientCnt(int ingerediantCatId);
 }

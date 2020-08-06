@@ -237,6 +237,25 @@ public class MasterAPIController {
 		}
 		return info;
 	}
+	
+	@RequestMapping(value = { "/isTasteCatAssign" }, method = RequestMethod.POST)
+	public @ResponseBody Info isTasteCatAssign(@RequestParam int ingerediantCatId) {
+
+		Info info = new Info();
+		try {
+			int res = tagService.getIngredientCnt(ingerediantCatId);
+			if (res > 0) {
+				info.setError(false);
+				info.setMessage("Taste Assigned To This Category. Can't Delete This Record");
+			} else {
+				info.setError(true);
+				info.setMessage(null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
 
 	@RequestMapping(value = { "/saveNewIngrediant" }, method = RequestMethod.POST)
 	public @ResponseBody Ingrediant saveNewIngrediant(@RequestBody Ingrediant ingerediant) {

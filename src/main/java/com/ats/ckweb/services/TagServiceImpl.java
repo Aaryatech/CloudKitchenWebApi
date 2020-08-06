@@ -502,4 +502,10 @@ public class TagServiceImpl implements TagsServices {
 		return list;
 	}
 
+	@Override
+	public int getIngredientCnt(int ingerediantCatId) {
+		int cnt = ingrediantRepo.getIngredientCnt(ingerediantCatId);
+		return cnt;
+	}
+
 }

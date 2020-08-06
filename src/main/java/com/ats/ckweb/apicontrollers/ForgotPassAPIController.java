@@ -21,8 +21,8 @@ public class ForgotPassAPIController {
 	
 	@Autowired TagsServices tagService;
 	
-	public static String senderEmail ="mahendra941213@gmail.com";
-	public static String senderPassword ="m@hendra1213";
+	public static String senderEmail ="madhvierp@gmail.com";
+	public static String senderPassword ="madhvi@#2020";
 	static String mailsubject = "";
 	String otp1 = null;
 	

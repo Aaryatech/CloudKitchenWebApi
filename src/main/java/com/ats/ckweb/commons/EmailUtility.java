@@ -231,10 +231,10 @@ public class EmailUtility {
 			String message = msg;
 			String mob = phoneNo.trim();
 		
-		//NA-	String sms = restTemplate.getForObject("https://smsapi.24x7sms.com/api_2.0/SendSMS.aspx?APIKEY=pJMAaVPuGbh&MobileNo="+mob+"&SenderID=MADHVI&Message="+message+"&ServiceName=TEMPLATE_BASED", String.class);
+		String sms = restTemplate.getForObject("https://smsapi.24x7sms.com/api_2.0/SendSMS.aspx?APIKEY=pJMAaVPuGbh&MobileNo="+mob+"&SenderID=MADHVI&Message="+message+"&ServiceName=TEMPLATE_BASED", String.class);
 		
 			info.setError(false);
-			//info.setMessage(sms);
+			info.setMessage(sms);
 		  
 		}catch (Exception e) {
 			
