@@ -10,6 +10,7 @@ import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
+import com.ats.ckweb.model.GetItemTagDetails;
 import com.ats.ckweb.model.GrievencesInstruction;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
 import com.ats.ckweb.model.Ingrediant;
@@ -161,6 +162,8 @@ public interface TagsServices {
 	List<Area> getAreaCityAndCompById(int cityId, int compId);
 
 	int getIngredientCnt(int ingerediantCatId);
+
+	List<GetItemTagDetails> getItemTagDtl(int tagId, int compId);
 	
 
 	

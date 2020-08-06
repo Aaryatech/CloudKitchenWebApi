@@ -23,6 +23,7 @@ import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.GetItemTagDetails;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
 import com.ats.ckweb.model.GetProductRelatedList;
 import com.ats.ckweb.model.GrievencesInstruction;
@@ -1218,5 +1219,13 @@ public class MasterAPIController {
 		}
 		return ingrediantList;
 
+	}
+	
+	@RequestMapping(value = { "/showAllItemTags" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetItemTagDetails> showAllItemTags(@RequestParam int tagId, @RequestParam int compId) {
+
+		List<GetItemTagDetails> itmTagList = tagService.getItemTagDtl(tagId, compId);
+
+		return itmTagList;
 	}
 }
