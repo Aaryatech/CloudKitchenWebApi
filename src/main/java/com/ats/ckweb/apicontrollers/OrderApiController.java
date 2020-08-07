@@ -91,6 +91,51 @@ public class OrderApiController {
 		return info;
 	}
 
+	@RequestMapping(value = { "/updateOrderHeader" }, method = RequestMethod.POST)
+	public @ResponseBody OrderHeader saveCloudOrder(@RequestBody OrderHeader orderHeader) {
+
+		OrderHeader res = new OrderHeader();
+
+		try {
+
+			res = orderHeaderRepository.save(orderHeader);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/updateOrderHeaderDetail" }, method = RequestMethod.POST)
+	public @ResponseBody List<OrderDetail> saveCloudOrder(@RequestBody List<OrderDetail> detailList) {
+
+		List<OrderDetail> res = new ArrayList<>();
+
+		try {
+
+			res = orderDetailRepository.saveAll(detailList);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/insertOrderTrail" }, method = RequestMethod.POST)
+	public @ResponseBody OrderTrail insertOrderTrail(@RequestBody OrderTrail orderTrail) {
+
+		OrderTrail res = new OrderTrail();
+
+		try {
+
+			OrderTrail orderRes = orderTrailRepository.save(orderTrail);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
 	@RequestMapping(value = { "/changeStatusByOrderId" }, method = RequestMethod.POST)
 	public @ResponseBody Info changeStatusByOrderId(@RequestParam("status") int status,
 			@RequestParam("userId") int userId, @RequestParam("orderId") int orderId,
