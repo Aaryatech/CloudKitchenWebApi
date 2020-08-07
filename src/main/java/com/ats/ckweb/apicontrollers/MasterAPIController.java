@@ -95,12 +95,12 @@ public class MasterAPIController {
 		return saveTag;
 	}
 
-	@RequestMapping(value = { "/getAllTags" }, method = RequestMethod.GET)
-	public @ResponseBody List<Tags> getAllTags() {
+	@RequestMapping(value = { "/getAllTags" }, method = RequestMethod.POST)
+	public @ResponseBody List<Tags> getAllTags(@RequestParam int compId) {
 
 		List<Tags> tagList = new ArrayList<Tags>();
 		try {
-			tagList = tagService.getAllOfferTags();
+			tagList = tagService.getAllOfferTags(compId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -108,12 +108,12 @@ public class MasterAPIController {
 
 	}
 
-	@RequestMapping(value = { "/getAllActiveTags" }, method = RequestMethod.GET)
-	public @ResponseBody List<Tags> getAllActiveTags() {
+	@RequestMapping(value = { "/getAllActiveTags" }, method = RequestMethod.POST)
+	public @ResponseBody List<Tags> getAllActiveTags(@RequestParam int compId) {
 
 		List<Tags> tagList = new ArrayList<Tags>();
 		try {
-			tagList = tagService.getAllActiveOfferTags();
+			tagList = tagService.getAllActiveOfferTags(compId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

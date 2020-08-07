@@ -265,7 +265,7 @@ public class FrontEndController {
 	// ---------ALL DATA BY FR-----------
 	@RequestMapping(value = { "/getAllDataByFr" }, method = RequestMethod.POST)
 	public @ResponseBody GetAllDataByFr getAllDataByFr(@RequestParam("frId") int frId, @RequestParam("type") int type,
-			@RequestParam("applicableFor") int applicableFor) {
+			@RequestParam("applicableFor") int applicableFor, @RequestParam("compId") int compId) {
 
 		GetAllDataByFr res = new GetAllDataByFr();
 
@@ -279,7 +279,7 @@ public class FrontEndController {
 
 		try {
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
-			List<Tags> allTagList = tagRepo.findByTagDeleteStatusOrderByTagIdDesc(0);
+			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
 
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();

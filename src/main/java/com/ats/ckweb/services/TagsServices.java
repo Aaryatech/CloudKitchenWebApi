@@ -25,13 +25,13 @@ import com.ats.ckweb.model.UserType;
 public interface TagsServices {
 
 	
-	List<Tags> getAllOfferTags();
+	List<Tags> getAllOfferTags(int compId);
 
 	Tags getTagById(int tagId);
 
 	Tags saveTag(Tags tag);
 
-	List<Tags> getAllActiveOfferTags();
+	List<Tags> getAllActiveOfferTags(int compId);
 
 	int deletTagById(int tagId);
 
