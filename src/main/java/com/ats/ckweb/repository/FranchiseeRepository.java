@@ -46,4 +46,6 @@ public interface FranchiseeRepository extends JpaRepository<Franchisee, Integer>
 		
 		@Query(value="SELECT * FROM `m_franchisee` where del_status=0 ORDER BY fr_name ASC",nativeQuery=true)
 		public List<Franchisee> findAllFranchisee();
+		
+		public Franchisee findByFrId(int frId);
 	}

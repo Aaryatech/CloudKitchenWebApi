@@ -15,19 +15,25 @@ public interface GetItemsForConfigRepo extends JpaRepository<GetItemsForConfig, 
 	@Query(value="SELECT\r\n" + 
 			"    t1.item_id,\r\n" + 
 			"    t1.item_name,\r\n" + 
-			"    t1.hsncd,\r\n" + 
+			"    CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.hsncd ELSE t1.hsncd END AS hsncd,\r\n" + 
 			"    t1.mrp AS rate_amt,\r\n" + 
 			"    CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.mrp_amt ELSE t1.mrp\r\n" + 
 			"END AS mrp_amt,\r\n" + 
 			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.sp_rate_amt ELSE t1.mrp\r\n" + 
 			"END AS sp_rate_amt,\r\n" + 
+			" CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.cgst_per ELSE t1.tax1\r\n" + 
+			"END AS tax1,\r\n" + 
+			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.sgst_per ELSE t1.tax2\r\n" + 
+			"END AS tax2,\r\n" + 
+			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.igst_per ELSE t1.tax3\r\n" + 
+			"END AS tax3, " +
 			"t1.tax1,\r\n" + 
 			"t1.tax2,\r\n" + 
 			"t1.tax3,\r\n" + 
 			"COALESCE(t2.status, 0) AS status,\r\n" + 
 			"    COALESCE(t2.checked, 0) AS checked,\r\n" + 
 			"    COALESCE(t2.item_config_id, 0) AS item_config_id,\r\n" + 
-			"    COALESCE(t2.item_config_detail_id, 0) AS item_config_detail_id\r\n" + 
+			"    COALESCE(t2.item_config_detail_id, 0) AS item_config_detail_id , COALESCE(t2.is_active,0) as is_active \r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 

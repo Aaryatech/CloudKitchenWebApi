@@ -44,6 +44,10 @@ public class ItemDisplay {
 	private float mrpDiscAmt;
 	private float spDiscAmt;
 	private String offerIds;
+	private float freqOrderedQty;
+
+	@Transient
+	private int isAvailable;
 
 	@Transient
 	private String jsonStr;
@@ -73,7 +77,7 @@ public class ItemDisplay {
 			String productStatus, int productCategory, String productCategoryName, String preperationTime,
 			int showInOrder, float rating, String tagIds, String tasteTypeIds, String tagName, String tasteName,
 			float rateAmt, float mrpAmt, float spRateAmt, float cgstPer, float sgstPer, float igstPer, String hsncd,
-			String relItemIds, float discPer, float mrpDiscAmt, float spDiscAmt, String offerIds) {
+			String relItemIds, float discPer, float mrpDiscAmt, float spDiscAmt, String offerIds, float freqOrderedQty,int isAvailable) {
 		super();
 		this.itemId = itemId;
 		this.itemName = itemName;
@@ -109,6 +113,8 @@ public class ItemDisplay {
 		this.mrpDiscAmt = mrpDiscAmt;
 		this.spDiscAmt = spDiscAmt;
 		this.offerIds = offerIds;
+		this.freqOrderedQty = freqOrderedQty;
+		this.isAvailable = isAvailable;
 	}
 
 	public int getItemId() {
@@ -415,6 +421,22 @@ public class ItemDisplay {
 		this.offerIds = offerIds;
 	}
 
+	public float getFreqOrderedQty() {
+		return freqOrderedQty;
+	}
+
+	public void setFreqOrderedQty(float freqOrderedQty) {
+		this.freqOrderedQty = freqOrderedQty;
+	}
+
+	public int getIsAvailable() {
+		return isAvailable;
+	}
+
+	public void setIsAvailable(int isAvailable) {
+		this.isAvailable = isAvailable;
+	}
+
 	public String getJsonStr() {
 		return jsonStr;
 	}
@@ -443,8 +465,9 @@ public class ItemDisplay {
 				+ rateAmt + ", mrpAmt=" + mrpAmt + ", spRateAmt=" + spRateAmt + ", cgstPer=" + cgstPer + ", sgstPer="
 				+ sgstPer + ", igstPer=" + igstPer + ", hsncd=" + hsncd + ", relItemIds=" + relItemIds + ", discPer="
 				+ discPer + ", mrpDiscAmt=" + mrpDiscAmt + ", spDiscAmt=" + spDiscAmt + ", offerIds=" + offerIds
-				+ ", jsonStr=" + jsonStr + ", tagList=" + tagList + ", tasteList=" + tasteList + ", imageList="
-				+ imageList + ", relItemList=" + relItemList + ", offerList=" + offerList + "]";
+				+ ", freqOrderedQty=" + freqOrderedQty + ", isAvailable=" + isAvailable + ", jsonStr=" + jsonStr
+				+ ", tagList=" + tagList + ", tasteList=" + tasteList + ", imageList=" + imageList + ", relItemList="
+				+ relItemList + ", offerList=" + offerList + "]";
 	}
 
 }
