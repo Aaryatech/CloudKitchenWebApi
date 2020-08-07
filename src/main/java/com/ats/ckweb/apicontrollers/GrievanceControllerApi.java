@@ -67,7 +67,7 @@ public class GrievanceControllerApi {
 	@RequestMapping(value = { "/getGrievanceTrailByGrivId" }, method = RequestMethod.POST)
 	@ResponseBody
 	public List<GetGrievanceTrail> getGrievanceTrailByGrivId(@RequestParam("grieveId") int grieveId) {
-
+ 
 		List<GetGrievanceTrail> grievTrailList = null;
 		try {
 			grievTrailList = getGrievanceTrailRepo.getGrievanceTrailListByGrievencesId(grieveId);
