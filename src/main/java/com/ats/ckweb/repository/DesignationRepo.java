@@ -9,6 +9,8 @@ import com.ats.ckweb.model.Designation;
 public interface DesignationRepo extends JpaRepository<Designation, Integer> {
 	
   List<Designation> findByDelStatusOrderByDesignationIdDesc(int del);
+
+List<Designation> findByDelStatusAndExVar1OrderByDesignationIdDesc(int i, int compId);
   
   
 }

@@ -518,4 +518,10 @@ public class TagServiceImpl implements TagsServices {
 		return list;
 	}
 
+	@Override
+	public List<Designation> getAllDesignationsBtCompId(int compId) {
+		List<Designation> list = desigRepo.findByDelStatusAndExVar1OrderByDesignationIdDesc(0, compId);
+		return list;
+	}
+
 }

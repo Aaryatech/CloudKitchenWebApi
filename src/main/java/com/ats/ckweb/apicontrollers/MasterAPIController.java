@@ -66,6 +66,20 @@ public class MasterAPIController {
 		return list;
 
 	}
+	
+	
+	@RequestMapping(value = { "/getDesignationsByCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<Designation> getDesignationsByCompId(@RequestParam int compId) {
+
+		List<Designation> list = new ArrayList<Designation>();
+		try {
+			list = tagService.getAllDesignationsBtCompId(compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+
+	}
 
 	/********************************************************************************/
 

@@ -164,6 +164,8 @@ public interface TagsServices {
 	int getIngredientCnt(int ingerediantCatId);
 
 	List<GetItemTagDetails> getItemTagDtl(int tagId, int compId);
+
+	List<Designation> getAllDesignationsBtCompId(int compId);
 	
 
 	
