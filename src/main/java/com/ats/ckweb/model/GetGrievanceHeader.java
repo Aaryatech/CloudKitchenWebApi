@@ -1,7 +1,11 @@
 package com.ats.ckweb.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 
 //Sachin 2020-08-06
@@ -23,12 +27,12 @@ public class GetGrievanceHeader {
 
 	private int currentStatus;
 
-	private String insertDateTime;
+	private Date insertDateTime;
 
 	private String insertUserName;
 	
 
-	private String date;
+	private Date date;
 
 	private String extraVar1;
 
@@ -39,7 +43,7 @@ public class GetGrievanceHeader {
 	private String grievencceNo;
 	
 	private String orderNo;
-	private String orderDate;
+	private Date orderDate;
 	private int frId;
 	private int custId;
 	
@@ -91,10 +95,11 @@ public class GetGrievanceHeader {
 	public void setCurrentStatus(int currentStatus) {
 		this.currentStatus = currentStatus;
 	}
-	public String getInsertDateTime() {
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy HH:mm:ss")
+	public Date getInsertDateTime() {
 		return insertDateTime;
 	}
-	public void setInsertDateTime(String insertDateTime) {
+	public void setInsertDateTime(Date insertDateTime) {
 		this.insertDateTime = insertDateTime;
 	}
 	public String getInsertUserName() {
@@ -103,10 +108,13 @@ public class GetGrievanceHeader {
 	public void setInsertUserName(String insertUserName) {
 		this.insertUserName = insertUserName;
 	}
-	public String getDate() {
+	
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(String date) {
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public void setDate(Date date) {
 		this.date = date;
 	}
 	public String getExtraVar1() {
@@ -139,10 +147,12 @@ public class GetGrievanceHeader {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	public String getOrderDate() {
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getOrderDate() {
 		return orderDate;
 	}
-	public void setOrderDate(String orderDate) {
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
 	}
 	public int getFrId() {
