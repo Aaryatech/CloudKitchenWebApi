@@ -21,6 +21,7 @@ public class GetItemsForConfig {
 	private int checked;
 	private int itemConfigId;
 	private int itemConfigDetailId;
+	private int isActive;
 
 	public int getItemId() {
 		return itemId;
@@ -126,12 +127,20 @@ public class GetItemsForConfig {
 		this.itemConfigDetailId = itemConfigDetailId;
 	}
 
+	public int getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(int isActive) {
+		this.isActive = isActive;
+	}
+
 	@Override
 	public String toString() {
 		return "GetItemsForConfig [itemId=" + itemId + ", itemName=" + itemName + ", hsncd=" + hsncd + ", rate_amt="
 				+ rate_amt + ", mrp_amt=" + mrp_amt + ", sp_rate_amt=" + sp_rate_amt + ", tax1=" + tax1 + ", tax2="
 				+ tax2 + ", tax3=" + tax3 + ", status=" + status + ", checked=" + checked + ", itemConfigId="
-				+ itemConfigId + ", itemConfigDetailId=" + itemConfigDetailId + "]";
+				+ itemConfigId + ", itemConfigDetailId=" + itemConfigDetailId + ", isActive=" + isActive + "]";
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.ConfigRelatedProduct;
 import com.ats.ckweb.model.FrConfig;
@@ -64,5 +65,15 @@ public interface CompanyServices {
 	List<GetProductRelatedList> getAllRelatedProductsByCompId(int compId);
 
 	int deleteRelProductConfig(int relatedProductId);
+
+	List<Agent> getAllAgentsByComp(int compId);
+
+	Agent getAgentById(int agentId, int compId);
+
+	Agent insertAgent(Agent agent);
+
+	int deleteAgent(int agentId);
+
+	Agent getAgentByMobileNo(String mobile);
 
 }

@@ -25,13 +25,13 @@ import com.ats.ckweb.model.UserType;
 public interface TagsServices {
 
 	
-	List<Tags> getAllOfferTags();
+	List<Tags> getAllOfferTags(int compId);
 
 	Tags getTagById(int tagId);
 
 	Tags saveTag(Tags tag);
 
-	List<Tags> getAllActiveOfferTags();
+	List<Tags> getAllActiveOfferTags(int compId);
 
 	int deletTagById(int tagId);
 
@@ -164,6 +164,8 @@ public interface TagsServices {
 	int getIngredientCnt(int ingerediantCatId);
 
 	List<GetItemTagDetails> getItemTagDtl(int tagId, int compId);
+
+	List<Designation> getAllDesignationsBtCompId(int compId);
 	
 
 	

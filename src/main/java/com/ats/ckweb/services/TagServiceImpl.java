@@ -86,9 +86,9 @@ public class TagServiceImpl implements TagsServices {
 	@Autowired GetItemTagDetailsRepo itmTagDtlRepo;
 	
 	@Override
-	public List<Tags> getAllOfferTags() {
+	public List<Tags> getAllOfferTags(int compId) {
 		
-		List<Tags> taglist = tagRepo.findByTagDeleteStatusOrderByTagIdDesc(0);
+		List<Tags> taglist = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 		
 		return taglist;
 	}
@@ -106,9 +106,9 @@ public class TagServiceImpl implements TagsServices {
 	}
 
 	@Override
-	public List<Tags> getAllActiveOfferTags() {
+	public List<Tags> getAllActiveOfferTags(int compId) {
 		
-		List<Tags> taglist = tagRepo.findByTagDeleteStatusAndTagIsActive(0, 0);		
+		List<Tags> taglist = tagRepo.findByTagDeleteStatusAndTagIsActive(compId);		
 		return taglist;
 	}
 
@@ -515,6 +515,12 @@ public class TagServiceImpl implements TagsServices {
 	@Override
 	public List<GetItemTagDetails> getItemTagDtl(int tagId, int compId) {
 		List<GetItemTagDetails> list = itmTagDtlRepo.getItemTagDtls(tagId, compId);
+		return list;
+	}
+
+	@Override
+	public List<Designation> getAllDesignationsBtCompId(int compId) {
+		List<Designation> list = desigRepo.findByDelStatusAndExVar1OrderByDesignationIdDesc(0, compId);
 		return list;
 	}
 

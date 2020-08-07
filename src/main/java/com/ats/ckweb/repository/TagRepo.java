@@ -15,28 +15,32 @@ import com.ats.ckweb.model.Tags;
 @Repository
 public interface TagRepo extends JpaRepository<Tags, Integer> {
 
-	@Query(value="select\n" + 
-			"	DISTINCT\n" + 
-			"      tag.tag_id,\n" + 
-			"      tag.tag_name,\n" + 
-			"      tag.tag_desc,\n" + 
-			"      tag.tag_is_active,\n" + 
-			"      tag.tag_delete_status,\n" + 
-			"      tag.tag_sort_number,\n" + 
-			"      tag.ex_int2,\n" + 
-			"      tag.ex_var1,\n" + 
-			"      tag.ex_var2,\n" + 
-			"      \n" + 
-			"      (SELECT COUNT(dtl.item_d_id) FROM mn_detail dtl WHERE FIND_IN_SET(tag.tag_id, dtl.tag_ids)) AS ex_int1\n" + 
-			"    from\n" + 
-			"        mn_tags tag, \n" + 
+	@Query(value="SELECT DISTINCT\n" + 
+			"    tag.tag_id,\n" + 
+			"    tag.tag_name,\n" + 
+			"    tag.tag_desc,\n" + 
+			"    tag.tag_is_active,\n" + 
+			"    tag.tag_delete_status,\n" + 
+			"    tag.tag_sort_number,\n" + 
+			"    tag.ex_int1,\n" + 
+			"    tag.ex_var1,\n" + 
+			"    tag.ex_var2,\n" + 
+			"    (\n" + 
+			"    SELECT\n" + 
+			"        COUNT(dtl.item_d_id)\n" + 
+			"    FROM\n" + 
 			"        mn_detail dtl\n" + 
-			"    where\n" + 
-			"        tag.tag_delete_status=:del\n" + 
-			"        and tag.tag_is_active=:status",nativeQuery=true)
-	public List<Tags> findByTagDeleteStatusAndTagIsActive(int del, int status);
+			"    WHERE\n" + 
+			"        FIND_IN_SET(tag.tag_id, dtl.tag_ids)\n" + 
+			") AS ex_int2\n" + 
+			"FROM\n" + 
+			"    mn_tags tag,\n" + 
+			"    mn_detail dtl\n" + 
+			"WHERE\n" + 
+			"    tag.tag_delete_status = 0 AND tag.tag_is_active = 0 AND tag.ex_int1 = :compId",nativeQuery=true)
+	public List<Tags> findByTagDeleteStatusAndTagIsActive(@Param("compId") int compId);
 	
-	public List<Tags> findByTagDeleteStatusOrderByTagIdDesc(int del);
+	public List<Tags> findByTagDeleteStatusAndExInt1OrderByTagIdDesc(int del, int compId);
 	
 	public Tags findByTagIdAndTagDeleteStatus(int tagId, int del);
 	
