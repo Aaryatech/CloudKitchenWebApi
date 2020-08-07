@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaCityList;
 import com.ats.ckweb.model.Category;
@@ -1228,4 +1229,76 @@ public class MasterAPIController {
 
 		return itmTagList;
 	}
+	
+	
+	/******************************************************************************************/
+	//Agent
+	
+	@RequestMapping(value = { "/getAllAgents" }, method = RequestMethod.POST)
+	public @ResponseBody List<Agent> getAllItems(@RequestParam int compId) {
+
+		List<Agent> agentList = new ArrayList<Agent>();
+		try {
+			agentList = companyService.getAllAgentsByComp(compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return agentList;
+	}
+
+	@RequestMapping(value = { "/getAgentById" }, method = RequestMethod.POST)
+	public @ResponseBody Agent getAgentById(@RequestParam int agentId, @RequestParam int compId) {
+
+		Agent agent = new Agent();
+		try {
+			agent = companyService.getAgentById(agentId, compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return agent;
+	}
+	
+	@RequestMapping(value = { "/addNewAgent" }, method = RequestMethod.POST)
+	public @ResponseBody Agent addRelatedProductConfig(@RequestBody Agent agent) {
+
+		Agent saveAgent = new Agent();
+		try {
+			saveAgent = companyService.insertAgent(agent);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return saveAgent;
+	}
+	
+	@RequestMapping(value = { "/deleteAgentById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteAgentById(@RequestParam int agentId) {
+
+		Info info = new Info();
+		try {
+			int res = companyService.deleteAgent(agentId);
+			if (res > 0) {
+				info.setError(false);
+				info.setMessage("Agent Deleted Successfully");
+			} else {
+				info.setError(true);
+				info.setMessage("Failed To Delete Agent");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+	@RequestMapping(value = { "/getAgentByMob" }, method = RequestMethod.POST)
+	public @ResponseBody Agent getAgentByMob(@RequestParam String mobile) {
+
+		Agent agent = new Agent();
+		try {
+			agent = companyService.getAgentByMobileNo(mobile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return agent;
+	}
+
 }

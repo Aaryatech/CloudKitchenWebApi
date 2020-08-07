@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.ConfigRelatedProduct;
 import com.ats.ckweb.model.FrConfig;
@@ -15,6 +16,7 @@ import com.ats.ckweb.model.GetProductRelatedList;
 import com.ats.ckweb.model.Item;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
+import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.CompanyRepo;
 import com.ats.ckweb.repository.ConfigRelatedProductRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
@@ -49,6 +51,10 @@ public class CompanyServiceImpl implements CompanyServices{
 	@Autowired ConfigRelatedProductRepo configProductRepo;
 	
 	@Autowired GetProductRelatedListRepo getRelatedProductListRepo;
+	
+	@Autowired AgentRepo agentRepo;
+	
+	/**********************************************************************/
 
 	@Override
 	public Company getMnCompanyById(int compId) {
@@ -192,6 +198,37 @@ public class CompanyServiceImpl implements CompanyServices{
 	public List<GetProductRelatedList> getAllRelatedProductsByCompId(int compId) {
 		List<GetProductRelatedList> list = getRelatedProductListRepo.getAllConfigureRelatedProducts(compId);
 		return list;
+	}
+
+	/******************************************************************************/
+	@Override
+	public List<Agent> getAllAgentsByComp(int compId) {
+		List<Agent> list = agentRepo.findByCompanyIdAndDelStatusOrderByAgentIdDesc(compId, 0);
+		return list;
+	}
+
+	@Override
+	public Agent getAgentById(int agentId, int compId) {
+		Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(agentId, compId, 0);
+		return agent;
+	}
+
+	@Override
+	public Agent insertAgent(Agent agent) {
+		Agent savAgnt = agentRepo.save(agent);
+		return savAgnt;
+	}
+
+	@Override
+	public int deleteAgent(int agentId) {
+		int res = agentRepo.deleteAgent(agentId);
+		return res;
+	}
+
+	@Override
+	public Agent getAgentByMobileNo(String mobile) {
+		Agent agent = agentRepo.findByMobileNoAndDelStatus(mobile, 0);
+		return agent;
 	}
 
 	
