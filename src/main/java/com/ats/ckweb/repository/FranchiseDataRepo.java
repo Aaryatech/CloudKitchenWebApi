@@ -52,5 +52,31 @@ public interface FranchiseDataRepo extends JpaRepository<FranchiseData, Integer>
 			"    fc.del_status = 0 AND fc.is_active = 0 AND fc.fr_id = f.fr_id AND f.fr_id=:frId ORDER BY f.fr_name",nativeQuery=true)
 	public  FranchiseData getFranchiseById(@Param("frId") int frId);
 
+	@Query(value="SELECT\r\n" + 
+			"        fc.fr_config_id,\r\n" + 
+			"        fc.fr_id,\r\n" + 
+			"        fc.fr_type,\r\n" + 
+			"        f.fr_name,\r\n" + 
+			"        f.fr_code,\r\n" + 
+			"        f.fr_address,\r\n" + 
+			"        f.fr_mob,\r\n" + 
+			"        fc.from_latitude,\r\n" + 
+			"        fc.from_longitude,\r\n" + 
+			"        fc.to_latitude,\r\n" + 
+			"        fc.to_longitude,\r\n" + 
+			"        fc.km_area_covered,\r\n" + 
+			"        fc.comp_id" + 
+			"    FROM\r\n" + 
+			"        tn_fr_config fc,\r\n" + 
+			"        m_franchisee f \r\n" + 
+			"    WHERE\r\n" + 
+			"        fc.del_status = 0 \r\n" + 
+			"        AND fc.is_active = 0 \r\n" + 
+			"        AND fc.fr_id = f.fr_id\r\n" + 
+			"        and FIND_IN_SET(:cityId,fc.city_ids)\r\n" + 
+			"    ORDER BY\r\n" + 
+			"        f.fr_name",nativeQuery=true)
+	public List<FranchiseData> getShopByCityId(@Param("cityId") int cityId);
+
 
 }

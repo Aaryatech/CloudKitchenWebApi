@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaData;
 import com.ats.ckweb.model.CategoryData;
@@ -42,6 +43,7 @@ import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.PostFrItemStockHeader;
 import com.ats.ckweb.model.SubCategoryData;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.AreaDataRepo;
 import com.ats.ckweb.repository.CategoryDataRepo;
 import com.ats.ckweb.repository.CityDataRepo;
@@ -101,7 +103,7 @@ public class FrontEndController {
 
 	@Autowired
 	ItemWiseOfferDataRepo itemWiseOfferDataRepo;
-	
+
 	@Autowired
 	FrItemStockRepo frItemStockRepo;
 
@@ -157,6 +159,59 @@ public class FrontEndController {
 		res.setInfo(info);
 
 		return res;
+	}
+
+	@RequestMapping(value = { "/getShopByCityId" }, method = RequestMethod.POST)
+	public @ResponseBody GetFranchiseData getShopByCityId(@RequestParam("cityId") int cityId) {
+
+		GetFranchiseData res = new GetFranchiseData();
+
+		try {
+
+			List<FranchiseData> frData = null;
+
+			frData = franchiseDataRepo.getShopByCityId(cityId);
+
+			Info info = new Info();
+
+			if (frData == null) {
+				frData = new ArrayList<FranchiseData>();
+
+				info.setError(true);
+				info.setMessage("Failed");
+			} else {
+
+				info.setError(false);
+				info.setMessage("Success");
+			}
+
+			res.setFranchise(frData);
+			res.setInfo(info);
+		} catch (Exception e) {
+
+		}
+
+		return res;
+	}
+
+	@Autowired
+	AgentRepo agentRepo;
+
+	@RequestMapping(value = { "/getAgetListByShopId" }, method = RequestMethod.POST)
+	public @ResponseBody List<Agent> getAgetListByShopId(@RequestParam("cityId") int cityId,
+			@RequestParam("shopId") int shopId) {
+
+		List<Agent> list = new ArrayList<>();
+
+		try {
+
+			list = agentRepo.getAgetListByShopId(cityId, shopId);
+
+		} catch (Exception e) {
+
+		}
+
+		return list;
 	}
 
 	@RequestMapping(value = { "/getFranchiseByFrId" }, method = RequestMethod.POST)
@@ -282,1064 +337,1064 @@ public class FrontEndController {
 	}
 
 	// ---------ALL DATA BY FR-----------
-		@RequestMapping(value = { "/getAllDataByFr" }, method = RequestMethod.POST)
-		public @ResponseBody GetAllDataByFr getAllDataByFr(@RequestParam("frId") int frId, @RequestParam("type") int type,
-				@RequestParam("applicableFor") int applicableFor, @RequestParam("compId") int compId) {
+	@RequestMapping(value = { "/getAllDataByFr" }, method = RequestMethod.POST)
+	public @ResponseBody GetAllDataByFr getAllDataByFr(@RequestParam("frId") int frId, @RequestParam("type") int type,
+			@RequestParam("applicableFor") int applicableFor, @RequestParam("compId") int compId) {
 
-			GetAllDataByFr res = new GetAllDataByFr();
+		GetAllDataByFr res = new GetAllDataByFr();
 
-			Info info = new Info();
+		Info info = new Info();
 
-			List<CategoryData> catData = null;
-			List<SubCategoryData> subCatData = null;
-			List<OfferHeader> offerData = null;
-			List<Tags> tagsData = null;
-			List<ItemDisplay> itemData = null;
+		List<CategoryData> catData = null;
+		List<SubCategoryData> subCatData = null;
+		List<OfferHeader> offerData = null;
+		List<Tags> tagsData = null;
+		List<ItemDisplay> itemData = null;
 
-			try {
-				List<Images> imgList = imagesRepo.findAllByDelStatus(0);
-				List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0,compId);
-				List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+		try {
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
 
-				List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
 
-				List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
-				if (allOfferList != null) {
-					Set<Integer> offerSet = new HashSet<Integer>();
-					for (ItemWiseOfferData data : allOfferList) {
-						offerSet.add(data.getOfferId());
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
 					}
+				}
 
-					List<Integer> offerIdList = new ArrayList<>();
-					offerIdList.addAll(offerSet);
+				for (int i = 0; i < offerDisplayList.size(); i++) {
 
-					Collections.sort(offerIdList);
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
 
-					for (int i = 0; i < offerIdList.size(); i++) {
-						for (int j = 0; j < allOfferList.size(); j++) {
-							if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
 
-								ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
-										allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
-										allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
-										allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
-										allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
-										allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
-										allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
-										allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
-										allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
-										allOfferList.get(j).getDiscPer());
+						detailList.add(detail);
 
-								offerDisplayList.add(header);
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
 
+			}
+
+			// -------CATEGORY LIST---------------
+			catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
+
+			if (catData == null) {
+				catData = new ArrayList<CategoryData>();
+			} else {
+
+				for (int i = 0; i < catData.size(); i++) {
+
+					List<Images> catImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == catData.get(i).getCatId() && image.getDocType() == 1) {
+								catImgList.add(image);
+							}
+						}
+					}
+					catData.get(i).setImageList(catImgList);
+				}
+			}
+			res.setCategoryData(catData);
+
+			// --------SUB CATEGORY LIST-------------
+			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
+
+			if (subCatData == null) {
+				subCatData = new ArrayList<SubCategoryData>();
+			} else {
+
+				for (int i = 0; i < subCatData.size(); i++) {
+
+					List<Images> subCatImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == subCatData.get(i).getSubCatId() && image.getDocType() == 2) {
+								subCatImgList.add(image);
+							}
+						}
+					}
+					subCatData.get(i).setImageList(subCatImgList);
+
+				}
+			}
+			res.setSubCategoryData(subCatData);
+
+			// ---------OFFER DATA--------------
+			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+
+			if (offerData == null) {
+				offerData = new ArrayList<OfferHeader>();
+			} else {
+
+				for (int i = 0; i < offerData.size(); i++) {
+
+					List<Images> offerImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+								offerImgList.add(image);
+							}
+						}
+					}
+					offerData.get(i).setImageList(offerImgList);
+
+				}
+			}
+			res.setOfferData(offerData);
+
+			// ------------Tag DATA--------------------
+			tagsData = tagRepo.getTagListByFr(frId, type);
+
+			if (tagsData == null) {
+				tagsData = new ArrayList<Tags>();
+			}
+			res.setTagsData(tagsData);
+
+			// ------------ITEM DATA----------------
+
+			Franchisee fr = franchiseeRepository.findByFrId(frId);
+
+			boolean isMonthCloseApplicable = false;
+			String fromDate = "", toDate = "";
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
+
+			int month = 0;
+
+			for (PostFrItemStockHeader header : list) {
+				month = header.getMonth();
+				break;
+			}
+
+			Date todaysDate = new Date();
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(todaysDate);
+
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+
+			Date firstDay = cal.getTime();
+
+			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = new Date();
+			System.out.println(dateFormat1.format(date));
+
+			Calendar cal1 = Calendar.getInstance();
+			cal1.setTime(date);
+
+			int dayOfMonth = cal1.get(Calendar.DATE);
+
+			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
+
+			if (month < calCurrentMonth) {
+
+				isMonthCloseApplicable = true;
+				System.out.println("Day Of Month End ......");
+
+			} else if (month == 12 && calCurrentMonth == 1) {
+				isMonthCloseApplicable = true;
+			}
+
+			if (isMonthCloseApplicable) {
+				System.err.println("Inside iMonthclose app");
+				String strDate;
+				int year;
+				if (month == 12) {
+					System.err.println("running month =12");
+					year = (Calendar.getInstance().getWeekYear() - 1);
+					System.err.println("year value " + year);
+				} else {
+					System.err.println("running month not eq 12");
+					year = Calendar.getInstance().getWeekYear();
+					System.err.println("year value " + year);
+				}
+
+				if (month < 10) {
+					strDate = year + "-0" + month + "-01";
+				} else {
+					strDate = year + "-" + month + "-01";
+				}
+				fromDate = strDate;
+
+			} else {
+				fromDate = dateFormat.format(firstDay);
+			}
+
+			int stockType = 1;
+			if (fr != null) {
+				stockType = fr.getStockType();
+			}
+
+			int year = Integer.parseInt(yearFormat.format(todaysDate));
+
+			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
+					type);
+
+			System.err.println("FR STOCk = " + frStock);
+
+			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
+
+			if (tempItemData != null) {
+				if (frStock != null) {
+
+					for (ItemDisplay item : tempItemData) {
+						for (FrItemStock stock : frStock) {
+							if (item.getItemId() == stock.getId()) {
+								if (stock.getCurrentStock() > stock.getReorder()) {
+									item.setIsAvailable(0);
+								} else {
+									item.setIsAvailable(1);
+								}
 								break;
-
 							}
 						}
 					}
 
-					for (int i = 0; i < offerDisplayList.size(); i++) {
-
-						List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
-
-						for (int j = 0; j < allOfferList.size(); j++) {
-							ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
-									allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
-									allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
-									allOfferList.get(j).getSecondaryItemName());
-
-							detailList.add(detail);
-
-						}
-						offerDisplayList.get(i).setOfferDetailList(detailList);
-					}
+					itemData = tempItemData;
 
 				}
+			}
 
-				// -------CATEGORY LIST---------------
-				catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
 
-				if (catData == null) {
-					catData = new ArrayList<CategoryData>();
-				} else {
+				for (int i = 0; i < itemData.size(); i++) {
 
-					for (int i = 0; i < catData.size(); i++) {
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
 
-						List<Images> catImgList = new ArrayList<>();
-
-						if (imgList != null) {
-							for (Images image : imgList) {
-								if (image.getDocId() == catData.get(i).getCatId() && image.getDocType() == 1) {
-									catImgList.add(image);
-								}
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
 							}
 						}
-						catData.get(i).setImageList(catImgList);
 					}
-				}
-				res.setCategoryData(catData);
+					itemData.get(i).setImageList(itemImgList);
 
-				// --------SUB CATEGORY LIST-------------
-				subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
-
-				if (subCatData == null) {
-					subCatData = new ArrayList<SubCategoryData>();
-				} else {
-
-					for (int i = 0; i < subCatData.size(); i++) {
-
-						List<Images> subCatImgList = new ArrayList<>();
-
-						if (imgList != null) {
-							for (Images image : imgList) {
-								if (image.getDocId() == subCatData.get(i).getSubCatId() && image.getDocType() == 2) {
-									subCatImgList.add(image);
-								}
-							}
-						}
-						subCatData.get(i).setImageList(subCatImgList);
-
-					}
-				}
-				res.setSubCategoryData(subCatData);
-
-				// ---------OFFER DATA--------------
-				offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
-
-				if (offerData == null) {
-					offerData = new ArrayList<OfferHeader>();
-				} else {
-
-					for (int i = 0; i < offerData.size(); i++) {
-
-						List<Images> offerImgList = new ArrayList<>();
-
-						if (imgList != null) {
-							for (Images image : imgList) {
-								if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
-									offerImgList.add(image);
-								}
-							}
-						}
-						offerData.get(i).setImageList(offerImgList);
-
-					}
-				}
-				res.setOfferData(offerData);
-
-				// ------------Tag DATA--------------------
-				tagsData = tagRepo.getTagListByFr(frId, type);
-
-				if (tagsData == null) {
-					tagsData = new ArrayList<Tags>();
-				}
-				res.setTagsData(tagsData);
-
-				// ------------ITEM DATA----------------
-
-				Franchisee fr = franchiseeRepository.findByFrId(frId);
-
-				boolean isMonthCloseApplicable = false;
-				String fromDate = "", toDate = "";
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				DateFormat yearFormat = new SimpleDateFormat("yyyy");
-
-				List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
-
-				int month = 0;
-
-				for (PostFrItemStockHeader header : list) {
-					month = header.getMonth();
-					break;
-				}
-
-				Date todaysDate = new Date();
-
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(todaysDate);
-
-				cal.set(Calendar.DAY_OF_MONTH, 1);
-
-				Date firstDay = cal.getTime();
-
-				DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-				Date date = new Date();
-				System.out.println(dateFormat1.format(date));
-
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(date);
-
-				int dayOfMonth = cal1.get(Calendar.DATE);
-
-				int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
-
-				if (month < calCurrentMonth) {
-
-					isMonthCloseApplicable = true;
-					System.out.println("Day Of Month End ......");
-
-				} else if (month == 12 && calCurrentMonth == 1) {
-					isMonthCloseApplicable = true;
-				}
-
-				if (isMonthCloseApplicable) {
-					System.err.println("Inside iMonthclose app");
-					String strDate;
-					int year;
-					if (month == 12) {
-						System.err.println("running month =12");
-						year = (Calendar.getInstance().getWeekYear() - 1);
-						System.err.println("year value " + year);
-					} else {
-						System.err.println("running month not eq 12");
-						year = Calendar.getInstance().getWeekYear();
-						System.err.println("year value " + year);
+					// -----------RELATED PRODUCTS---------------
+					List<ItemDisplay> relItemData = new ArrayList<>();
+					List<Integer> relItemIdsList = new ArrayList<>();
+					try {
+						relItemIdsList = Stream.of(itemData.get(i).getRelItemIds().split(",")).map(Integer::parseInt)
+								.collect(Collectors.toList());
+					} catch (Exception e) {
 					}
 
-					if (month < 10) {
-						strDate = year + "-0" + month + "-01";
-					} else {
-						strDate = year + "-" + month + "-01";
-					}
-					fromDate = strDate;
+					for (int t = 0; t < itemData.size(); t++) {
+						if (relItemIdsList.contains(itemData.get(t).getItemId())) {
 
-				} else {
-					fromDate = dateFormat.format(firstDay);
-				}
+							ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
+									itemData.get(t).getItemName(), itemData.get(t).getCatId(),
+									itemData.get(t).getCatName(), itemData.get(t).getSubCatId(),
+									itemData.get(t).getSubCatName(), itemData.get(t).getItemSortId(),
+									itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
+									itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
+									itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
+									itemData.get(t).getProductCategory(), itemData.get(t).getProductCategoryName(),
+									itemData.get(t).getPreperationTime(), itemData.get(t).getShowInOrder(),
+									itemData.get(t).getRating(), itemData.get(t).getTagIds(),
+									itemData.get(t).getTasteTypeIds(), itemData.get(t).getTagName(),
+									itemData.get(t).getTasteName(), itemData.get(t).getRateAmt(),
+									itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
+									itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
+									itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
+									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
+									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
+									itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
+									itemData.get(t).getIsAvailable());
 
-				int stockType = 1;
-				if (fr != null) {
-					stockType = fr.getStockType();
-				}
+							// ----Related Item Images-----
+							List<Images> relItemImgList = new ArrayList<>();
 
-				int year = Integer.parseInt(yearFormat.format(todaysDate));
-
-				List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
-						type);
-
-				System.err.println("FR STOCk = " + frStock);
-
-				List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
-
-				if (tempItemData != null) {
-					if (frStock != null) {
-
-						for (ItemDisplay item : tempItemData) {
-							for (FrItemStock stock : frStock) {
-								if (item.getItemId() == stock.getId()) {
-									if (stock.getCurrentStock() > stock.getReorder()) {
-										item.setIsAvailable(0);
-									} else {
-										item.setIsAvailable(1);
+							if (imgList != null) {
+								for (Images image : imgList) {
+									if (image.getDocId() == relItem.getItemId() && image.getDocType() == 3) {
+										relItemImgList.add(image);
 									}
-									break;
 								}
 							}
+							relItem.setImageList(relItemImgList);
+
+							relItemData.add(relItem);
 						}
-
-						itemData = tempItemData;
-
 					}
-				}
+					itemData.get(i).setRelItemList(relItemData);
 
-				if (itemData == null) {
-					itemData = new ArrayList<ItemDisplay>();
-				} else {
+					// ----------ITEM TAGS------------
+					List<Tags> tagList = new ArrayList<>();
 
-					for (int i = 0; i < itemData.size(); i++) {
+					if (allTagList != null) {
 
-						// ----------ITEM IMAGES------------
-						List<Images> itemImgList = new ArrayList<>();
-
-						if (imgList != null) {
-							for (Images image : imgList) {
-								if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
-									itemImgList.add(image);
-								}
-							}
-						}
-						itemData.get(i).setImageList(itemImgList);
-
-						// -----------RELATED PRODUCTS---------------
-						List<ItemDisplay> relItemData = new ArrayList<>();
-						List<Integer> relItemIdsList = new ArrayList<>();
+						List<Integer> tagIdsList = new ArrayList<>();
 						try {
-							relItemIdsList = Stream.of(itemData.get(i).getRelItemIds().split(",")).map(Integer::parseInt)
+							tagIdsList = Stream.of(itemData.get(i).getTagIds().split(",")).map(Integer::parseInt)
 									.collect(Collectors.toList());
 						} catch (Exception e) {
 						}
 
-						for (int t = 0; t < itemData.size(); t++) {
-							if (relItemIdsList.contains(itemData.get(t).getItemId())) {
-
-								ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
-										itemData.get(t).getItemName(), itemData.get(t).getCatId(),
-										itemData.get(t).getCatName(), itemData.get(t).getSubCatId(),
-										itemData.get(t).getSubCatName(), itemData.get(t).getItemSortId(),
-										itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
-										itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
-										itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
-										itemData.get(t).getProductCategory(), itemData.get(t).getProductCategoryName(),
-										itemData.get(t).getPreperationTime(), itemData.get(t).getShowInOrder(),
-										itemData.get(t).getRating(), itemData.get(t).getTagIds(),
-										itemData.get(t).getTasteTypeIds(), itemData.get(t).getTagName(),
-										itemData.get(t).getTasteName(), itemData.get(t).getRateAmt(),
-										itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
-										itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
-										itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
-										itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
-										itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
-										itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
-										itemData.get(t).getIsAvailable());
-
-								// ----Related Item Images-----
-								List<Images> relItemImgList = new ArrayList<>();
-
-								if (imgList != null) {
-									for (Images image : imgList) {
-										if (image.getDocId() == relItem.getItemId() && image.getDocType() == 3) {
-											relItemImgList.add(image);
-										}
-									}
-								}
-								relItem.setImageList(relItemImgList);
-
-								relItemData.add(relItem);
+						for (int t = 0; t < allTagList.size(); t++) {
+							if (tagIdsList.contains(allTagList.get(t).getTagId())) {
+								tagList.add(allTagList.get(t));
 							}
 						}
-						itemData.get(i).setRelItemList(relItemData);
-
-						// ----------ITEM TAGS------------
-						List<Tags> tagList = new ArrayList<>();
-
-						if (allTagList != null) {
-
-							List<Integer> tagIdsList = new ArrayList<>();
-							try {
-								tagIdsList = Stream.of(itemData.get(i).getTagIds().split(",")).map(Integer::parseInt)
-										.collect(Collectors.toList());
-							} catch (Exception e) {
-							}
-
-							for (int t = 0; t < allTagList.size(); t++) {
-								if (tagIdsList.contains(allTagList.get(t).getTagId())) {
-									tagList.add(allTagList.get(t));
-								}
-							}
-
-						}
-						itemData.get(i).setTagList(tagList);
-
-						// ----------ITEM TASTES------------
-						List<Ingrediant> taseList = new ArrayList<>();
-
-						if (allTasteList != null) {
-
-							List<Integer> tasteIdsList = new ArrayList<>();
-							try {
-								tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
-										.map(Integer::parseInt).collect(Collectors.toList());
-							} catch (Exception e) {
-							}
-
-							for (int t = 0; t < allTasteList.size(); t++) {
-								if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
-									taseList.add(allTasteList.get(t));
-								}
-							}
-
-						}
-						itemData.get(i).setTasteList(taseList);
-
-						// ------------JSON STRING------------------------------
-						ObjectMapper Obj = new ObjectMapper();
-
-						try {
-							String jsonStr = Obj.writeValueAsString(itemData.get(i));
-							itemData.get(i).setJsonStr(jsonStr);
-						} catch (IOException e) {
-						}
-
-						// --------------------OFFER LIST--------------------------
-
-						List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
-
-						if (offerDisplayList != null) {
-							List<Integer> offerIdsList = new ArrayList<>();
-							try {
-								offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
-										.collect(Collectors.toList());
-							} catch (Exception e) {
-							}
-
-							for (int t = 0; t < offerDisplayList.size(); t++) {
-								if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
-									itemOfferList.add(offerDisplayList.get(t));
-								}
-							}
-						}
-						itemData.get(i).setOfferList(itemOfferList);
 
 					}
+					itemData.get(i).setTagList(tagList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+					// ------------JSON STRING------------------------------
+					ObjectMapper Obj = new ObjectMapper();
+
+					try {
+						String jsonStr = Obj.writeValueAsString(itemData.get(i));
+						itemData.get(i).setJsonStr(jsonStr);
+					} catch (IOException e) {
+					}
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
+
 				}
-				res.setItemData(itemData);
-
-				info.setError(false);
-				info.setMessage("Success");
-
-				res.setInfo(info);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				info.setError(true);
-				info.setMessage("Failed");
 			}
+			res.setItemData(itemData);
+
+			info.setError(false);
+			info.setMessage("Success");
 
 			res.setInfo(info);
 
-			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
 		}
 
-		@RequestMapping(value = { "/getAllItemListByFr" }, method = RequestMethod.POST)
-		public @ResponseBody List<ItemDisplay> getAllItemListByFr(@RequestParam("frId") int frId,
-				@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor) {
+		res.setInfo(info);
 
-			List<ItemDisplay> itemData = null;
+		return res;
+	}
 
-			try {
+	@RequestMapping(value = { "/getAllItemListByFr" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemDisplay> getAllItemListByFr(@RequestParam("frId") int frId,
+			@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor) {
 
-				Franchisee fr = franchiseeRepository.findByFrId(frId);
+		List<ItemDisplay> itemData = null;
 
-				boolean isMonthCloseApplicable = false;
-				String fromDate = "", toDate = "";
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				DateFormat yearFormat = new SimpleDateFormat("yyyy");
+		try {
 
-				List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
+			Franchisee fr = franchiseeRepository.findByFrId(frId);
 
-				int month = 0;
+			boolean isMonthCloseApplicable = false;
+			String fromDate = "", toDate = "";
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat yearFormat = new SimpleDateFormat("yyyy");
 
-				for (PostFrItemStockHeader header : list) {
-					month = header.getMonth();
-					break;
-				}
+			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
 
-				Date todaysDate = new Date();
+			int month = 0;
 
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(todaysDate);
-
-				cal.set(Calendar.DAY_OF_MONTH, 1);
-
-				Date firstDay = cal.getTime();
-
-				DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-				Date date = new Date();
-				System.out.println(dateFormat1.format(date));
-
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(date);
-
-				int dayOfMonth = cal1.get(Calendar.DATE);
-
-				int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
-
-				if (month < calCurrentMonth) {
-
-					isMonthCloseApplicable = true;
-					System.out.println("Day Of Month End ......");
-
-				} else if (month == 12 && calCurrentMonth == 1) {
-					isMonthCloseApplicable = true;
-				}
-
-				if (isMonthCloseApplicable) {
-					System.err.println("Inside iMonthclose app");
-					String strDate;
-					int year;
-					if (month == 12) {
-						System.err.println("running month =12");
-						year = (Calendar.getInstance().getWeekYear() - 1);
-						System.err.println("year value " + year);
-					} else {
-						System.err.println("running month not eq 12");
-						year = Calendar.getInstance().getWeekYear();
-						System.err.println("year value " + year);
-					}
-
-					if (month < 10) {
-						strDate = year + "-0" + month + "-01";
-					} else {
-						strDate = year + "-" + month + "-01";
-					}
-					fromDate = strDate;
-
-				} else {
-					fromDate = dateFormat.format(firstDay);
-				}
-
-				int stockType = 1;
-				if (fr != null) {
-					stockType = fr.getStockType();
-				}
-
-				int year = Integer.parseInt(yearFormat.format(todaysDate));
-
-				List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
-						type);
-
-				System.err.println("FR STOCk = " + frStock);
-
-				List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
-
-				if (tempItemData != null) {
-					if (frStock != null) {
-
-						for (ItemDisplay item : tempItemData) {
-							for (FrItemStock stock : frStock) {
-								if (item.getItemId() == stock.getId()) {
-									if (stock.getCurrentStock() > stock.getReorder()) {
-										item.setIsAvailable(0);
-									} else {
-										item.setIsAvailable(1);
-									}
-									break;
-								}
-							}
-						}
-
-						itemData = tempItemData;
-
-					}
-				}
-
-				if (itemData == null) {
-					itemData = new ArrayList<>();
-				}
-
-			} catch (Exception e) {
-				System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
-				e.printStackTrace();
+			for (PostFrItemStockHeader header : list) {
+				month = header.getMonth();
+				break;
 			}
 
-			return itemData;
-		}
+			Date todaysDate = new Date();
 
-		@RequestMapping(value = { "/getFrequentlyOrderedItemListByCust" }, method = RequestMethod.POST)
-		public @ResponseBody List<ItemDisplay> getFrequentlyOrderedItemListByCust(@RequestParam("frId") int frId,
-				@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
-				@RequestParam("custId") int custId) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(todaysDate);
 
-			List<ItemDisplay> itemData = null;
+			cal.set(Calendar.DAY_OF_MONTH, 1);
 
-			try {
+			Date firstDay = cal.getTime();
 
-				List<Images> imgList = imagesRepo.findAllByDelStatus(0);
-				List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = new Date();
+			System.out.println(dateFormat1.format(date));
 
-				// ------------ALL OFFER--------------------
-				List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+			Calendar cal1 = Calendar.getInstance();
+			cal1.setTime(date);
 
-				List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
-				if (allOfferList != null) {
-					Set<Integer> offerSet = new HashSet<Integer>();
-					for (ItemWiseOfferData data : allOfferList) {
-						offerSet.add(data.getOfferId());
-					}
+			int dayOfMonth = cal1.get(Calendar.DATE);
 
-					List<Integer> offerIdList = new ArrayList<>();
-					offerIdList.addAll(offerSet);
+			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
 
-					Collections.sort(offerIdList);
+			if (month < calCurrentMonth) {
 
-					for (int i = 0; i < offerIdList.size(); i++) {
-						for (int j = 0; j < allOfferList.size(); j++) {
-							if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+				isMonthCloseApplicable = true;
+				System.out.println("Day Of Month End ......");
 
-								ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
-										allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
-										allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
-										allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
-										allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
-										allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
-										allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
-										allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
-										allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
-										allOfferList.get(j).getDiscPer());
-
-								offerDisplayList.add(header);
-
-								break;
-
-							}
-						}
-					}
-
-					for (int i = 0; i < offerDisplayList.size(); i++) {
-
-						List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
-
-						for (int j = 0; j < allOfferList.size(); j++) {
-							ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
-									allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
-									allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
-									allOfferList.get(j).getSecondaryItemName());
-
-							detailList.add(detail);
-
-						}
-						offerDisplayList.get(i).setOfferDetailList(detailList);
-					}
-
-				}
-
-				Franchisee fr = franchiseeRepository.findByFrId(frId);
-
-				boolean isMonthCloseApplicable = false;
-				String fromDate = "", toDate = "";
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				DateFormat yearFormat = new SimpleDateFormat("yyyy");
-
-				List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
-
-				int month = 0;
-
-				for (PostFrItemStockHeader header : list) {
-					month = header.getMonth();
-					break;
-				}
-
-				Date todaysDate = new Date();
-
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(todaysDate);
-
-				cal.set(Calendar.DAY_OF_MONTH, 1);
-
-				Date firstDay = cal.getTime();
-
-				DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-				Date date = new Date();
-				System.out.println(dateFormat1.format(date));
-
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(date);
-
-				int dayOfMonth = cal1.get(Calendar.DATE);
-
-				int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
-
-				if (month < calCurrentMonth) {
-
-					isMonthCloseApplicable = true;
-					System.out.println("Day Of Month End ......");
-
-				} else if (month == 12 && calCurrentMonth == 1) {
-					isMonthCloseApplicable = true;
-				}
-
-				if (isMonthCloseApplicable) {
-					System.err.println("Inside iMonthclose app");
-					String strDate;
-					int year;
-					if (month == 12) {
-						System.err.println("running month =12");
-						year = (Calendar.getInstance().getWeekYear() - 1);
-						System.err.println("year value " + year);
-					} else {
-						System.err.println("running month not eq 12");
-						year = Calendar.getInstance().getWeekYear();
-						System.err.println("year value " + year);
-					}
-
-					if (month < 10) {
-						strDate = year + "-0" + month + "-01";
-					} else {
-						strDate = year + "-" + month + "-01";
-					}
-					fromDate = strDate;
-
-				} else {
-					fromDate = dateFormat.format(firstDay);
-				}
-
-				int stockType = 1;
-				if (fr != null) {
-					stockType = fr.getStockType();
-				}
-
-				int year = Integer.parseInt(yearFormat.format(todaysDate));
-
-				List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
-						type);
-
-				System.err.println("FR STOCk = " + frStock);
-
-				List<ItemDisplay> tempItemData = itemDisplayRepo.getFrequentlyOrderedItemListByCust(frId, type,
-						applicableFor, custId);
-
-				if (tempItemData != null) {
-					if (frStock != null) {
-
-						for (ItemDisplay item : tempItemData) {
-							for (FrItemStock stock : frStock) {
-								if (item.getItemId() == stock.getId()) {
-									if (stock.getCurrentStock() > stock.getReorder()) {
-										item.setIsAvailable(0);
-									} else {
-										item.setIsAvailable(1);
-									}
-									break;
-								}
-							}
-						}
-
-						itemData = tempItemData;
-
-					}
-				}
-
-				if (itemData == null) {
-					itemData = new ArrayList<ItemDisplay>();
-				} else {
-
-					for (int i = 0; i < itemData.size(); i++) {
-
-						// ----------ITEM IMAGES------------
-						List<Images> itemImgList = new ArrayList<>();
-
-						if (imgList != null) {
-							for (Images image : imgList) {
-								if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
-									itemImgList.add(image);
-								}
-							}
-						}
-						itemData.get(i).setImageList(itemImgList);
-
-						// ----------ITEM TASTES------------
-						List<Ingrediant> taseList = new ArrayList<>();
-
-						if (allTasteList != null) {
-
-							List<Integer> tasteIdsList = new ArrayList<>();
-							try {
-								tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
-										.map(Integer::parseInt).collect(Collectors.toList());
-							} catch (Exception e) {
-							}
-
-							for (int t = 0; t < allTasteList.size(); t++) {
-								if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
-									taseList.add(allTasteList.get(t));
-								}
-							}
-
-						}
-						itemData.get(i).setTasteList(taseList);
-
-						// --------------------OFFER LIST--------------------------
-
-						List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
-
-						if (offerDisplayList != null) {
-							List<Integer> offerIdsList = new ArrayList<>();
-							try {
-								offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
-										.collect(Collectors.toList());
-							} catch (Exception e) {
-							}
-
-							for (int t = 0; t < offerDisplayList.size(); t++) {
-								if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
-									itemOfferList.add(offerDisplayList.get(t));
-								}
-							}
-						}
-						itemData.get(i).setOfferList(itemOfferList);
-
-					}
-				}
-
-			} catch (Exception e) {
-				System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
-				e.printStackTrace();
+			} else if (month == 12 && calCurrentMonth == 1) {
+				isMonthCloseApplicable = true;
 			}
 
-			return itemData;
+			if (isMonthCloseApplicable) {
+				System.err.println("Inside iMonthclose app");
+				String strDate;
+				int year;
+				if (month == 12) {
+					System.err.println("running month =12");
+					year = (Calendar.getInstance().getWeekYear() - 1);
+					System.err.println("year value " + year);
+				} else {
+					System.err.println("running month not eq 12");
+					year = Calendar.getInstance().getWeekYear();
+					System.err.println("year value " + year);
+				}
+
+				if (month < 10) {
+					strDate = year + "-0" + month + "-01";
+				} else {
+					strDate = year + "-" + month + "-01";
+				}
+				fromDate = strDate;
+
+			} else {
+				fromDate = dateFormat.format(firstDay);
+			}
+
+			int stockType = 1;
+			if (fr != null) {
+				stockType = fr.getStockType();
+			}
+
+			int year = Integer.parseInt(yearFormat.format(todaysDate));
+
+			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
+					type);
+
+			System.err.println("FR STOCk = " + frStock);
+
+			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
+
+			if (tempItemData != null) {
+				if (frStock != null) {
+
+					for (ItemDisplay item : tempItemData) {
+						for (FrItemStock stock : frStock) {
+							if (item.getItemId() == stock.getId()) {
+								if (stock.getCurrentStock() > stock.getReorder()) {
+									item.setIsAvailable(0);
+								} else {
+									item.setIsAvailable(1);
+								}
+								break;
+							}
+						}
+					}
+
+					itemData = tempItemData;
+
+				}
+			}
+
+			if (itemData == null) {
+				itemData = new ArrayList<>();
+			}
+
+		} catch (Exception e) {
+			System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
+			e.printStackTrace();
 		}
 
-		@RequestMapping(value = { "/getRelatedItemListByItemIds" }, method = RequestMethod.POST)
-		public @ResponseBody List<ItemDisplay> getRelatedItemListByItemIds(@RequestParam("frId") int frId,
-				@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
-				@RequestParam("itemIds") List<Integer> itemIds) {
+		return itemData;
+	}
 
-			List<ItemDisplay> itemData = null;
+	@RequestMapping(value = { "/getFrequentlyOrderedItemListByCust" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemDisplay> getFrequentlyOrderedItemListByCust(@RequestParam("frId") int frId,
+			@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
+			@RequestParam("custId") int custId) {
 
-			try {
+		List<ItemDisplay> itemData = null;
 
-				List<Images> imgList = imagesRepo.findAllByDelStatus(0);
-				List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+		try {
 
-				// ------------ALL OFFER--------------------
-				List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
 
-				List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
-				if (allOfferList != null) {
-					Set<Integer> offerSet = new HashSet<Integer>();
-					for (ItemWiseOfferData data : allOfferList) {
-						offerSet.add(data.getOfferId());
-					}
+			// ------------ALL OFFER--------------------
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
 
-					List<Integer> offerIdList = new ArrayList<>();
-					offerIdList.addAll(offerSet);
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
 
-					Collections.sort(offerIdList);
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
 
-					for (int i = 0; i < offerIdList.size(); i++) {
-						for (int j = 0; j < allOfferList.size(); j++) {
-							if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+				Collections.sort(offerIdList);
 
-								ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
-										allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
-										allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
-										allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
-										allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
-										allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
-										allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
-										allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
-										allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
-										allOfferList.get(j).getDiscPer());
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
 
-								offerDisplayList.add(header);
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
 
-								break;
+							offerDisplayList.add(header);
 
-							}
+							break;
+
 						}
 					}
-
-					for (int i = 0; i < offerDisplayList.size(); i++) {
-
-						List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
-
-						for (int j = 0; j < allOfferList.size(); j++) {
-							ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
-									allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
-									allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
-									allOfferList.get(j).getSecondaryItemName());
-
-							detailList.add(detail);
-
-						}
-						offerDisplayList.get(i).setOfferDetailList(detailList);
-					}
-
 				}
 
-				Franchisee fr = franchiseeRepository.findByFrId(frId);
+				for (int i = 0; i < offerDisplayList.size(); i++) {
 
-				boolean isMonthCloseApplicable = false;
-				String fromDate = "", toDate = "";
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				DateFormat yearFormat = new SimpleDateFormat("yyyy");
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
 
-				List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
 
-				int month = 0;
+						detailList.add(detail);
 
-				for (PostFrItemStockHeader header : list) {
-					month = header.getMonth();
-					break;
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
 				}
 
-				Date todaysDate = new Date();
+			}
 
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(todaysDate);
+			Franchisee fr = franchiseeRepository.findByFrId(frId);
 
-				cal.set(Calendar.DAY_OF_MONTH, 1);
+			boolean isMonthCloseApplicable = false;
+			String fromDate = "", toDate = "";
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat yearFormat = new SimpleDateFormat("yyyy");
 
-				Date firstDay = cal.getTime();
+			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
 
-				DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-				Date date = new Date();
-				System.out.println(dateFormat1.format(date));
+			int month = 0;
 
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(date);
+			for (PostFrItemStockHeader header : list) {
+				month = header.getMonth();
+				break;
+			}
 
-				int dayOfMonth = cal1.get(Calendar.DATE);
+			Date todaysDate = new Date();
 
-				int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(todaysDate);
 
-				if (month < calCurrentMonth) {
+			cal.set(Calendar.DAY_OF_MONTH, 1);
 
-					isMonthCloseApplicable = true;
-					System.out.println("Day Of Month End ......");
+			Date firstDay = cal.getTime();
 
-				} else if (month == 12 && calCurrentMonth == 1) {
-					isMonthCloseApplicable = true;
-				}
+			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = new Date();
+			System.out.println(dateFormat1.format(date));
 
-				if (isMonthCloseApplicable) {
-					System.err.println("Inside iMonthclose app");
-					String strDate;
-					int year;
-					if (month == 12) {
-						System.err.println("running month =12");
-						year = (Calendar.getInstance().getWeekYear() - 1);
-						System.err.println("year value " + year);
-					} else {
-						System.err.println("running month not eq 12");
-						year = Calendar.getInstance().getWeekYear();
-						System.err.println("year value " + year);
-					}
+			Calendar cal1 = Calendar.getInstance();
+			cal1.setTime(date);
 
-					if (month < 10) {
-						strDate = year + "-0" + month + "-01";
-					} else {
-						strDate = year + "-" + month + "-01";
-					}
-					fromDate = strDate;
+			int dayOfMonth = cal1.get(Calendar.DATE);
 
+			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
+
+			if (month < calCurrentMonth) {
+
+				isMonthCloseApplicable = true;
+				System.out.println("Day Of Month End ......");
+
+			} else if (month == 12 && calCurrentMonth == 1) {
+				isMonthCloseApplicable = true;
+			}
+
+			if (isMonthCloseApplicable) {
+				System.err.println("Inside iMonthclose app");
+				String strDate;
+				int year;
+				if (month == 12) {
+					System.err.println("running month =12");
+					year = (Calendar.getInstance().getWeekYear() - 1);
+					System.err.println("year value " + year);
 				} else {
-					fromDate = dateFormat.format(firstDay);
+					System.err.println("running month not eq 12");
+					year = Calendar.getInstance().getWeekYear();
+					System.err.println("year value " + year);
 				}
 
-				int stockType = 1;
-				if (fr != null) {
-					stockType = fr.getStockType();
+				if (month < 10) {
+					strDate = year + "-0" + month + "-01";
+				} else {
+					strDate = year + "-" + month + "-01";
 				}
+				fromDate = strDate;
 
-				int year = Integer.parseInt(yearFormat.format(todaysDate));
+			} else {
+				fromDate = dateFormat.format(firstDay);
+			}
 
-				List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
-						type);
+			int stockType = 1;
+			if (fr != null) {
+				stockType = fr.getStockType();
+			}
 
-				System.err.println("FR STOCk = " + frStock);
+			int year = Integer.parseInt(yearFormat.format(todaysDate));
 
-				List<ItemDisplay> allItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
+			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
+					type);
 
-				if (allItemData != null) {
+			System.err.println("FR STOCk = " + frStock);
 
-					Set<Integer> idSet = new HashSet<Integer>();
+			List<ItemDisplay> tempItemData = itemDisplayRepo.getFrequentlyOrderedItemListByCust(frId, type,
+					applicableFor, custId);
 
-					if (itemIds != null) {
-						for (ItemDisplay item : allItemData) {
-							if (itemIds.contains(item.getItemId())) {
+			if (tempItemData != null) {
+				if (frStock != null) {
 
-								if (!item.getRelItemIds().isEmpty()) {
-									List<Integer> relIdList = Stream.of(item.getRelItemIds().split(","))
-											.map(Integer::parseInt).collect(Collectors.toList());
-									idSet.addAll(relIdList);
+					for (ItemDisplay item : tempItemData) {
+						for (FrItemStock stock : frStock) {
+							if (item.getItemId() == stock.getId()) {
+								if (stock.getCurrentStock() > stock.getReorder()) {
+									item.setIsAvailable(0);
+								} else {
+									item.setIsAvailable(1);
 								}
-
+								break;
 							}
 						}
 					}
 
-					List<Integer> relItemIds = new ArrayList<>();
-					relItemIds.addAll(idSet);
+					itemData = tempItemData;
 
-					List<ItemDisplay> tempItemData = new ArrayList<>();
+				}
+			}
 
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
+							}
+						}
+					}
+					itemData.get(i).setImageList(itemImgList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
+
+				}
+			}
+
+		} catch (Exception e) {
+			System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return itemData;
+	}
+
+	@RequestMapping(value = { "/getRelatedItemListByItemIds" }, method = RequestMethod.POST)
+	public @ResponseBody List<ItemDisplay> getRelatedItemListByItemIds(@RequestParam("frId") int frId,
+			@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
+			@RequestParam("itemIds") List<Integer> itemIds) {
+
+		List<ItemDisplay> itemData = null;
+
+		try {
+
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+
+			// ------------ALL OFFER--------------------
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
+					}
+				}
+
+				for (int i = 0; i < offerDisplayList.size(); i++) {
+
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
+
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
+
+						detailList.add(detail);
+
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
+
+			}
+
+			Franchisee fr = franchiseeRepository.findByFrId(frId);
+
+			boolean isMonthCloseApplicable = false;
+			String fromDate = "", toDate = "";
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
+
+			int month = 0;
+
+			for (PostFrItemStockHeader header : list) {
+				month = header.getMonth();
+				break;
+			}
+
+			Date todaysDate = new Date();
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(todaysDate);
+
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+
+			Date firstDay = cal.getTime();
+
+			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = new Date();
+			System.out.println(dateFormat1.format(date));
+
+			Calendar cal1 = Calendar.getInstance();
+			cal1.setTime(date);
+
+			int dayOfMonth = cal1.get(Calendar.DATE);
+
+			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
+
+			if (month < calCurrentMonth) {
+
+				isMonthCloseApplicable = true;
+				System.out.println("Day Of Month End ......");
+
+			} else if (month == 12 && calCurrentMonth == 1) {
+				isMonthCloseApplicable = true;
+			}
+
+			if (isMonthCloseApplicable) {
+				System.err.println("Inside iMonthclose app");
+				String strDate;
+				int year;
+				if (month == 12) {
+					System.err.println("running month =12");
+					year = (Calendar.getInstance().getWeekYear() - 1);
+					System.err.println("year value " + year);
+				} else {
+					System.err.println("running month not eq 12");
+					year = Calendar.getInstance().getWeekYear();
+					System.err.println("year value " + year);
+				}
+
+				if (month < 10) {
+					strDate = year + "-0" + month + "-01";
+				} else {
+					strDate = year + "-" + month + "-01";
+				}
+				fromDate = strDate;
+
+			} else {
+				fromDate = dateFormat.format(firstDay);
+			}
+
+			int stockType = 1;
+			if (fr != null) {
+				stockType = fr.getStockType();
+			}
+
+			int year = Integer.parseInt(yearFormat.format(todaysDate));
+
+			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
+					type);
+
+			System.err.println("FR STOCk = " + frStock);
+
+			List<ItemDisplay> allItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
+
+			if (allItemData != null) {
+
+				Set<Integer> idSet = new HashSet<Integer>();
+
+				if (itemIds != null) {
 					for (ItemDisplay item : allItemData) {
-						if (relItemIds.contains(item.getItemId())) {
+						if (itemIds.contains(item.getItemId())) {
 
-							tempItemData.add(item);
-
-						}
-					}
-
-					if (frStock != null) {
-
-						for (ItemDisplay item : tempItemData) {
-							for (FrItemStock stock : frStock) {
-								if (item.getItemId() == stock.getId()) {
-									if (stock.getCurrentStock() > stock.getReorder()) {
-										item.setIsAvailable(0);
-									} else {
-										item.setIsAvailable(1);
-									}
-									break;
-								}
-							}
-						}
-
-						itemData = tempItemData;
-
-					}
-				}
-
-				if (itemData == null) {
-					itemData = new ArrayList<ItemDisplay>();
-				} else {
-
-					for (int i = 0; i < itemData.size(); i++) {
-
-						// ----------ITEM IMAGES------------
-						List<Images> itemImgList = new ArrayList<>();
-
-						if (imgList != null) {
-							for (Images image : imgList) {
-								if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
-									itemImgList.add(image);
-								}
-							}
-						}
-						itemData.get(i).setImageList(itemImgList);
-
-						// ----------ITEM TASTES------------
-						List<Ingrediant> taseList = new ArrayList<>();
-
-						if (allTasteList != null) {
-
-							List<Integer> tasteIdsList = new ArrayList<>();
-							try {
-								tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+							if (!item.getRelItemIds().isEmpty()) {
+								List<Integer> relIdList = Stream.of(item.getRelItemIds().split(","))
 										.map(Integer::parseInt).collect(Collectors.toList());
-							} catch (Exception e) {
-							}
-
-							for (int t = 0; t < allTasteList.size(); t++) {
-								if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
-									taseList.add(allTasteList.get(t));
-								}
+								idSet.addAll(relIdList);
 							}
 
 						}
-						itemData.get(i).setTasteList(taseList);
+					}
+				}
 
-						// --------------------OFFER LIST--------------------------
+				List<Integer> relItemIds = new ArrayList<>();
+				relItemIds.addAll(idSet);
 
-						List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+				List<ItemDisplay> tempItemData = new ArrayList<>();
 
-						if (offerDisplayList != null) {
-							List<Integer> offerIdsList = new ArrayList<>();
-							try {
-								offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
-										.collect(Collectors.toList());
-							} catch (Exception e) {
-							}
+				for (ItemDisplay item : allItemData) {
+					if (relItemIds.contains(item.getItemId())) {
 
-							for (int t = 0; t < offerDisplayList.size(); t++) {
-								if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
-									itemOfferList.add(offerDisplayList.get(t));
-								}
-							}
-						}
-						itemData.get(i).setOfferList(itemOfferList);
+						tempItemData.add(item);
 
 					}
 				}
 
-			} catch (Exception e) {
-				System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
-				e.printStackTrace();
+				if (frStock != null) {
+
+					for (ItemDisplay item : tempItemData) {
+						for (FrItemStock stock : frStock) {
+							if (item.getItemId() == stock.getId()) {
+								if (stock.getCurrentStock() > stock.getReorder()) {
+									item.setIsAvailable(0);
+								} else {
+									item.setIsAvailable(1);
+								}
+								break;
+							}
+						}
+					}
+
+					itemData = tempItemData;
+
+				}
 			}
 
-			return itemData;
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
+							}
+						}
+					}
+					itemData.get(i).setImageList(itemImgList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
+
+				}
+			}
+
+		} catch (Exception e) {
+			System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
+			e.printStackTrace();
 		}
+
+		return itemData;
+	}
 
 }

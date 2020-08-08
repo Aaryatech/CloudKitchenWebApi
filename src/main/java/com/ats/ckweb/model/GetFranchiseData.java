@@ -4,7 +4,7 @@ import java.util.List;
 
 public class GetFranchiseData {
 
-	private List<FranchiseData> franchise;
+	private List<FranchiseData> franchise; 
 	private Info info;
 
 	public List<FranchiseData> getFranchise() {
@@ -22,7 +22,7 @@ public class GetFranchiseData {
 	public void setInfo(Info info) {
 		this.info = info;
 	}
-
+ 
 	@Override
 	public String toString() {
 		return "GetFranchiseData [franchise=" + franchise + ", info=" + info + "]";
