@@ -75,7 +75,7 @@ public class GetOrderTrailList {
 		this.actionByUserId = actionByUserId;
 	}
 	
-	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss aa")
+	@JsonFormat(locale = "English", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss a")
 	public Date getActionDateTime() {
 		return actionDateTime;
 	}
