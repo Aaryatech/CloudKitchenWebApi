@@ -2,7 +2,10 @@ package com.ats.ckweb.repository;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -67,6 +70,12 @@ public interface GetGrievanceHeaderRepo extends JpaRepository<GetGrievanceHeader
 			"and m_franchisee.fr_id=tn_order_header.fr_id and t_grievences.grieve_id=:grieveId  ",nativeQuery=true)
 
 	GetGrievanceHeader getGrievanceHeaderByGrieveId(@Param("grieveId")int grieveId);
+	
+	@Transactional
+	@Modifying
+	@Query(value="UPDATE t_grievences SET current_status=:status  WHERE grieve_id=:grieveId",nativeQuery=true)
+	int updateGrievHeaderStatus(@Param("grieveId") int grieveId,@Param("status") int status);
+	
 	
 	
 }

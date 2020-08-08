@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,9 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.GetGrievanceHeader;
 import com.ats.ckweb.model.GetGrievanceTrail;
+import com.ats.ckweb.model.GrievanceActionMaster;
 import com.ats.ckweb.model.LoginResponse;
+import com.ats.ckweb.model.OrderGrievanceTrail;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
+import com.ats.ckweb.repository.GrievanceActionMasterRepo;
+import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
 
 @RestController
 
@@ -24,6 +29,12 @@ public class GrievanceControllerApi {
 
 	@Autowired
 	private GetGrievanceTrailRepo getGrievanceTrailRepo;
+
+	@Autowired
+	private GrievanceActionMasterRepo grievanceActionMasterRepo;
+	
+	@Autowired OrderGrievanceTrailRepo grievTrailRepo;
+	
 
 	@RequestMapping(value = { "/getGrievanceHeaderList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -67,7 +78,7 @@ public class GrievanceControllerApi {
 	@RequestMapping(value = { "/getGrievanceTrailByGrivId" }, method = RequestMethod.POST)
 	@ResponseBody
 	public List<GetGrievanceTrail> getGrievanceTrailByGrivId(@RequestParam("grieveId") int grieveId) {
- 
+
 		List<GetGrievanceTrail> grievTrailList = null;
 		try {
 			grievTrailList = getGrievanceTrailRepo.getGrievanceTrailListByGrievencesId(grieveId);
@@ -80,4 +91,58 @@ public class GrievanceControllerApi {
 		}
 		return grievTrailList;
 	}
+
+	@RequestMapping(value = { "/getGrivActionList" }, method = RequestMethod.GET)
+	@ResponseBody
+	public List<GrievanceActionMaster> getGrivActionList() {
+
+		List<GrievanceActionMaster> grievTrailList = null;
+		try {
+			grievTrailList = grievanceActionMasterRepo.findAllByIsActiveAndDelStatus(1, 1);
+			if (grievTrailList == null) {
+				grievTrailList = new ArrayList<GrievanceActionMaster>();
+			}
+		} catch (Exception e) {
+			grievTrailList = new ArrayList<GrievanceActionMaster>();
+		}
+
+		return grievTrailList;
+	}
+
+	
+	//Sachin 2020-08-08 
+	//Desc - To save grievance trail and update grievance header for status.
+	
+	
+	
+	
+	@RequestMapping(value = { "/saveGrievTrailAndUpdateHeader" }, method = RequestMethod.POST)
+	@ResponseBody
+	public OrderGrievanceTrail saveGrievTrailAndUpdateHeader(@RequestBody OrderGrievanceTrail grivTrail) {
+		OrderGrievanceTrail trailRes=new OrderGrievanceTrail();
+		
+		try {
+			
+			GrievanceActionMaster actionName=grievanceActionMasterRepo.findByGrivActionValue(grivTrail.getGrivActionValue());
+			
+			grivTrail.setGrivActionText(""+actionName.getGrivActionText());
+			
+			trailRes=grievTrailRepo.save(grivTrail);
+			
+			if(trailRes!=null) {
+				
+				int x=getGrievanceHeaderRepo.updateGrievHeaderStatus(trailRes.getGrievencesId(),trailRes.getStatus());
+				
+			}
+			
+		}catch (Exception e) {
+			trailRes=new OrderGrievanceTrail();
+			
+		}
+		
+		return trailRes;
+		
+	}
+	
+	
 }

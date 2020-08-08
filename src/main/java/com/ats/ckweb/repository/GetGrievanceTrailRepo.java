@@ -20,7 +20,7 @@ public interface GetGrievanceTrailRepo extends JpaRepository<GetGrievanceTrail, 
 			"\n" + 
 			"FROM t_grievences_trail \n" + 
 			"LEFT JOIN  mn_user user_data on t_grievences_trail.action_by_user_id=user_data.user_id\n" + 
-			"WHERE t_grievences_trail.grievences_id=:grieveId",nativeQuery=true)
+			"WHERE t_grievences_trail.grievences_id=:grieveId ORDER BY t_grievences_trail.action_date_time DESC",nativeQuery=true)
 	
 	List<GetGrievanceTrail> getGrievanceTrailListByGrievencesId(@Param("grieveId") int grieveId );
 

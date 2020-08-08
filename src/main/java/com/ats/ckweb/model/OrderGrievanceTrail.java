@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_grievences_trail")
 public class OrderGrievanceTrail {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "trail_id")
@@ -21,7 +21,7 @@ public class OrderGrievanceTrail {
 
 	@Column(name = "remark")
 	private String remark;
- 
+
 	@Column(name = "status")
 	private int status;
 
@@ -30,7 +30,7 @@ public class OrderGrievanceTrail {
 
 	@Column(name = "action_date_time")
 	private String actionDateTime;
- 
+
 	@Column(name = "extra_int1")
 	private int extraInt1;
 
@@ -42,21 +42,25 @@ public class OrderGrievanceTrail {
 
 	@Column(name = "extra_var2")
 	private String extraVar2;
-	
+
 	@Column(name = "identified_root_cause")
 	private String identifiedRootCause;
-	
+
 	@Column(name = "grievence_res_type")
 	private int grievenceResType;
-	
+
 	@Column(name = "resolution_detail")
 	private String resolutionDetail;
-	
+
 	@Column(name = "repay_amt")
-	private float repay_amt;
-	
+	private float repayAmt;
+
 	@Column(name = "repay_details")
 	private String repayDetails;
+	@Column(name = "griv_action_value")
+	private int grivActionValue;
+	@Column(name = "griv_action_text")
+	private String grivActionText;
 
 	public int getTrailId() {
 		return trailId;
@@ -162,12 +166,12 @@ public class OrderGrievanceTrail {
 		this.resolutionDetail = resolutionDetail;
 	}
 
-	public float getRepay_amt() {
-		return repay_amt;
+	public float getRepayAmt() {
+		return repayAmt;
 	}
 
-	public void setRepay_amt(float repay_amt) {
-		this.repay_amt = repay_amt;
+	public void setRepay_amt(float repayAmt) {
+		this.repayAmt = repayAmt;
 	}
 
 	public String getRepayDetails() {
@@ -178,17 +182,30 @@ public class OrderGrievanceTrail {
 		this.repayDetails = repayDetails;
 	}
 
+	public int getGrivActionValue() {
+		return grivActionValue;
+	}
+
+	public void setGrivActionValue(int grivActionValue) {
+		this.grivActionValue = grivActionValue;
+	}
+
+	public String getGrivActionText() {
+		return grivActionText;
+	}
+
+	public void setGrivActionText(String grivActionText) {
+		this.grivActionText = grivActionText;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderGrievanceTrail [trailId=" + trailId + ", grievencesId=" + grievencesId + ", remark=" + remark
 				+ ", status=" + status + ", actionByUserId=" + actionByUserId + ", actionDateTime=" + actionDateTime
 				+ ", extraInt1=" + extraInt1 + ", extraInt2=" + extraInt2 + ", extraVar1=" + extraVar1 + ", extraVar2="
 				+ extraVar2 + ", identifiedRootCause=" + identifiedRootCause + ", grievenceResType=" + grievenceResType
-				+ ", resolutionDetail=" + resolutionDetail + ", repay_amt=" + repay_amt + ", repayDetails="
-				+ repayDetails + "]";
+				+ ", resolutionDetail=" + resolutionDetail + ", repayAmt=" + repayAmt + ", repayDetails=" + repayDetails
+				+ ", grivActionValue=" + grivActionValue + ", grivActionText=" + grivActionText + "]";
 	}
-	
-	
-	
 
 }
