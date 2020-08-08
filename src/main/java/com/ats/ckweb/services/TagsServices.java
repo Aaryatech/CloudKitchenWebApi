@@ -166,6 +166,10 @@ public interface TagsServices {
 	List<GetItemTagDetails> getItemTagDtl(int tagId, int compId);
 
 	List<Designation> getAllDesignationsByCompId(int compId);
+
+	List<City> getAllCitiesOnly(int compId);
+
+	List<City> getAllCitiesByCompId(int compId);
 	
 
 	

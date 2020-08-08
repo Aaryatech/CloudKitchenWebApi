@@ -32,7 +32,7 @@ public class Agent {
 	private String profilePic;
 	
 	@Column(name = "franchise_id")
-	private int franchiseId;
+	private String franchiseId;
 	
 	@Column(name = "area_ids")
 	private String areaIds;
@@ -107,11 +107,11 @@ public class Agent {
 		this.profilePic = profilePic;
 	}
 
-	public int getFranchiseId() {
+	public String getFranchiseId() {
 		return franchiseId;
 	}
 
-	public void setFranchiseId(int franchiseId) {
+	public void setFranchiseId(String franchiseId) {
 		this.franchiseId = franchiseId;
 	}
 

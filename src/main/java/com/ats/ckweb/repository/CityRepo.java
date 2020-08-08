@@ -16,11 +16,15 @@ public interface CityRepo extends JpaRepository<City, Integer> {
 
 	List<City> findByDelStatusAndIsActiveOrderByCityIdDesc(int del, int i);
 	
+	List<City> findByDelStatusAndIsActiveAndCompanyIdOrderByCityIdDesc(int del, int i, int compId);
+	
 	City findByCityCodeIgnoreCase(String cityCode);
 	
 	City findByCityCodeIgnoreCaseAndCityIdNot(String cityCode, int cityId);
 	
 	City findByCityId(int cityId);
+	
+	List<City> findByDelStatusAndCompanyIdAndExInt1OrderByCityIdDesc(int del, int compId, int type);
 	
 	@Transactional
 	@Modifying

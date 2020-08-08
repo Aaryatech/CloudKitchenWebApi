@@ -524,4 +524,16 @@ public class TagServiceImpl implements TagsServices {
 		return list;
 	}
 
+	@Override
+	public List<City> getAllCitiesOnly(int compId) {
+		List<City> cityList = cityRepo.findByDelStatusAndCompanyIdAndExInt1OrderByCityIdDesc(0, compId, 0);
+		return cityList;
+	}
+
+	@Override
+	public List<City> getAllCitiesByCompId(int compId) {
+		List<City> cityList = cityRepo.findByDelStatusAndIsActiveAndCompanyIdOrderByCityIdDesc(0, 0, compId);
+		return cityList;
+	}
+
 }

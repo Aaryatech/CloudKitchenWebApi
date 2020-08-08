@@ -466,6 +466,32 @@ public class MasterAPIController {
 		return cityList;
 
 	}
+	
+	@RequestMapping(value = { "/getAllCitiesByCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<City> getAllCities(@RequestParam int compId) {
+
+		List<City> cityList = new ArrayList<City>();
+		try {
+			cityList = tagService.getAllCitiesByCompId(compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cityList;
+
+	}
+	
+	@RequestMapping(value = { "/getAllCitiesOnly" }, method = RequestMethod.POST)
+	public @ResponseBody List<City> getAllCitiesOnly(@RequestParam int compId) {
+
+		List<City> cityList = new ArrayList<City>();
+		try {
+			cityList = tagService.getAllCitiesOnly(compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cityList;
+
+	}
 
 	@RequestMapping(value = { "/getCityById" }, method = RequestMethod.POST)
 	public @ResponseBody City getCityById(@RequestParam int cityId) {
