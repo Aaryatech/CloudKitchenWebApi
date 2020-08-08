@@ -41,6 +41,7 @@ import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
+import com.ats.ckweb.repository.AreaRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
 import com.ats.ckweb.services.CompanyServices;
 import com.ats.ckweb.services.TagsServices;
@@ -54,6 +55,9 @@ public class MasterAPIController {
 	@Autowired
 	CompanyServices companyService;
 
+	@Autowired
+	AreaRepo areaRepo;
+
 	@RequestMapping(value = { "/getDesignations" }, method = RequestMethod.GET)
 	public @ResponseBody List<Designation> getDesignations() {
 
@@ -66,8 +70,7 @@ public class MasterAPIController {
 		return list;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "/getDesignationsByCompId" }, method = RequestMethod.POST)
 	public @ResponseBody List<Designation> getDesignationsByCompId(@RequestParam int compId) {
 
@@ -253,7 +256,7 @@ public class MasterAPIController {
 		}
 		return info;
 	}
-	
+
 	@RequestMapping(value = { "/isTasteCatAssign" }, method = RequestMethod.POST)
 	public @ResponseBody Info isTasteCatAssign(@RequestParam int ingerediantCatId) {
 
@@ -634,6 +637,23 @@ public class MasterAPIController {
 
 		try {
 			list = tagService.getAreaCityAndCompById(cityId, compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@RequestMapping(value = { "/getAreaByCityIdsAndCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<Area> getAreaByCityIdAndCopmId(@RequestParam List<Integer> cityId,
+			@RequestParam int compId) {
+
+		List<Area> list = null;
+
+		try {
+			list = areaRepo.getAreaByCityIdsAndCompId(cityId, compId);
+			if (list == null) {
+				list = new ArrayList<Area>();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1235,7 +1255,7 @@ public class MasterAPIController {
 		return ingrediantList;
 
 	}
-	
+
 	@RequestMapping(value = { "/showAllItemTags" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetItemTagDetails> showAllItemTags(@RequestParam int tagId, @RequestParam int compId) {
 
@@ -1243,11 +1263,10 @@ public class MasterAPIController {
 
 		return itmTagList;
 	}
-	
-	
+
 	/******************************************************************************************/
-	//Agent
-	
+	// Agent
+
 	@RequestMapping(value = { "/getAllAgents" }, method = RequestMethod.POST)
 	public @ResponseBody List<Agent> getAllItems(@RequestParam int compId) {
 
@@ -1271,7 +1290,7 @@ public class MasterAPIController {
 		}
 		return agent;
 	}
-	
+
 	@RequestMapping(value = { "/addNewAgent" }, method = RequestMethod.POST)
 	public @ResponseBody Agent addRelatedProductConfig(@RequestBody Agent agent) {
 
@@ -1283,7 +1302,7 @@ public class MasterAPIController {
 		}
 		return saveAgent;
 	}
-	
+
 	@RequestMapping(value = { "/deleteAgentById" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteAgentById(@RequestParam int agentId) {
 
@@ -1302,7 +1321,7 @@ public class MasterAPIController {
 		}
 		return info;
 	}
-	
+
 	@RequestMapping(value = { "/getAgentByMob" }, method = RequestMethod.POST)
 	public @ResponseBody Agent getAgentByMob(@RequestParam String mobile) {
 

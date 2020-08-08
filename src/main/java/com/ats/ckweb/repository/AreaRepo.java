@@ -35,4 +35,7 @@ public interface AreaRepo extends JpaRepository<Area, Integer> {
 
 	@Query(value="SELECT * FROM mn_area WHERE city_id=:cityId and del_status=0",nativeQuery=true)
 	List<Area> getarealistbycityid(@Param("cityId") int cityId);
+	
+	@Query(value="SELECT * FROM mn_area WHERE city_id IN(:cityId) and del_status=0 and company_id=:compId",nativeQuery=true)
+	List<Area> getAreaByCityIdsAndCompId(@Param("cityId") List<Integer> cityId,@Param("compId") int compId);
 }

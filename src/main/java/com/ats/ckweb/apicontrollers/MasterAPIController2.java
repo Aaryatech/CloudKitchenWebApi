@@ -282,6 +282,19 @@ public class MasterAPIController2 {
 		}
 		return franchisee;
 	}
+	
+	@RequestMapping(value = { "/getAllNotConfiguredFranchisee" }, method = RequestMethod.GET)
+	public @ResponseBody List<Franchisee> getAllNotConfiguredFranchisee() {
+
+		List<Franchisee> franchisee = null;
+
+		franchisee = franchiseeRepository.getAllNotConfiguredFranchisee();
+
+		if (franchisee == null) {
+			franchisee = new ArrayList<Franchisee>();
+		}
+		return franchisee;
+	}
 
 	// Author-Anmol Shirke Created On-22-07-2020
 	// Desc- Returns Info object - delete item config details.

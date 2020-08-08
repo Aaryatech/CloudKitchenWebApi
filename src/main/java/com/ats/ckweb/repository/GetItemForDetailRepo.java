@@ -17,7 +17,7 @@ public interface GetItemForDetailRepo extends JpaRepository<GetItemForDetail, In
 			"FROM\r\n" + 
 			"    m_item i\r\n" + 
 			"WHERE\r\n" + 
-			"    i.del_status = 0 AND i.id NOT IN (SELECT item_id FROM mn_detail WHERE del_status=0)",nativeQuery=true)
+			"    i.del_status = 0 AND i.is_saleable=1 AND i.id NOT IN (SELECT item_id FROM mn_detail WHERE del_status=0) ORDER BY i.item_name",nativeQuery=true)
 	List<GetItemForDetail> getItemsForDetail();
 	
 	
@@ -29,7 +29,7 @@ public interface GetItemForDetailRepo extends JpaRepository<GetItemForDetail, In
 			"FROM\r\n" + 
 			"    m_item i\r\n" + 
 			"WHERE\r\n" + 
-			"    i.del_status = 0",nativeQuery=true)
+			"    i.del_status = 0 AND i.is_saleable=1  ORDER BY i.item_name",nativeQuery=true)
 	List<GetItemForDetail> getAllItemsForDetail();
 
 	

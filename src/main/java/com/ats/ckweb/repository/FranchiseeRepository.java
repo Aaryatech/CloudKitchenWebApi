@@ -48,4 +48,9 @@ public interface FranchiseeRepository extends JpaRepository<Franchisee, Integer>
 		public List<Franchisee> findAllFranchisee();
 		
 		public Franchisee findByFrId(int frId);
+		
+		@Query(value="SELECT * FROM m_franchisee f WHERE f.del_status=0 AND f.fr_id NOT IN(SELECT fr_id FROM tn_fr_config WHERE del_status=0 ) ORDER BY f.fr_name",nativeQuery=true)
+		public List<Franchisee> getAllNotConfiguredFranchisee();
+		
+		
 	}

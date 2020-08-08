@@ -10,7 +10,7 @@ public class GetFrConfigList {
 	private int frConfigId;
 	private int frId;
 	private int frType;
-	private int cityIds;
+	private String cityIds;
 	private String areaIds;
 	private double fromLatitude;
 	private double fromLongitude;
@@ -44,10 +44,10 @@ public class GetFrConfigList {
 	public void setFrType(int frType) {
 		this.frType = frType;
 	}
-	public int getCityIds() {
+	public String getCityIds() {
 		return cityIds;
 	}
-	public void setCityIds(int cityIds) {
+	public void setCityIds(String cityIds) {
 		this.cityIds = cityIds;
 	}
 	public String getAreaIds() {

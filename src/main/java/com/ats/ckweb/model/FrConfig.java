@@ -23,7 +23,7 @@ public class FrConfig {
 	private int frType;
 	
 	@Column(name = "city_ids")
-	private int cityIds;
+	private String cityIds;
 	
 	@Column(name = "area_ids")
 	private String areaIds;
@@ -106,11 +106,11 @@ public class FrConfig {
 		this.frType = frType;
 	}
 
-	public int getCityIds() {
+	public String getCityIds() {
 		return cityIds;
 	}
 
-	public void setCityIds(int cityIds) {
+	public void setCityIds(String cityIds) {
 		this.cityIds = cityIds;
 	}
 
