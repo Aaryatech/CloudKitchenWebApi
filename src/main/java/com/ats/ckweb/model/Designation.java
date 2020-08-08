@@ -26,7 +26,7 @@ public class Designation {
 	private int delStatus;
 	
 	@Column(name = "ex_int1")
-	private int eInt1;
+	private int exInt1;
 	
 	@Column(name = "ex_int2")
 	private int exInt2;
@@ -69,12 +69,13 @@ public class Designation {
 		this.delStatus = delStatus;
 	}
 
-	public int geteInt1() {
-		return eInt1;
+	
+	public int getExInt1() {
+		return exInt1;
 	}
 
-	public void seteInt1(int eInt1) {
-		this.eInt1 = eInt1;
+	public void setExInt1(int exInt1) {
+		this.exInt1 = exInt1;
 	}
 
 	public int getExInt2() {
@@ -104,7 +105,7 @@ public class Designation {
 	@Override
 	public String toString() {
 		return "Designation [designationId=" + designationId + ", designation=" + designation + ", isActive=" + isActive
-				+ ", delStatus=" + delStatus + ", eInt1=" + eInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1
+				+ ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1
 				+ ", exVar2=" + exVar2 + "]";
 	}
 	

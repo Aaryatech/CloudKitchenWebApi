@@ -76,7 +76,7 @@ public class MasterAPIController {
 
 		List<Designation> list = new ArrayList<Designation>();
 		try {
-			list = tagService.getAllDesignationsBtCompId(compId);
+			list = tagService.getAllDesignationsByCompId(compId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
