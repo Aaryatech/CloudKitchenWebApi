@@ -17,7 +17,7 @@ public interface CustomerDisplayRepo extends JpaRepository<CustomerDisplay, Inte
 			"    l.lang_name,\r\n" + 
 			"    ct.city_name\r\n" + 
 			"FROM\r\n" + 
-			"    mn_customer c,\r\n" + 
+			"    m_customer c,\r\n" + 
 			"    mn_language l,\r\n" + 
 			"    mn_city ct\r\n" + 
 			"WHERE\r\n" + 
@@ -30,7 +30,7 @@ public interface CustomerDisplayRepo extends JpaRepository<CustomerDisplay, Inte
 			"        l.lang_name,\r\n" + 
 			"        '' as city_name  \r\n" + 
 			"    FROM\r\n" + 
-			"        mn_customer c,\r\n" + 
+			"        m_customer c,\r\n" + 
 			"        mn_language l \r\n" + 
 			"    WHERE\r\n" + 
 			"        c.is_active = 0 \r\n" + 
@@ -45,13 +45,14 @@ public interface CustomerDisplayRepo extends JpaRepository<CustomerDisplay, Inte
 			"        l.lang_name,\r\n" + 
 			"        '' as city_name  \r\n" + 
 			"    FROM\r\n" + 
-			"        mn_customer c,\r\n" + 
+			"        m_customer c,\r\n" + 
 			"        mn_language l \r\n" + 
 			"    WHERE\r\n" + 
 			"        c.del_status = 0  \r\n" + 
 			"        AND c.lang_id = l.lang_id  \r\n" + 
 			"        AND c.phone_number=:mobileNo", nativeQuery = true)
 	public List<CustomerDisplay> getCustomerByMobileNo(@Param("mobileNo")String mobileNo);
+	
 	
 	
 }

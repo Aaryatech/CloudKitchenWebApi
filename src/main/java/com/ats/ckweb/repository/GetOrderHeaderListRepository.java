@@ -20,7 +20,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct,\n" + 
 			"        mn_area ar,\n" + 
-			"        mn_customer cm,\n" + 
+			"        m_customer cm,\n" + 
 			"        m_franchisee fr\n" + 
 			"    where\n" + 
 			"        oh.del_status=0 \n" + 
@@ -42,7 +42,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct,\n" + 
 			"        mn_area ar,\n" + 
-			"        mn_customer cm,\n" + 
+			"        m_customer cm,\n" + 
 			"        m_franchisee fr     \n" + 
 			"    where\n" + 
 			"        delivery_date=:date \n" + 
@@ -66,7 +66,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct,\n" + 
 			"        mn_area ar,\n" + 
-			"        mn_customer cm,\n" + 
+			"        m_customer cm,\n" + 
 			"        m_franchisee fr          \n" + 
 			"    where\n" + 
 			"        oh.del_status=0      \n" + 
@@ -88,7 +88,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct,\n" + 
 			"        mn_area ar,\n" + 
-			"        mn_customer cm,\n" + 
+			"        m_customer cm,\n" + 
 			"        m_franchisee fr          \n" + 
 			"    where\n" + 
 			"        oh.del_status=0      \n" + 

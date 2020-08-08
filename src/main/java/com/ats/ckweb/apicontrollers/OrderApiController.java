@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.model.CustomerDisplay;
 import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
+import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.OrderDetail;
 import com.ats.ckweb.model.OrderFeedback;
@@ -28,6 +29,7 @@ import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
+import com.ats.ckweb.repository.GetOrderTrailListRepository;
 import com.ats.ckweb.repository.OrderDetailRepository;
 import com.ats.ckweb.repository.OrderFeedbackRepo;
 import com.ats.ckweb.repository.OrderGrievanceRepo;
@@ -64,6 +66,9 @@ public class OrderApiController {
 
 	@Autowired
 	OrderGrievanceTrailRepo orderGrievanceTrailRepo;
+
+	@Autowired
+	GetOrderTrailListRepository getOrderTrailListRepository;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -139,7 +144,7 @@ public class OrderApiController {
 	@RequestMapping(value = { "/changeStatusByOrderId" }, method = RequestMethod.POST)
 	public @ResponseBody Info changeStatusByOrderId(@RequestParam("status") int status,
 			@RequestParam("userId") int userId, @RequestParam("orderId") int orderId,
-			@RequestParam("remark") String remark) {
+			@RequestParam("remark") String remark,@RequestParam("type") int type) {
 
 		Info info = new Info();
 
@@ -155,6 +160,7 @@ public class OrderApiController {
 			orderTrail.setActionDateTime(sf.format(dt));
 			orderTrail.setStatus(status);
 			orderTrail.setExVar1(remark);
+			orderTrail.setExInt1(type);
 			OrderTrail orderRes = orderTrailRepository.save(orderTrail);
 
 			info.setError(false);
@@ -178,6 +184,8 @@ public class OrderApiController {
 
 			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderDetailListByStatus(sts);
 
+			List<GetOrderTrailList> trailListbystatus = getOrderTrailListRepository.trailListbystatus(sts);
+
 			for (int i = 0; i < listbystatus.size(); i++) {
 				List<GetOrderDetailList> detail = new ArrayList<>();
 
@@ -188,6 +196,16 @@ public class OrderApiController {
 					}
 				}
 				listbystatus.get(i).setDetailList(detail);
+
+				List<GetOrderTrailList> traildetail = new ArrayList<>();
+
+				for (int j = 0; j < trailListbystatus.size(); j++) {
+
+					if (listbystatus.get(i).getOrderId() == trailListbystatus.get(j).getOrderId()) {
+						traildetail.add(trailListbystatus.get(j));
+					}
+				}
+				listbystatus.get(i).setTrailList(traildetail);
 			}
 
 			orderListData.setOrderListByStatus(listbystatus);
@@ -201,6 +219,9 @@ public class OrderApiController {
 			List<GetOrderDetailList> detailListbydate = getOrderDetailListRepository
 					.getOrderDetailListByStatusAndDate(sf.format(dt));
 
+			List<GetOrderTrailList> trailListbydate = getOrderTrailListRepository
+					.trailListbyByStatusAndDate(sf.format(dt));
+
 			for (int i = 0; i < listbydate.size(); i++) {
 				List<GetOrderDetailList> detail = new ArrayList<>();
 
@@ -211,6 +232,16 @@ public class OrderApiController {
 					}
 				}
 				listbydate.get(i).setDetailList(detail);
+
+				List<GetOrderTrailList> traildetail = new ArrayList<>();
+
+				for (int j = 0; j < trailListbydate.size(); j++) {
+
+					if (listbydate.get(i).getOrderId() == trailListbydate.get(j).getOrderId()) {
+						traildetail.add(trailListbydate.get(j));
+					}
+				}
+				listbydate.get(i).setTrailList(traildetail);
 			}
 
 			orderListData.setOrderListByStatusAndDate(listbydate);
@@ -232,6 +263,8 @@ public class OrderApiController {
 
 			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderListByCustomerId(custId);
 
+			List<GetOrderTrailList> trailListbystatus = getOrderTrailListRepository.trailListbyByCustomerIds(custId);
+
 			for (int i = 0; i < listbystatus.size(); i++) {
 				List<GetOrderDetailList> detail = new ArrayList<>();
 
@@ -242,6 +275,16 @@ public class OrderApiController {
 					}
 				}
 				listbystatus.get(i).setDetailList(detail);
+
+				List<GetOrderTrailList> traildetail = new ArrayList<>();
+
+				for (int j = 0; j < trailListbystatus.size(); j++) {
+
+					if (listbystatus.get(i).getOrderId() == trailListbystatus.get(j).getOrderId()) {
+						traildetail.add(trailListbystatus.get(j));
+					}
+				}
+				listbystatus.get(i).setTrailList(traildetail);
 			}
 
 		} catch (Exception e) {
