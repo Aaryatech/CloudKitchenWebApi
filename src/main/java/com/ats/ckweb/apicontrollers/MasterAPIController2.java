@@ -282,7 +282,7 @@ public class MasterAPIController2 {
 		}
 		return franchisee;
 	}
-	
+
 	@RequestMapping(value = { "/getAllNotConfiguredFranchisee" }, method = RequestMethod.GET)
 	public @ResponseBody List<Franchisee> getAllNotConfiguredFranchisee() {
 
@@ -587,7 +587,7 @@ public class MasterAPIController2 {
 		List<CustomerAddress> res = customerAddressRepo.saveAll(custAddressList);
 		if (res != null) {
 			info.setError(false);
-			info.setMessage("Success");
+			info.setMessage(String.valueOf(res.get(0).getCustAddressId()));
 		} else {
 			info.setError(true);
 			info.setMessage("Failed");
