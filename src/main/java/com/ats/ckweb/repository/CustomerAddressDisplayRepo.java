@@ -13,13 +13,36 @@ import com.ats.ckweb.model.CustomerAddressDisplay;
 public interface CustomerAddressDisplayRepo extends JpaRepository<CustomerAddressDisplay, Integer> {
 
 	@Query(value = "SELECT\r\n" + 
-			"    c.*,\r\n" + 
-			"    '' as area_name,\r\n" + 
-			"    ct.city_name\r\n" + 
-			"FROM\r\n" + 
-			"    mn_cust_address c, mn_city ct\r\n" + 
-			"WHERE\r\n" + 
-			"    c.del_status = 0 AND  c.city_id = ct.city_id AND c.cust_id = :custId", nativeQuery = true)
+			"        c.cust_address_id,\r\n" + 
+			"        c.cust_id,\r\n" + 
+			"        c.address_caption,\r\n" + 
+			"        c.address,\r\n" + 
+			"        c.area_id,\r\n" + 
+			"        c.area,\r\n" + 
+			"        c.landmark,\r\n" + 
+			"        c.pincode,\r\n" + 
+			"        c.city_id,\r\n" + 
+			"        c.del_status,\r\n" + 
+			"        c.latitude,\r\n" + 
+			"        c.longitude,\r\n" + 
+			"        ct.ex_int1,\r\n" + 
+			"        c.ex_int2,\r\n" + 
+			"        c.ex_int3,\r\n" + 
+			"        c.ex_var1,\r\n" + 
+			"        c.ex_var2,\r\n" + 
+			"        c.ex_var3,\r\n" + 
+			"        c.ex_float1,\r\n" + 
+			"        c.ex_float2,\r\n" + 
+			"        c.ex_float3,\r\n" + 
+			"        '' as area_name,\r\n" + 
+			"        ct.city_name  \r\n" + 
+			"    FROM\r\n" + 
+			"        mn_cust_address c,\r\n" + 
+			"        mn_city ct  \r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0 \r\n" + 
+			"        AND  c.city_id = ct.city_id \r\n" + 
+			"        AND c.cust_id = :custId", nativeQuery = true)
 	public List<CustomerAddressDisplay> getCustomerAddressList(@Param("custId") int custId);
 	
 	
