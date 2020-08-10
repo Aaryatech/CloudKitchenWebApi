@@ -55,4 +55,17 @@ public interface CustomerDisplayRepo extends JpaRepository<CustomerDisplay, Inte
 	
 	
 	
+	//Sachin Handge 10-08-2020 to get data from m_customer to show in grievance list for filtering
+	
+	@Query(value = " SELECT " + 
+			"    c.*,'0' as city_name,'0' as lang_name "+
+		
+			" FROM " + 
+			"    m_customer c "+
+			" WHERE " + 
+			"    c.is_active = 0 AND c.del_status = 0 ", nativeQuery = true)
+	public List<CustomerDisplay> getAllCustomerList();
+	
+	
+	
 }

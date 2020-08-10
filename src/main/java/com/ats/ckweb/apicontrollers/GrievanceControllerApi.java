@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.model.GetGrievanceHeader;
 import com.ats.ckweb.model.GetGrievanceTrail;
 import com.ats.ckweb.model.GrievanceActionMaster;
-import com.ats.ckweb.model.LoginResponse;
 import com.ats.ckweb.model.OrderGrievanceTrail;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
@@ -54,6 +53,10 @@ public class GrievanceControllerApi {
 			} else {
 				System.err.println("C");
 				grivList = getGrievanceHeaderRepo.getGrievanceHeaderByCustId(custId);
+			}
+			if(grivList==null) {
+				System.err.println("in null ");
+				grivList = new ArrayList<GetGrievanceHeader>();
 			}
 		} catch (Exception e) {
 			grivList = new ArrayList<GetGrievanceHeader>();

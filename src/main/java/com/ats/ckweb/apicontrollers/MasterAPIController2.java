@@ -610,6 +610,26 @@ public class MasterAPIController2 {
 		}
 		return res;
 	}
+	
+	// Author-Sachin Handge Created On-10-08-2020
+		// Desc- Returns all Customer List
+		@RequestMapping(value = { "/getAllCustomerList" }, method = RequestMethod.GET)
+		public @ResponseBody List<CustomerDisplay> getAllCustomerList() {
+
+			List<CustomerDisplay> res = null;
+try {
+			res = customerDisplayRepo.getAllCustomerList();
+
+			if (res == null) {
+				res = new ArrayList<CustomerDisplay>();
+			}
+}catch (Exception e) {
+	res = new ArrayList<CustomerDisplay>();
+	e.printStackTrace();
+}
+			return res;
+		}
+		
 
 	// Author-Anmol Shirke Created On-22-07-2020
 	// Desc- Returns Customer Object by cust id

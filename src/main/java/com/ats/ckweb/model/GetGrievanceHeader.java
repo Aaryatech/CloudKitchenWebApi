@@ -57,8 +57,16 @@ public class GetGrievanceHeader {
 	private String frName;
 	private String frCode;
 	
+	private int grivTrailCount;
 	
 	
+	
+	public int getGrivTrailCount() {
+		return grivTrailCount;
+	}
+	public void setGrivTrailCount(int grivTrailCount) {
+		this.grivTrailCount = grivTrailCount;
+	}
 	public int getGrieveId() {
 		return grieveId;
 	}
