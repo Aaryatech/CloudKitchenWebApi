@@ -12,21 +12,19 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        ar.area_name,\n" + 
+			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        fr.fr_name\n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
-			"        mn_city ct,\n" + 
-			"        mn_area ar,\n" + 
+			"        mn_city ct, \n" + 
 			"        m_customer cm,\n" + 
 			"        m_franchisee fr\n" + 
 			"    where\n" + 
 			"        oh.del_status=0 \n" + 
 			"        and oh.order_status in(:sts) \n" + 
 			"        and ct.city_id=oh.city_id \n" + 
-			"        and ar.area_id=oh.area_id\n" + 
 			"        and cm.cust_id=oh.cust_id\n" + 
 			"        and oh.fr_id=fr.fr_id", nativeQuery = true)
 	List<GetOrderHeaderList> getOrderListByStatus(@Param("sts") List<Integer> sts);
@@ -34,14 +32,13 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 	
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        ar.area_name,\n" + 
+			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        fr.fr_name     \n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
-			"        mn_city ct,\n" + 
-			"        mn_area ar,\n" + 
+			"        mn_city ct, \n" + 
 			"        m_customer cm,\n" + 
 			"        m_franchisee fr     \n" + 
 			"    where\n" + 
@@ -51,27 +48,24 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"            5,6,7,8\n" + 
 			"        )          \n" + 
 			"        and ct.city_id=oh.city_id          \n" + 
-			"        and ar.area_id=oh.area_id         \n" + 
 			"        and cm.cust_id=oh.cust_id         \n" + 
 			"        and oh.fr_id=fr.fr_id", nativeQuery = true)
 	List<GetOrderHeaderList> getOrderListByStatusAndDate(@Param("date") String date);
 
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        ar.area_name,\n" + 
+			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        fr.fr_name          \n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
-			"        mn_city ct,\n" + 
-			"        mn_area ar,\n" + 
+			"        mn_city ct, \n" + 
 			"        m_customer cm,\n" + 
 			"        m_franchisee fr          \n" + 
 			"    where\n" + 
 			"        oh.del_status=0      \n" + 
 			"        and ct.city_id=oh.city_id                   \n" + 
-			"        and ar.area_id=oh.area_id                  \n" + 
 			"        and cm.cust_id=oh.cust_id                  \n" + 
 			"        and oh.fr_id=fr.fr_id\n" + 
 			"        and oh.cust_id=:custId\n" + 
@@ -80,20 +74,18 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        ar.area_name,\n" + 
+			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        fr.fr_name          \n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
-			"        mn_city ct,\n" + 
-			"        mn_area ar,\n" + 
+			"        mn_city ct, \n" + 
 			"        m_customer cm,\n" + 
 			"        m_franchisee fr          \n" + 
 			"    where\n" + 
 			"        oh.del_status=0      \n" + 
 			"        and ct.city_id=oh.city_id                   \n" + 
-			"        and ar.area_id=oh.area_id                  \n" + 
 			"        and cm.cust_id=oh.cust_id                  \n" + 
 			"        and oh.fr_id=fr.fr_id\n" + 
 			"        and oh.order_id=:orderId\n" + 
