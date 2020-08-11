@@ -1683,15 +1683,13 @@ public class FrontEndController {
 		}
 
 		itemListRes.setRelatedItemList(itemData);
-		
-		
-		//====================FREQUENTLY ORDERED ITEM LIST========================================
-		
-		
+
+		// ====================FREQUENTLY ORDERED ITEM
+		// LIST========================================
+
 		List<ItemDisplay> freqItemData = null;
 
 		try {
-
 
 			List<ItemDisplay> tempItemData = itemDisplayRepo.getFrequentlyOrderedItemListByCust(frId, type,
 					applicableFor, custId);
@@ -1763,8 +1761,8 @@ public class FrontEndController {
 					if (offerDisplayList != null) {
 						List<Integer> offerIdsList = new ArrayList<>();
 						try {
-							offerIdsList = Stream.of(freqItemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
-									.collect(Collectors.toList());
+							offerIdsList = Stream.of(freqItemData.get(i).getOfferIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
 						} catch (Exception e) {
 						}
 
@@ -1783,12 +1781,27 @@ public class FrontEndController {
 			System.err.println("EXCEPTION IN getFreqOrderItemList -> " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		itemListRes.setFreqOrderItemList(freqItemData);
-		
 
 		return itemListRes;
 
+	}
+
+	@RequestMapping(value = { "/getAllTokenListByFr" }, method = RequestMethod.POST)
+	public @ResponseBody List<String> getAllTokenListByFr(@RequestParam("frId") int frId) {
+
+		List<String> list = new ArrayList<>();
+
+		try {
+
+			list = franchiseDataRepo.getAllTokenListByFr(frId);
+
+		} catch (Exception e) {
+
+		}
+
+		return list;
 	}
 
 }

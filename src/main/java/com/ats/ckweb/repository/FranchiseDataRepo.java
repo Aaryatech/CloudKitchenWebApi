@@ -77,6 +77,9 @@ public interface FranchiseDataRepo extends JpaRepository<FranchiseData, Integer>
 			"    ORDER BY\r\n" + 
 			"        f.fr_name",nativeQuery=true)
 	public List<FranchiseData> getShopByCityId(@Param("cityId") int cityId);
-
+	
+	
+	@Query(value="SELECT e.ex_var1  FROM m_fr_emp e WHERE e.del_status=0 AND e.ex_var1!='' AND e.ex_var1!='NA' AND e.fr_id=:frId",nativeQuery=true)
+	public List<String> getAllTokenListByFr(@Param("frId") int frId);
 
 }
