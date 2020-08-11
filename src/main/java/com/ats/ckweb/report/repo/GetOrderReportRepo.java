@@ -37,7 +37,7 @@ public interface GetOrderReportRepo extends JpaRepository<GetOrderReport, Intege
 			"    0 as ex_float4\n" + 
 			"FROM\n" + 
 			"    tn_order_header head,\n" + 
-			"    mn_customer cust,\n" + 
+			"    m_customer cust,\n" + 
 			"    m_franchisee fr\n" + 
 			"WHERE\n" + 
 			"    head.del_status=0 AND\n" + 
