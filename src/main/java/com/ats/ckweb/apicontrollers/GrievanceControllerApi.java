@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.model.GetGrievanceHeader;
 import com.ats.ckweb.model.GetGrievanceTrail;
 import com.ats.ckweb.model.GrievanceActionMaster;
+import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.OrderGrievanceTrail;
+import com.ats.ckweb.report.model.GrievanceBetDate;
+import com.ats.ckweb.report.repo.GrievanceBetDateRepo;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
 import com.ats.ckweb.repository.GrievanceActionMasterRepo;
+import com.ats.ckweb.repository.MnUserRepo;
 import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
 
 @RestController
@@ -116,9 +120,6 @@ public class GrievanceControllerApi {
 	//Sachin 2020-08-08 
 	//Desc - To save grievance trail and update grievance header for status.
 	
-	
-	
-	
 	@RequestMapping(value = { "/saveGrievTrailAndUpdateHeader" }, method = RequestMethod.POST)
 	@ResponseBody
 	public OrderGrievanceTrail saveGrievTrailAndUpdateHeader(@RequestBody OrderGrievanceTrail grivTrail) {
@@ -147,5 +148,51 @@ public class GrievanceControllerApi {
 		
 	}
 	
+	
+	//Sachin 11-08-2020
+	//Desc-get Grievances of orders delivery between given date.
+	
+	@Autowired GrievanceBetDateRepo grievanceBetDateRepo;
+	
+	@RequestMapping(value = { "/getGrievanceBetOrderDelDate" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GrievanceBetDate> getGrievanceBetOrderDelDate(@RequestParam String fromDate, @RequestParam String toDate) {
+
+		List<GrievanceBetDate> grivList = null;
+		try {
+			grivList = grievanceBetDateRepo.getGrieBetGivenDeliveryDate(fromDate, toDate);
+			if(grivList==null) {
+				grivList = new ArrayList<GrievanceBetDate>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			grivList = new ArrayList<GrievanceBetDate>();
+		}
+
+		return grivList;
+	}
+	
+	//Sachin 11-08-2020
+	//Desc-show user list by type and compId
+	@Autowired MnUserRepo userRepo;
+	
+	@RequestMapping(value = { "/getUserListByTypeAndCompId" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<MnUser> getUserListByTypeAndCompId(@RequestParam int compId, 
+			@RequestParam int userType) {
+
+		List<MnUser> userList = null;
+		try {
+			userList = userRepo.getUserListByTypeAndCompId(compId, userType);
+			if(userList==null) {
+				userList = new ArrayList<MnUser>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			userList = new ArrayList<MnUser>();
+		}
+
+		return userList;
+	}
 	
 }

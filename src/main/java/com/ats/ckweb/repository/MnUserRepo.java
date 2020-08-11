@@ -111,4 +111,46 @@ public interface MnUserRepo extends JpaRepository<MnUser, Integer> {
 	@Modifying
 	@Query(value="UPDATE `mn_user` SET password=:newPass WHERE user_id=:userId",nativeQuery=true)
 	int UpdateUserPassword(@Param("userId") int userId, @Param("newPass") String newPass);
+	
+	//Sachin 11-08-2020
+	//Desc get Executive list at admin side for grievance report filters.
+	
+	@Query(value="SELECT\n" + 
+			"    user.user_id,\n" + 
+			"    user.user_name,\n" + 
+			"    user.user_mobile_no,\n" + 
+			"    user.user_address,\n" + 
+			"    user.user_email,\n" + 
+			"    user.reg_date,\n" + 
+			"    user.profile_pic,\n" + 
+			"    user.password,\n" + 
+			"    user.company_Id,\n" + 
+			"    user.designation_id,\n" + 
+			"    user.user_type,\n" + 
+			"    user.del_status,\n" + 
+			"    user.is_active,\n" + 
+			"    user.ex_int1,\n" + 
+			"    user.ex_int2,\n" + 
+			"    user.ex_int3,\n" + 
+			"    user.ex_int4,\n" + 
+			"    user.ex_float1,\n" + 
+			"    user.ex_float2,\n" + 
+			"    user.ex_float3,\n" + 
+			"    user.ex_var1,\n" + 
+			"    user.ex_var2,\n" + 
+			"    type.user_type_name AS ex_var3,\n" + 
+			"    desig.designation AS ex_var4\n" + 
+			"FROM\n" + 
+			"     mn_user user,\n" + 
+			"     mn_user_type type,\n" + 
+			"     mn_designation desig\n" + 
+			"WHERE\n" + 
+			"	user.company_Id=:compId AND\n" + 
+			"    user.del_status=0 AND\n" + 
+			"    type.del_status=0 AND\n" + 
+			"    desig.del_status=0 AND\n" + 
+			"    user.user_type=type.user_type_id AND\n" + 
+			"    user.designation_id=desig.designation_id and type.user_type_id=:userType " + 
+			"    ORDER BY user.user_id DESC",nativeQuery=true)
+	List<MnUser> getUserListByTypeAndCompId(@Param("compId") int compId,@Param("userType") int userType);
 }
