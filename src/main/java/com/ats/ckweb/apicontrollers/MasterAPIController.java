@@ -57,6 +57,18 @@ public class MasterAPIController {
 
 	@Autowired
 	AreaRepo areaRepo;
+	
+	@RequestMapping(value = { "/insertDesignation" }, method = RequestMethod.POST)
+	public @ResponseBody Designation insertDesignation(@RequestBody Designation desig) {
+		
+		Designation res = new Designation();
+		try {
+			res = tagService.addDesignation(desig);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
 
 	@RequestMapping(value = { "/getDesignations" }, method = RequestMethod.GET)
 	public @ResponseBody List<Designation> getDesignations() {
@@ -83,6 +95,37 @@ public class MasterAPIController {
 		return list;
 
 	}
+	@RequestMapping(value = { "/getDesignationById" }, method = RequestMethod.POST)
+	public @ResponseBody Designation getDesignationById(@RequestParam int desigId, @RequestParam int compId) {
+
+		Designation designation = new Designation();
+		try {
+			designation = tagService.getDesignationsById(desigId, compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return designation;
+
+	}
+	@RequestMapping(value = { "/deleteDesignationById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteDesignationById(@RequestParam int desigId) {
+
+		Info info = new Info();
+		try {
+			int res = tagService.deletDesignationId(desigId);
+			if (res > 0) {
+				info.setError(false);
+				info.setMessage("Designation Deleted Successfully");
+			} else {
+				info.setError(true);
+				info.setMessage("Failed to Delete Designation");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
 
 	/********************************************************************************/
 

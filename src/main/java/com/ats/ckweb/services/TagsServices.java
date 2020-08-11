@@ -170,6 +170,12 @@ public interface TagsServices {
 	List<City> getAllCitiesOnly(int compId);
 
 	List<City> getAllCitiesByCompId(int compId);
+
+	Designation getDesignationsById(int desigId, int compId);
+
+	int deletDesignationId(int desigId);
+
+	Designation addDesignation(Designation desig);
 	
 
 	

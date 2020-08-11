@@ -536,4 +536,22 @@ public class TagServiceImpl implements TagsServices {
 		return cityList;
 	}
 
+	@Override
+	public Designation getDesignationsById(int desigId, int compId) {
+		Designation res = desigRepo.findBydesignationIdAndExInt1(desigId, compId);
+		return res;
+	}
+
+	@Override
+	public int deletDesignationId(int desigId) {
+		int res =  desigRepo.deleteDesignation(desigId);
+		return res;
+	}
+
+	@Override
+	public Designation addDesignation(Designation desig) {
+		Designation res = desigRepo.save(desig);
+		return res;
+	}
+
 }
