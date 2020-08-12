@@ -76,18 +76,15 @@ public class GetOrderHeaderDisplay {
 	private int deliveryYear;
 	private String deliveryDateDisplay;
 	private String deliveryTimeDisplay;
+	private String monthName;
 
 	List<GetOrderDetailDisplay> orderDetailList;
 	List<GetOrderTrailDisplay> orderTrailList;
-	
-	
 
 	public GetOrderHeaderDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 
 	public GetOrderHeaderDisplay(int orderId, String orderNo, String orderDate, int frId, int custId, int status,
 			float taxableAmt, float cgstAmt, float sgstAmt, float igstAmt, float discAmt, float itemDiscAmt,
@@ -98,10 +95,10 @@ public class GetOrderHeaderDisplay {
 			int exInt4, String exVar1, String exVar2, String exVar3, String exVar4, float exFloat1, float exFloat2,
 			float exFloat3, float exFloat4, String exDate1, String exDate2, String billingName, String billingAddress,
 			String customerGstnNo, int deliveryType, int deliveryInstId, String deliveryInstText, float deliveryKm,
-			 float deliveryCharges, int paymentSubMode, int isAgent, String orderDeliveredByName,
-			String custName, String custMobile, String custWhatsappNo, String frName, String cityName, String areaName,
-			String offerName, String offerDesc, int deliveryMonth, int deliveryYear, String deliveryDateDisplay,
-			String deliveryTimeDisplay, List<GetOrderDetailDisplay> orderDetailList,
+			float deliveryCharges, int paymentSubMode, int isAgent, String orderDeliveredByName, String custName,
+			String custMobile, String custWhatsappNo, String frName, String cityName, String areaName, String offerName,
+			String offerDesc, int deliveryMonth, int deliveryYear, String deliveryDateDisplay,
+			String deliveryTimeDisplay, String monthName, List<GetOrderDetailDisplay> orderDetailList,
 			List<GetOrderTrailDisplay> orderTrailList) {
 		super();
 		this.orderId = orderId;
@@ -174,11 +171,10 @@ public class GetOrderHeaderDisplay {
 		this.deliveryYear = deliveryYear;
 		this.deliveryDateDisplay = deliveryDateDisplay;
 		this.deliveryTimeDisplay = deliveryTimeDisplay;
+		this.monthName = monthName;
 		this.orderDetailList = orderDetailList;
 		this.orderTrailList = orderTrailList;
 	}
-
-
 
 	public int getOrderId() {
 		return orderId;
@@ -612,7 +608,6 @@ public class GetOrderHeaderDisplay {
 		this.deliveryKm = deliveryKm;
 	}
 
-
 	public float getDeliveryCharges() {
 		return deliveryCharges;
 	}
@@ -757,6 +752,14 @@ public class GetOrderHeaderDisplay {
 		this.orderTrailList = orderTrailList;
 	}
 
+	public String getMonthName() {
+		return monthName;
+	}
+
+	public void setMonthName(String monthName) {
+		this.monthName = monthName;
+	}
+
 	@Override
 	public String toString() {
 		return "GetOrderHeaderDisplay [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate
@@ -775,13 +778,14 @@ public class GetOrderHeaderDisplay {
 				+ exDate1 + ", exDate2=" + exDate2 + ", billingName=" + billingName + ", billingAddress="
 				+ billingAddress + ", customerGstnNo=" + customerGstnNo + ", deliveryType=" + deliveryType
 				+ ", deliveryInstId=" + deliveryInstId + ", deliveryInstText=" + deliveryInstText + ", deliveryKm="
-				+ deliveryKm + ", deliveryCharges=" + deliveryCharges + ", paymentSubMode="
-				+ paymentSubMode + ", isAgent=" + isAgent + ", orderDeliveredByName=" + orderDeliveredByName
-				+ ", custName=" + custName + ", custMobile=" + custMobile + ", custWhatsappNo=" + custWhatsappNo
-				+ ", frName=" + frName + ", cityName=" + cityName + ", areaName=" + areaName + ", offerName="
-				+ offerName + ", offerDesc=" + offerDesc + ", deliveryMonth=" + deliveryMonth + ", deliveryYear="
-				+ deliveryYear + ", deliveryDateDisplay=" + deliveryDateDisplay + ", deliveryTimeDisplay="
-				+ deliveryTimeDisplay + ", orderDetailList=" + orderDetailList + "]";
+				+ deliveryKm + ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode
+				+ ", isAgent=" + isAgent + ", orderDeliveredByName=" + orderDeliveredByName + ", custName=" + custName
+				+ ", custMobile=" + custMobile + ", custWhatsappNo=" + custWhatsappNo + ", frName=" + frName
+				+ ", cityName=" + cityName + ", areaName=" + areaName + ", offerName=" + offerName + ", offerDesc="
+				+ offerDesc + ", deliveryMonth=" + deliveryMonth + ", deliveryYear=" + deliveryYear
+				+ ", deliveryDateDisplay=" + deliveryDateDisplay + ", deliveryTimeDisplay=" + deliveryTimeDisplay
+				+ ", monthName=" + monthName + ", orderDetailList=" + orderDetailList + ", orderTrailList="
+				+ orderTrailList + "]";
 	}
 
 }

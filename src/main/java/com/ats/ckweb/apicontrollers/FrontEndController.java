@@ -42,6 +42,7 @@ import com.ats.ckweb.model.ItemWiseOfferDetailDisplay;
 import com.ats.ckweb.model.ItemWiseOfferHeaderDisplay;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.PostFrItemStockHeader;
+import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.SubCategoryData;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.repository.AgentRepo;
@@ -57,6 +58,7 @@ import com.ats.ckweb.repository.ItemDisplayRepo;
 import com.ats.ckweb.repository.ItemWiseOfferDataRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.PostFrItemStockHeaderRepo;
+import com.ats.ckweb.repository.SettingRepository;
 import com.ats.ckweb.repository.SubCategoryDataRepo;
 import com.ats.ckweb.repository.TagRepo;
 import com.ats.ckweb.services.ImagesService;
@@ -113,6 +115,9 @@ public class FrontEndController {
 
 	@Autowired
 	FranchiseeRepository franchiseeRepository;
+
+	@Autowired
+	SettingRepository settingRepository;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -1802,6 +1807,43 @@ public class FrontEndController {
 		}
 
 		return list;
+	}
+
+	@RequestMapping(value = { "/updateSettingValueByKey" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateSettingValueByKey(@RequestParam("key") String key,
+			@RequestParam("value") int value) {
+
+		Info info = new Info();
+
+		try {
+
+			int res = settingRepository.udateKeyAndValue(key, value);
+			if (res > 0) {
+				info.setError(false);
+			} else {
+				info.setError(true);
+			}
+
+		} catch (Exception e) {
+			info.setError(true);
+		}
+
+		return info;
+	}
+
+	@RequestMapping(value = { "/getSettingByKey" }, method = RequestMethod.POST)
+	public @ResponseBody Setting getSettingByKey(@RequestParam("key") String key) {
+
+		Setting setting = new Setting();
+
+		try {
+
+			setting = settingRepository.findBySettingKey(key);
+
+		} catch (Exception e) {
+		}
+
+		return setting;
 	}
 
 }

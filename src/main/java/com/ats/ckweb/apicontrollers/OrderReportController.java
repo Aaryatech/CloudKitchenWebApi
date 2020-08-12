@@ -94,7 +94,7 @@ public class OrderReportController {
 										order.getCustWhatsappNo(), order.getFrName(), order.getCityName(),
 										order.getAreaName(), order.getOfferName(), order.getOfferDesc(),
 										order.getDeliveryMonth(), order.getDeliveryYear(),
-										order.getDeliveryDateDisplay(), order.getDeliveryTimeDisplay(), detailList,
+										order.getDeliveryDateDisplay(), order.getDeliveryTimeDisplay(), order.getMonthName(), detailList,
 										trailList); 
 
 								orderList.add(header);

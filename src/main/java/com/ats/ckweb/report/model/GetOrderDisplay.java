@@ -116,6 +116,7 @@ public class GetOrderDisplay {
 	private int deliveryYear;
 	private String deliveryDateDisplay;
 	private String deliveryTimeDisplay;
+	private String monthName;
 
 	public String getId() {
 		return id;
@@ -933,7 +934,6 @@ public class GetOrderDisplay {
 		this.deliveryTimeDisplay = deliveryTimeDisplay;
 	}
 
-
 	public float getDeliveryCharges() {
 		return deliveryCharges;
 	}
@@ -957,8 +957,14 @@ public class GetOrderDisplay {
 	public void setIsAgent(int isAgent) {
 		this.isAgent = isAgent;
 	}
-	
-	
+
+	public String getMonthName() {
+		return monthName;
+	}
+
+	public void setMonthName(String monthName) {
+		this.monthName = monthName;
+	}
 
 	@Override
 	public String toString() {
@@ -994,7 +1000,8 @@ public class GetOrderDisplay {
 				+ catName + ", itemUom=" + itemUom + ", uomId=" + uomId + ", cityName=" + cityName + ", areaName="
 				+ areaName + ", offerName=" + offerName + ", offerDesc=" + offerDesc + ", orderDeliveredByName="
 				+ orderDeliveredByName + ", deliveryMonth=" + deliveryMonth + ", deliveryYear=" + deliveryYear
-				+ ", deliveryDateDisplay=" + deliveryDateDisplay + ", deliveryTimeDisplay=" + deliveryTimeDisplay + "]";
+				+ ", deliveryDateDisplay=" + deliveryDateDisplay + ", deliveryTimeDisplay=" + deliveryTimeDisplay
+				+ ", monthName=" + monthName + "]";
 	}
 
 }

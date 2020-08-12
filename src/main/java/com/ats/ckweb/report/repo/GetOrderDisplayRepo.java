@@ -30,7 +30,7 @@ public interface GetOrderDisplayRepo extends JpaRepository<GetOrderDisplay, Inte
 			"    MONTH(t1.delivery_date) AS delivery_month,\r\n" + 
 			"    YEAR(t1.delivery_date) AS delivery_year,\r\n" + 
 			"    DATE_FORMAT(t1.delivery_date, '%d-%m-%Y') AS delivery_date_display,\r\n" + 
-			"    TIME_FORMAT(t1.delivery_time, '%h:%i %p') AS delivery_time_display\r\n" + 
+			"    TIME_FORMAT(t1.delivery_time, '%h:%i %p') AS delivery_time_display, MONTHNAME(t1.delivery_date) AS month_name\r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
