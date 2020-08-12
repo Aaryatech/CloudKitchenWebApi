@@ -26,6 +26,7 @@ import com.ats.ckweb.model.OrderHeader;
 import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
+import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
@@ -36,6 +37,7 @@ import com.ats.ckweb.repository.OrderGrievanceRepo;
 import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
 import com.ats.ckweb.repository.OrderTrailRepository;
+import com.ats.ckweb.repository.SettingRepository;
 
 @RestController
 public class OrderApiController {
@@ -70,6 +72,9 @@ public class OrderApiController {
 	@Autowired
 	GetOrderTrailListRepository getOrderTrailListRepository;
 
+	@Autowired
+	SettingRepository settingRepository;
+
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
 
@@ -77,8 +82,20 @@ public class OrderApiController {
 
 		try {
 
+			Setting setting = new Setting();
+			setting = settingRepository.findBySettingKey("ORDER_NO");
+
+			int no = setting.getSettingValue();
+			String orderNo = String.format("%0" + 5 + "d", no);
+
+			orderSaveData.getOrderHeader().setOrderNo(orderNo);
+
 			OrderHeader res = orderHeaderRepository.save(orderSaveData.getOrderHeader());
 			orderSaveData.getOrderTrail().setOrderId(res.getOrderId());
+
+			no = no + 1;
+
+			int updateOrderNo = settingRepository.udateKeyAndValue("ORDER_NO", no);
 
 			OrderTrail orderRes = orderTrailRepository.save(orderSaveData.getOrderTrail());
 
@@ -144,7 +161,7 @@ public class OrderApiController {
 	@RequestMapping(value = { "/changeStatusByOrderId" }, method = RequestMethod.POST)
 	public @ResponseBody Info changeStatusByOrderId(@RequestParam("status") int status,
 			@RequestParam("userId") int userId, @RequestParam("orderId") int orderId,
-			@RequestParam("remark") String remark,@RequestParam("type") int type) {
+			@RequestParam("remark") String remark, @RequestParam("type") int type) {
 
 		Info info = new Info();
 
@@ -348,7 +365,18 @@ public class OrderApiController {
 		OrderGrievance res = new OrderGrievance();
 		try {
 
+			Setting setting = new Setting();
+			setting = settingRepository.findBySettingKey("GRI_NO");
+
+			int no = setting.getSettingValue();
+			String grievencceNo = String.format("%0" + 5 + "d", no);
+
+			orderGrievance.setGrievencceNo(grievencceNo);
 			res = orderGrievanceRepo.save(orderGrievance);
+
+			no = no + 1;
+			int updateOrderNo = settingRepository.udateKeyAndValue("GRI_NO", no);
+
 			orderGrievance.getOrderGrievanceTrail().setGrievencesId(res.getGrieveId());
 
 			OrderGrievanceTrail orderGrievanceTrailres = orderGrievanceTrailRepo
