@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.CustomerDisplay;
+import com.ats.ckweb.model.GetGrievienceList;
+import com.ats.ckweb.model.GetGrievienceTailList;
 import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.GetOrderTrailList;
@@ -28,6 +30,8 @@ import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
+import com.ats.ckweb.repository.GetGrievienceListRepository;
+import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.GetOrderTrailListRepository;
@@ -74,6 +78,12 @@ public class OrderApiController {
 
 	@Autowired
 	SettingRepository settingRepository;
+
+	@Autowired
+	GetGrievienceListRepository getGrievienceListRepository;
+
+	@Autowired
+	GetGrievienceTailListRepository getGrievienceTailListRepository;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -308,6 +318,40 @@ public class OrderApiController {
 			e.printStackTrace();
 		}
 		return listbystatus;
+	}
+
+	@RequestMapping(value = { "/getGrievienceListByCustomerId" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetGrievienceList> getGrievienceListByCustomerId(@RequestParam("custId") int custId) {
+
+		List<GetGrievienceList> listbystatus = new ArrayList<>();
+
+		try {
+
+			listbystatus = getGrievienceListRepository.getGrievienceListByCustomerId(custId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listbystatus;
+	}
+
+	@RequestMapping(value = { "/getGriviencevByGrvId" }, method = RequestMethod.POST)
+	public @ResponseBody GetGrievienceList getGriviencevByGrvId(@RequestParam("grvId") int grvId) {
+
+		GetGrievienceList getGrievienceList = new GetGrievienceList();
+
+		try {
+
+			getGrievienceList = getGrievienceListRepository.getGriviencevByGrvId(grvId);
+			List<GetGrievienceTailList> getGrievienceTailList = getGrievienceTailListRepository
+					.getGriviencevDetailByGrvId(grvId);
+
+			getGrievienceList.setGetGrievienceTailList(getGrievienceTailList);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return getGrievienceList;
 	}
 
 	@RequestMapping(value = { "/getOrderOrderId" }, method = RequestMethod.POST)
