@@ -17,7 +17,9 @@ import com.ats.ckweb.model.GrievanceActionMaster;
 import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.OrderGrievanceTrail;
 import com.ats.ckweb.report.model.GrievanceBetDate;
+import com.ats.ckweb.report.model.GrievanceDatewise;
 import com.ats.ckweb.report.repo.GrievanceBetDateRepo;
+import com.ats.ckweb.report.repo.GrievanceDatewiseRepo;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
 import com.ats.ckweb.repository.GrievanceActionMasterRepo;
@@ -35,9 +37,9 @@ public class GrievanceControllerApi {
 
 	@Autowired
 	private GrievanceActionMasterRepo grievanceActionMasterRepo;
-	
-	@Autowired OrderGrievanceTrailRepo grievTrailRepo;
-	
+
+	@Autowired
+	OrderGrievanceTrailRepo grievTrailRepo;
 
 	@RequestMapping(value = { "/getGrievanceHeaderList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -58,7 +60,7 @@ public class GrievanceControllerApi {
 				System.err.println("C");
 				grivList = getGrievanceHeaderRepo.getGrievanceHeaderByCustId(custId);
 			}
-			if(grivList==null) {
+			if (grivList == null) {
 				System.err.println("in null ");
 				grivList = new ArrayList<GetGrievanceHeader>();
 			}
@@ -116,52 +118,54 @@ public class GrievanceControllerApi {
 		return grievTrailList;
 	}
 
-	
-	//Sachin 2020-08-08 
-	//Desc - To save grievance trail and update grievance header for status.
-	
+	// Sachin 2020-08-08
+	// Desc - To save grievance trail and update grievance header for status.
+
 	@RequestMapping(value = { "/saveGrievTrailAndUpdateHeader" }, method = RequestMethod.POST)
 	@ResponseBody
 	public OrderGrievanceTrail saveGrievTrailAndUpdateHeader(@RequestBody OrderGrievanceTrail grivTrail) {
-		OrderGrievanceTrail trailRes=new OrderGrievanceTrail();
-		
+		OrderGrievanceTrail trailRes = new OrderGrievanceTrail();
+
 		try {
-			
-			GrievanceActionMaster actionName=grievanceActionMasterRepo.findByGrivActionValue(grivTrail.getGrivActionValue());
-			
-			grivTrail.setGrivActionText(""+actionName.getGrivActionText());
-			
-			trailRes=grievTrailRepo.save(grivTrail);
-			
-			if(trailRes!=null) {
-				
-				int x=getGrievanceHeaderRepo.updateGrievHeaderStatus(trailRes.getGrievencesId(),trailRes.getStatus());
-				
+
+			GrievanceActionMaster actionName = grievanceActionMasterRepo
+					.findByGrivActionValue(grivTrail.getGrivActionValue());
+
+			grivTrail.setGrivActionText("" + actionName.getGrivActionText());
+
+			trailRes = grievTrailRepo.save(grivTrail);
+
+			if (trailRes != null) {
+
+				int x = getGrievanceHeaderRepo.updateGrievHeaderStatus(trailRes.getGrievencesId(),
+						trailRes.getStatus());
+
 			}
-			
-		}catch (Exception e) {
-			trailRes=new OrderGrievanceTrail();
-			
+
+		} catch (Exception e) {
+			trailRes = new OrderGrievanceTrail();
+
 		}
-		
+
 		return trailRes;
-		
+
 	}
-	
-	
-	//Sachin 11-08-2020
-	//Desc-get Grievances of orders delivery between given date.
-	
-	@Autowired GrievanceBetDateRepo grievanceBetDateRepo;
-	
+
+	// Sachin 11-08-2020
+	// Desc-get Grievances of orders delivery between given date.
+
+	@Autowired
+	GrievanceBetDateRepo grievanceBetDateRepo;
+
 	@RequestMapping(value = { "/getGrievanceBetOrderDelDate" }, method = RequestMethod.POST)
 	@ResponseBody
-	public List<GrievanceBetDate> getGrievanceBetOrderDelDate(@RequestParam String fromDate, @RequestParam String toDate) {
+	public List<GrievanceBetDate> getGrievanceBetOrderDelDate(@RequestParam String fromDate,
+			@RequestParam String toDate) {
 
 		List<GrievanceBetDate> grivList = null;
 		try {
 			grivList = grievanceBetDateRepo.getGrieBetGivenDeliveryDate(fromDate, toDate);
-			if(grivList==null) {
+			if (grivList == null) {
 				grivList = new ArrayList<GrievanceBetDate>();
 			}
 		} catch (Exception e) {
@@ -171,20 +175,20 @@ public class GrievanceControllerApi {
 
 		return grivList;
 	}
-	
-	//Sachin 11-08-2020
-	//Desc-show user list by type and compId
-	@Autowired MnUserRepo userRepo;
-	
+
+	// Sachin 11-08-2020
+	// Desc-show user list by type and compId
+	@Autowired
+	MnUserRepo userRepo;
+
 	@RequestMapping(value = { "/getUserListByTypeAndCompId" }, method = RequestMethod.POST)
 	@ResponseBody
-	public List<MnUser> getUserListByTypeAndCompId(@RequestParam int compId, 
-			@RequestParam int userType) {
+	public List<MnUser> getUserListByTypeAndCompId(@RequestParam int compId, @RequestParam int userType) {
 
 		List<MnUser> userList = null;
 		try {
 			userList = userRepo.getUserListByTypeAndCompId(compId, userType);
-			if(userList==null) {
+			if (userList == null) {
 				userList = new ArrayList<MnUser>();
 			}
 		} catch (Exception e) {
@@ -194,5 +198,43 @@ public class GrievanceControllerApi {
 
 		return userList;
 	}
-	
+
+	// Sachin 13-08-2020
+	// Desc-show Griv Report Date wise
+	@Autowired
+	GrievanceDatewiseRepo grivReportDatewise;
+
+	@RequestMapping(value = { "/getGrievanceDatewise" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GrievanceDatewise> getGrievanceBetOrderDelDate(@RequestParam String fromDate,
+			@RequestParam String toDate, @RequestParam List<Integer> frIdList,
+			@RequestParam List<Integer> grievTypeIdList, @RequestParam List<Integer> grievSubTypeList,
+			@RequestParam List<Integer> statusList, @RequestParam Integer reportNo) {
+
+		List<GrievanceDatewise> grivList = null;
+		try {
+			
+			if (reportNo.equals(1))
+				grivList = grivReportDatewise.getGrievanceDatewiseGrpByGrivType(fromDate, toDate, frIdList,
+						grievTypeIdList, grievSubTypeList, statusList);
+			
+			if (reportNo.equals(2))
+				grivList = grivReportDatewise.getGrievanceDatewiseGrpByGrivSubType(fromDate, toDate, frIdList,
+						grievTypeIdList, grievSubTypeList, statusList);
+			
+			if (reportNo.equals(3))
+				grivList = grivReportDatewise.getGrievanceDatewiseGrpByFrId(fromDate, toDate, frIdList, grievTypeIdList,
+						grievSubTypeList, statusList);
+
+			if (grivList == null) {
+				grivList = new ArrayList<GrievanceDatewise>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			grivList = new ArrayList<GrievanceDatewise>();
+		}
+
+		return grivList;
+	}
+
 }
