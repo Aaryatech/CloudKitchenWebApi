@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.report.model.GetOrderTrailDetails;
 import com.ats.ckweb.report.model.Status;
+import com.ats.ckweb.report.model.GetOrderGrpDate;
 import com.ats.ckweb.report.model.GetOrderReport;
 import com.ats.ckweb.report.repo.GetOrderDetailsRepo;
+import com.ats.ckweb.report.repo.GetOrderGrpDateRepo;
 import com.ats.ckweb.report.repo.GetOrderReportRepo;
 import com.ats.ckweb.report.repo.StatusRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
@@ -30,9 +32,31 @@ public class ReportApiController {
 	
 	@Autowired GetOrderDetailsRepo detlRepo;
 	
-	//@Autowired CommonReportRepo cmnRepRepo;
 	
-	  @RequestMapping(value = { "/getAllStatus" }, method = RequestMethod.GET)
+	@Autowired GetOrderGrpDateRepo orderReportRepo;
+	
+	  
+	@RequestMapping(value = { "/getOrderReportDateWise" }, method = RequestMethod.POST)
+	  public @ResponseBody List<GetOrderGrpDate> getOrderReportDateWise(@RequestParam List<String> statusIds,
+			  @RequestParam String fromDate, @RequestParam String toDate   ) {
+	  
+		  List<GetOrderGrpDate> res = new ArrayList<GetOrderGrpDate>();
+		  res = orderReportRepo.getOrderGroupByDate(statusIds, fromDate, toDate);
+		   return res; 
+	  }
+	
+	@RequestMapping(value = { "/getOrderReportMonthWise" }, method = RequestMethod.POST)
+	  public @ResponseBody List<GetOrderGrpDate> getOrderReportMonthWise(@RequestParam List<String> statusIds,
+			  @RequestParam String fromDate, @RequestParam String toDate   ) {
+	  
+		  List<GetOrderGrpDate> res = new ArrayList<GetOrderGrpDate>();
+		  res = orderReportRepo.getOrderGroupByMonth(statusIds, fromDate, toDate);
+		   return res; 
+	  }	
+	
+	
+	
+	@RequestMapping(value = { "/getAllStatus" }, method = RequestMethod.GET)
 	  public @ResponseBody List<Status> getAllStatus() {
 	  
 		  List<Status> res = new ArrayList<Status>();
@@ -40,6 +64,7 @@ public class ReportApiController {
 		   return res; 
 	  }
 	 
+	/*********************************************************************************************/
 	
 	  @RequestMapping(value = { "/getOrderReportByDateWise" }, method = RequestMethod.POST)
 	  public @ResponseBody List<GetOrderReport> getOrderReportByDateWise(@RequestParam int status, @RequestParam String fromDate,
