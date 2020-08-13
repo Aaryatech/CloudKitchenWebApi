@@ -13,23 +13,27 @@ import com.ats.ckweb.model.ItemConfigDisplay;
 public interface ItemConfigDisplayRepo extends JpaRepository<ItemConfigDisplay, Integer> {
 	
 	@Query(value="SELECT\r\n" + 
-			"    t1.item_config_id,\r\n" + 
-			"    t1.fr_id,\r\n" + 
-			"    t1.fr_name,\r\n" + 
-			"    t1.config_type,\r\n" + 
-			"    t1.comp_id,\r\n" + 
-			"    COALESCE(t2.no_of_items, 0) AS no_of_items\r\n" + 
+			"    *\r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
-			"        h.*,\r\n" + 
-			"        CONCAT(f.fr_name, ' - ', f.fr_code) AS fr_name\r\n" + 
+			"        t1.item_config_id,\r\n" + 
+			"        t1.fr_id,\r\n" + 
+			"        t1.fr_name,\r\n" + 
+			"        t1.config_type,\r\n" + 
+			"        t1.comp_id,\r\n" + 
+			"        COALESCE(t2.no_of_items, 0) AS no_of_items\r\n" + 
 			"    FROM\r\n" + 
-			"        tn_item_config_header h,\r\n" + 
-			"        m_franchisee f\r\n" + 
-			"    WHERE\r\n" + 
-			"        h.comp_id = :compId AND h.del_status = 0 AND h.is_active = 0 AND h.fr_id = f.fr_id AND f.del_status = 0\r\n" + 
-			") t1\r\n" + 
+			"        (\r\n" + 
+			"        SELECT\r\n" + 
+			"            h.*,\r\n" + 
+			"            CONCAT(f.fr_name, ' - ', f.fr_code) AS fr_name\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_item_config_header h,\r\n" + 
+			"            m_franchisee f\r\n" + 
+			"        WHERE\r\n" + 
+			"            h.comp_id = :compId AND h.del_status = 0 AND h.is_active = 0 AND h.fr_id = f.fr_id AND f.del_status = 0\r\n" + 
+			"    ) t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        COUNT(*) AS no_of_items,\r\n" + 
@@ -43,7 +47,11 @@ public interface ItemConfigDisplayRepo extends JpaRepository<ItemConfigDisplay, 
 			"        d.item_config_id\r\n" + 
 			") t2\r\n" + 
 			"ON\r\n" + 
-			"    t1.item_config_id = t2.item_config_id", nativeQuery=true)
+			"    t1.item_config_id = t2.item_config_id\r\n" + 
+			") tbl\r\n" + 
+			"ORDER BY\r\n" + 
+			"    fr_id,\r\n" + 
+			"    config_type", nativeQuery=true)
 	List<ItemConfigDisplay> getAllConfigByComp(@Param("compId") int compId);
 
 

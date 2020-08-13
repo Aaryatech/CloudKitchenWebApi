@@ -15,25 +15,29 @@ public interface GetItemsForConfigRepo extends JpaRepository<GetItemsForConfig, 
 	@Query(value="SELECT\r\n" + 
 			"    t1.item_id,\r\n" + 
 			"    t1.item_name,\r\n" + 
-			"    CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.hsncd ELSE t1.hsncd END AS hsncd,\r\n" + 
-			"    t1.mrp AS rate_amt,\r\n" + 
-			"    CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.mrp_amt ELSE t1.mrp\r\n" + 
+			"    CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.hsncd ELSE t1.hsncd\r\n" + 
+			"END AS hsncd,\r\n" + 
+			"t1.mrp AS rate_amt,\r\n" + 
+			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.mrp_amt ELSE t1.mrp\r\n" + 
 			"END AS mrp_amt,\r\n" + 
 			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.sp_rate_amt ELSE t1.mrp\r\n" + 
 			"END AS sp_rate_amt,\r\n" + 
-			" CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.cgst_per ELSE t1.tax1\r\n" + 
+			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.cgst_per ELSE t1.tax1\r\n" + 
 			"END AS tax1,\r\n" + 
 			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.sgst_per ELSE t1.tax2\r\n" + 
 			"END AS tax2,\r\n" + 
 			"CASE WHEN(COALESCE(t2.checked, 0) = 1) THEN t2.igst_per ELSE t1.tax3\r\n" + 
-			"END AS tax3, " +
+			"END AS tax3,\r\n" + 
 			"t1.tax1,\r\n" + 
 			"t1.tax2,\r\n" + 
 			"t1.tax3,\r\n" + 
-			"COALESCE(t2.status, 0) AS status,\r\n" + 
+			"COALESCE(t2.status, 0) AS\r\n" + 
+			"STATUS\r\n" + 
+			"    ,\r\n" + 
 			"    COALESCE(t2.checked, 0) AS checked,\r\n" + 
 			"    COALESCE(t2.item_config_id, 0) AS item_config_id,\r\n" + 
-			"    COALESCE(t2.item_config_detail_id, 0) AS item_config_detail_id , COALESCE(t2.is_active,0) as is_active \r\n" + 
+			"    COALESCE(t2.item_config_detail_id, 0) AS item_config_detail_id,\r\n" + 
+			"    COALESCE(t2.is_active, 0) AS is_active\r\n" + 
 			"FROM\r\n" + 
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
@@ -49,7 +53,25 @@ public interface GetItemsForConfigRepo extends JpaRepository<GetItemsForConfig, 
 			"        m_item i,\r\n" + 
 			"        m_item_sup sup\r\n" + 
 			"    WHERE\r\n" + 
-			"        i.del_status = 0 AND sup.del_status = 0 AND i.id = sup.item_id AND d.item_id = i.id AND d.del_status = 0 AND d.is_used = 0 AND d.ex_int1 = :compId AND d.product_type IN(SELECT CASE WHEN fr_type=3 THEN '1,2' ELSE fr_type END FROM tn_fr_config WHERE fr_id=:frId AND del_status=0 AND is_active=0) \r\n" + 
+			"        i.del_status = 0 AND sup.del_status = 0 AND i.id = sup.item_id AND d.item_id = i.id AND d.del_status = 0 AND d.is_used = 0 AND d.ex_int1 = :compId AND d.product_show_in IN(:configType, 3) AND IF(\r\n" + 
+			"            (\r\n" + 
+			"            SELECT\r\n" + 
+			"                fr_type\r\n" + 
+			"            FROM\r\n" + 
+			"                tn_fr_config\r\n" + 
+			"            WHERE\r\n" + 
+			"                fr_id = :frId AND del_status = 0 AND is_active = 0\r\n" + 
+			"        ) = 3,\r\n" + 
+			"        d.product_type IN(1, 2),\r\n" + 
+			"        d.product_type =(\r\n" + 
+			"        SELECT\r\n" + 
+			"            fr_type\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_fr_config\r\n" + 
+			"        WHERE\r\n" + 
+			"            fr_id = :frId AND del_status = 0 AND is_active = 0\r\n" + 
+			"    )\r\n" + 
+			"        )\r\n" + 
 			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
