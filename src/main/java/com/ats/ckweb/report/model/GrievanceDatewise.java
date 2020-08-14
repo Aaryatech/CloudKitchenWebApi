@@ -37,11 +37,11 @@ public class GrievanceDatewise {
 	public void setId(String id) {
 		this.id = id;
 	}
-	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "yyyy-MM")
 	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
-	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "yyyy-MM")
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}

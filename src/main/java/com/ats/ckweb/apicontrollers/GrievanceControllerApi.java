@@ -236,5 +236,40 @@ public class GrievanceControllerApi {
 
 		return grivList;
 	}
+	
+	
+	@RequestMapping(value = { "/getGrievanceMonthwise" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GrievanceDatewise> getGrievanceMonthwise(@RequestParam String fromDate,
+			@RequestParam String toDate, @RequestParam List<Integer> frIdList,
+			@RequestParam List<Integer> grievTypeIdList, @RequestParam List<Integer> grievSubTypeList,
+			@RequestParam List<Integer> statusList, @RequestParam Integer reportNo) {
+
+		List<GrievanceDatewise> grivList = null;
+		try {
+			
+			if (reportNo.equals(1))
+				grivList = grivReportDatewise.getGrievanceDatewiseGrpByGrivTypeM1(fromDate, toDate, frIdList,
+						grievTypeIdList, grievSubTypeList, statusList);
+			
+			if (reportNo.equals(2))
+				grivList = grivReportDatewise.getGrievanceDatewiseGrpByGrivSubTypeM2(fromDate, toDate, frIdList,
+						grievTypeIdList, grievSubTypeList, statusList);
+			
+			if (reportNo.equals(3))
+				grivList = grivReportDatewise.getGrievanceDatewiseGrpByFrIdM3(fromDate, toDate, frIdList, grievTypeIdList,
+						grievSubTypeList, statusList);
+
+			if (grivList == null) {
+				grivList = new ArrayList<GrievanceDatewise>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			grivList = new ArrayList<GrievanceDatewise>();
+		}
+
+		return grivList;
+	}
+	
 
 }
