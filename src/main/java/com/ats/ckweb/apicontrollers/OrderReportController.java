@@ -35,6 +35,8 @@ public class OrderReportController {
 	@Autowired
 	GetGroupByReportDataRepo getGroupByReportDataRepo;
 
+	private static final String SEPARATOR = ",";
+
 	@RequestMapping(value = { "/getOrderReportByDate" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetOrderHeaderDisplay> getOrderReportByDate(@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate) {
@@ -284,8 +286,27 @@ public class OrderReportController {
 		List<GetGroupByReportData> orderList = new ArrayList<>();
 
 		try {
+			
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
 
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByDateForFr(fromDate, toDate, status, frIds);
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -427,7 +448,24 @@ public class OrderReportController {
 
 		try {
 
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
+
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByMonthForFr(fromDate, toDate, status, frIds);
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -586,7 +624,26 @@ public class OrderReportController {
 
 		try {
 
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
+
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByDateForCust(fromDate, toDate, status, custIds);
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -728,7 +785,26 @@ public class OrderReportController {
 
 		try {
 
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
+
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByMonthForCust(fromDate, toDate, status, custIds);
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -886,9 +962,28 @@ public class OrderReportController {
 		List<GetGroupByReportData> orderList = new ArrayList<>();
 
 		try {
+			
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
 
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByDateForPlatform(fromDate, toDate, status,
 					platform);
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1031,8 +1126,28 @@ public class OrderReportController {
 
 		try {
 
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
+
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByMonthForPlatform(fromDate, toDate, status,
 					platform);
+			
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1191,7 +1306,28 @@ public class OrderReportController {
 
 		try {
 
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
+
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByDateForPayment(fromDate, toDate, status, payment);
+			
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+			
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1334,8 +1470,29 @@ public class OrderReportController {
 
 		try {
 
+			
+			String statusList = "";
+			if (status != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Integer i : status) {
+					sb.append(i);
+					sb.append(SEPARATOR);
+				}
+				statusList = sb.toString();
+			}
+
 			orderList = getGroupByReportDataRepo.getOrderReportGroupByMonthForPayment(fromDate, toDate, status,
 					payment);
+			
+			if(orderList!=null) {
+				if(!orderList.isEmpty()) {
+					for(int i=0;i<orderList.size();i++) {
+						orderList.get(i).setStatusList(statusList);
+					}
+				}
+			}
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
