@@ -17,6 +17,7 @@ public class GetOrderGrpDate {
 	private int orderCnt;
 	private String monthName;
 	private int monthNo;
+	private int yearVal;
 	public String getId() {
 		return id;
 	}
@@ -54,10 +55,16 @@ public class GetOrderGrpDate {
 	public void setMonthNo(int monthNo) {
 		this.monthNo = monthNo;
 	}
+	public int getYearVal() {
+		return yearVal;
+	}
+	public void setYearVal(int yearVal) {
+		this.yearVal = yearVal;
+	}
 	@Override
 	public String toString() {
 		return "GetOrderGrpDate [id=" + id + ", deliveryDate=" + deliveryDate + ", totalAmt=" + totalAmt + ", orderCnt="
-				+ orderCnt + ", monthName=" + monthName + ", monthNo=" + monthNo + "]";
+				+ orderCnt + ", monthName=" + monthName + ", monthNo=" + monthNo + ", yearVal=" + yearVal + "]";
 	}
 	
 
