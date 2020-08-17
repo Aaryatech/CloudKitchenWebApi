@@ -231,7 +231,7 @@ public class FrontEndController {
 			frData = new FranchiseData();
 		} else {
 
-			List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.getFrId());
+			/*List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.getFrId());
 			if (cityList == null) {
 				cityList = new ArrayList<>();
 			}
@@ -241,7 +241,7 @@ public class FrontEndController {
 			if (areaList == null) {
 				areaList = new ArrayList<>();
 			}
-			frData.setAreaList(areaList);
+			frData.setAreaList(areaList);*/
 		}
 
 		return frData;
