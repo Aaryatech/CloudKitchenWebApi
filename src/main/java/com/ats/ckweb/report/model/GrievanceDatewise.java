@@ -19,6 +19,7 @@ public class GrievanceDatewise {
 	private String id;
 	
 	private Date deliveryDate;
+	private Date deliveryMonth;
 	
 	private float totalAmt;
 	
@@ -37,11 +38,11 @@ public class GrievanceDatewise {
 	public void setId(String id) {
 		this.id = id;
 	}
-	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "yyyy-MM")
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
 	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
-	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "yyyy-MM")
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
@@ -76,11 +77,22 @@ public class GrievanceDatewise {
 		this.cashPay = cashPay;
 	}
 
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "yyyy-MM")
+	public Date getDeliveryMonth() {
+		return deliveryMonth;
+	}
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "yyyy-MM")
+	public void setDeliveryMonth(Date deliveryMonth) {
+		this.deliveryMonth = deliveryMonth;
+	}
+	
 	@Override
 	public String toString() {
-		return "GrievanceDatewise [id=" + id + ", deliveryDate=" + deliveryDate + ", totalAmt=" + totalAmt
-				+ ", grivCount=" + grivCount + ", filterName=" + filterName + ", ePay=" + ePay + ", cashPay=" + cashPay
-				+ "]";
+		return "GrievanceDatewise [id=" + id + ", deliveryDate=" + deliveryDate + ", deliveryMonth=" + deliveryMonth
+				+ ", totalAmt=" + totalAmt + ", grivCount=" + grivCount + ", filterName=" + filterName + ", ePay="
+				+ ePay + ", cashPay=" + cashPay + "]";
 	}
+	
+	
 	
 }

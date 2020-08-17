@@ -32,4 +32,12 @@ public interface GetOrderTrailListRepository extends JpaRepository<GetOrderTrail
 			+ "and oh.cust_id=:custId", nativeQuery = true)
 	List<GetOrderTrailList> trailListbyByCustomerIds(@Param("custId")int custId);
 
+	@Query(value = "select ot.*,case when(ot.ex_int1=1) then (select concat(u.user_name,' (',ut.user_type_name,')') from mn_user u,mn_user_type ut where "
+			+ "u.user_id=ot.action_by_user_id and ut.user_type_id=u.user_type) when(ot.ex_int1=4) then (select concat(fremp.fr_emp_name,' (',fr.fr_name,')') "
+			+ "from m_fr_emp fremp,m_franchisee fr where fremp.fr_emp_id=ot.action_by_user_id and fr.fr_id=fremp.fr_id) else (select concat(c.cust_name,' (Customer)') "
+			+ "from m_customer c  where c.cust_id=ot.action_by_user_id )  end as action_user_name from tn_order_trail ot,tn_order_header oh where oh.order_id=ot.order_id "
+			+ "and oh.order_id=:orderId", nativeQuery = true)
+	List<GetOrderTrailList> trailListbyByOrderId(@Param("orderId")int orderId);
+
+	
 }

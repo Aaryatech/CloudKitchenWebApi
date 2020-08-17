@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import com.ats.ckweb.report.model.GetOrderTrailDisplay;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
@@ -206,6 +207,13 @@ public class GetOrderHeaderList {
 	@Transient
 	private List<GetOrderTrailList> trailList;
 
+	
+	
+	@Transient
+	private List<GetOrderTrailDisplay> trailDetailList;
+
+	
+	
 	public int getOrderId() {
 		return orderId;
 	}
@@ -713,6 +721,16 @@ public class GetOrderHeaderList {
 		this.trailList = trailList;
 	}
 
+	
+	
+	public List<GetOrderTrailDisplay> getTrailDetailList() {
+		return trailDetailList;
+	}
+
+	public void setTrailDetailList(List<GetOrderTrailDisplay> trailDetailList) {
+		this.trailDetailList = trailDetailList;
+	}
+
 	@Override
 	public String toString() {
 		return "GetOrderHeaderList [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate
@@ -733,7 +751,13 @@ public class GetOrderHeaderList {
 				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", areaName=" + areaName
 				+ ", cityName=" + cityName + ", custName=" + custName + ", frName=" + frName + ", deliveryKm="
 				+ deliveryKm + ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode
-				+ ", isAgent=" + isAgent + ", detailList=" + detailList + ", trailList=" + trailList + "]";
+				+ ", isAgent=" + isAgent + ", detailList=" + detailList + ", trailList=" + trailList
+				+ ", trailDetailList=" + trailDetailList + "]";
 	}
 
+
+	
+	
+	
+	
 }

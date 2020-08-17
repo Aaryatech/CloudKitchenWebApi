@@ -10,7 +10,7 @@ import com.ats.ckweb.report.model.GrievanceDatewise;
 
 public interface GrievanceDatewiseRepo extends JpaRepository<GrievanceDatewise, Integer> {
 
-	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, "
+	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, tn_order_header.delivery_date AS delivery_month, "
 			+ " SUM( tn_order_header.total_amt) as total_amt,COUNT(t_grievences.grieve_id) as griv_count,"
 			+ "  mn_grievences_type_instructn.caption as filter_name,0 as e_pay, 0 as cash_pay "
 			+ " FROM tn_order_header,mn_grievences_type_instructn,t_grievences,"
@@ -32,7 +32,7 @@ public interface GrievanceDatewiseRepo extends JpaRepository<GrievanceDatewise, 
 			@Param("grievSubTypeList") List<Integer> grievSubTypeList, @Param("statusList") List<Integer> statusList);
 
 	
-	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, "
+	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, tn_order_header.delivery_date AS delivery_month, "
 			+ " SUM( tn_order_header.total_amt) as total_amt,COUNT(t_grievences.grieve_id) as griv_count,"
 			+ "  mn_grievences_instruction.caption as filter_name,0 as e_pay, 0 as cash_pay "
 			+ " FROM tn_order_header,mn_grievences_type_instructn,t_grievences,"
@@ -54,7 +54,7 @@ public interface GrievanceDatewiseRepo extends JpaRepository<GrievanceDatewise, 
 			@Param("grievSubTypeList") List<Integer> grievSubTypeList, @Param("statusList") List<Integer> statusList);
 
 	
-	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, "
+	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, tn_order_header.delivery_date AS delivery_month, "
 			+ " SUM( tn_order_header.total_amt) as total_amt,COUNT(t_grievences.grieve_id) as griv_count,"
 			+ "  m_franchisee.fr_name as filter_name,0 as e_pay, 0 as cash_pay "
 			+ " FROM tn_order_header,mn_grievences_type_instructn,t_grievences,"
@@ -77,7 +77,7 @@ public interface GrievanceDatewiseRepo extends JpaRepository<GrievanceDatewise, 
 	/*************************************************************************************************/
 	
 	//Sachin 14-08-2020 04:39
-	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, "
+	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, tn_order_header.delivery_date AS delivery_month, "
 			+ " SUM( tn_order_header.total_amt) as total_amt,COUNT(t_grievences.grieve_id) as griv_count,"
 			+ "  mn_grievences_type_instructn.caption as filter_name,0 as e_pay, 0 as cash_pay "
 			+ " FROM tn_order_header,mn_grievences_type_instructn,t_grievences,"
@@ -99,7 +99,7 @@ public interface GrievanceDatewiseRepo extends JpaRepository<GrievanceDatewise, 
 			@Param("grievSubTypeList") List<Integer> grievSubTypeList, @Param("statusList") List<Integer> statusList);
 
 	
-	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, "
+	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, tn_order_header.delivery_date AS delivery_month, "
 			+ " SUM( tn_order_header.total_amt) as total_amt,COUNT(t_grievences.grieve_id) as griv_count,"
 			+ "  mn_grievences_instruction.caption as filter_name,0 as e_pay, 0 as cash_pay "
 			+ " FROM tn_order_header,mn_grievences_type_instructn,t_grievences,"
@@ -121,7 +121,7 @@ public interface GrievanceDatewiseRepo extends JpaRepository<GrievanceDatewise, 
 			@Param("grievSubTypeList") List<Integer> grievSubTypeList, @Param("statusList") List<Integer> statusList);
 
 	
-	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, "
+	@Query(value = " SELECT  UUID() as id,tn_order_header.delivery_date, tn_order_header.delivery_date AS delivery_month, "
 			+ " SUM( tn_order_header.total_amt) as total_amt,COUNT(t_grievences.grieve_id) as griv_count,"
 			+ "  m_franchisee.fr_name as filter_name,0 as e_pay, 0 as cash_pay "
 			+ " FROM tn_order_header,mn_grievences_type_instructn,t_grievences,"

@@ -13,15 +13,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.GetGrievanceHeader;
 import com.ats.ckweb.model.GetGrievanceTrail;
+import com.ats.ckweb.model.GetOrderDetailList;
+import com.ats.ckweb.model.GetOrderHeaderList;
+import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.GrievanceActionMaster;
 import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.OrderGrievanceTrail;
+import com.ats.ckweb.report.model.GetOrderHeaderDisplay;
+import com.ats.ckweb.report.model.GetOrderTrailDisplay;
 import com.ats.ckweb.report.model.GrievanceBetDate;
 import com.ats.ckweb.report.model.GrievanceDatewise;
+import com.ats.ckweb.report.repo.GetOrderTrailDisplayRepo;
 import com.ats.ckweb.report.repo.GrievanceBetDateRepo;
 import com.ats.ckweb.report.repo.GrievanceDatewiseRepo;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
+import com.ats.ckweb.repository.GetOrderDetailListRepository;
+import com.ats.ckweb.repository.GetOrderHeaderListRepository;
+import com.ats.ckweb.repository.GetOrderTrailListRepository;
 import com.ats.ckweb.repository.GrievanceActionMasterRepo;
 import com.ats.ckweb.repository.MnUserRepo;
 import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
@@ -271,5 +280,44 @@ public class GrievanceControllerApi {
 		return grivList;
 	}
 	
+	
+	
+	//Sachin 17-08-2020
+	//Desc - to show order header detail and its trail
+	
+	@Autowired
+	GetOrderHeaderListRepository getOrderHeaderListRepository;
+
+	@Autowired
+	GetOrderDetailListRepository getOrderDetailListRepository;
+
+	@Autowired
+	GetOrderTrailListRepository getOrderTrailListRepository;
+	@Autowired
+	GetOrderTrailDisplayRepo getOrderTrailDisplayRepo;
+
+	@RequestMapping(value = { "/getOrderDataByOrderId" }, method = RequestMethod.POST)
+	public @ResponseBody GetOrderHeaderList getOrderDataByOrderId(
+			@RequestParam("orderId") int orderId) {
+
+		GetOrderHeaderList getOrderHeaderList = new GetOrderHeaderList();
+
+		try {
+
+			getOrderHeaderList = getOrderHeaderListRepository.getOrderOrderId(orderId);
+
+			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderDetailOrderId(orderId);
+
+			getOrderHeaderList.setDetailList(detailListbystatus);
+			
+			List<GetOrderTrailDisplay> trailDetailList = getOrderTrailDisplayRepo.getOrderTrailDataOrderId(orderId);
+			getOrderHeaderList.setTrailDetailList(trailDetailList);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return getOrderHeaderList;
+	}
 
 }
