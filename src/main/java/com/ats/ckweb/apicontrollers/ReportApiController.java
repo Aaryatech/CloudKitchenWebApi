@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.report.model.GetOrderTrailDetails;
 import com.ats.ckweb.report.model.Status;
@@ -19,6 +20,7 @@ import com.ats.ckweb.report.repo.GetOrderDetailsRepo;
 import com.ats.ckweb.report.repo.GetOrderGrpDateRepo;
 import com.ats.ckweb.report.repo.GetOrderReportRepo;
 import com.ats.ckweb.report.repo.StatusRepo;
+import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
 
 @RestController
@@ -32,6 +34,7 @@ public class ReportApiController {
 	
 	@Autowired GetOrderDetailsRepo detlRepo;
 	
+	@Autowired CustomerRepo custRepo;
 	
 	@Autowired GetOrderGrpDateRepo orderReportRepo;
 	
@@ -63,7 +66,13 @@ public class ReportApiController {
 		  res = statusRepo.findByDelStatusOrderByStatusIdAsc(0);
 		   return res; 
 	  }
-	 
+	
+	@RequestMapping(value = { "/getAllCustomer" }, method = RequestMethod.POST)
+	  public @ResponseBody List<Customer> getOrderReportDateWise(@RequestParam int compId) {
+	  
+		   List<Customer> res = custRepo.findByDelStatusAndCompIdOrderByCustIdDesc(0, compId);
+		   return res; 
+	  }
 	/*********************************************************************************************/
 	
 	  @RequestMapping(value = { "/getOrderReportByDateWise" }, method = RequestMethod.POST)
