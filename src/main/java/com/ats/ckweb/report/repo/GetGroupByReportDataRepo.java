@@ -352,7 +352,7 @@ public interface GetGroupByReportDataRepo extends JpaRepository<GetGroupByReport
 			") AS month_name,\r\n" + 
 			"COALESCE(SUM(h.total_amt),\r\n" + 
 			"0) AS total_amt,\r\n" + 
-			":status AS status_list\r\n" + 
+			"':status' AS status_list\r\n" + 
 			"FROM\r\n" + 
 			"    tn_order_header h\r\n" + 
 			"WHERE\r\n" + 
@@ -400,7 +400,7 @@ public interface GetGroupByReportDataRepo extends JpaRepository<GetGroupByReport
 			") AS month_name,\r\n" + 
 			"COALESCE(SUM(h.total_amt),\r\n" + 
 			"0) AS total_amt,\r\n" + 
-			":status AS status_list\r\n" + 
+			"':status' AS status_list\r\n" + 
 			"FROM\r\n" + 
 			"    tn_order_header h\r\n" + 
 			"WHERE\r\n" + 
