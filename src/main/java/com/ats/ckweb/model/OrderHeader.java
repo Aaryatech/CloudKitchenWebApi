@@ -184,6 +184,9 @@ public class OrderHeader {
 	@Column(name = "is_agent")
 	private int isAgent;
 	
+	@Column(name = "uuid_no")
+	private String uuidNo;
+	
 	public int getOrderId() {
 		return orderId;
 	}
@@ -640,6 +643,14 @@ public class OrderHeader {
 		this.isAgent = isAgent;
 	}
 
+	public String getUuidNo() {
+		return uuidNo;
+	}
+
+	public void setUuidNo(String uuidNo) {
+		this.uuidNo = uuidNo;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderHeader [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate + ", frId="
@@ -659,7 +670,7 @@ public class OrderHeader {
 				+ billingAddress + ", customerGstnNo=" + customerGstnNo + ", deliveryInstText=" + deliveryInstText
 				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", deliveryKm=" + deliveryKm
 				+ ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode + ", isAgent=" + isAgent
-				+ "]";
+				+ ", uuidNo=" + uuidNo + "]";
 	}
 
 }

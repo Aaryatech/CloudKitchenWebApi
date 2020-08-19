@@ -181,6 +181,8 @@ public class OrderApiController {
 
 			int update = orderHeaderRepository.updateStatus(status, orderId);
 
+			String UUID = orderHeaderRepository.getUuId(orderId);
+			
 			OrderTrail orderTrail = new OrderTrail();
 			orderTrail.setOrderId(orderId);
 			orderTrail.setActionByUserId(userId);
@@ -191,7 +193,7 @@ public class OrderApiController {
 			OrderTrail orderRes = orderTrailRepository.save(orderTrail);
 
 			info.setError(false);
-			info.setMessage("updated");
+			info.setMessage(UUID);
 
 		} catch (Exception e) {
 			info.setError(true);

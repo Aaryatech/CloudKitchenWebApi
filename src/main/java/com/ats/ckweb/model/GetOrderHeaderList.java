@@ -201,6 +201,9 @@ public class GetOrderHeaderList {
 	@Column(name = "is_agent")
 	private int isAgent;
 
+	@Column(name = "uuid_no")
+	private String uuidNo;
+	
 	@Transient
 	private List<GetOrderDetailList> detailList;
 	
@@ -720,15 +723,21 @@ public class GetOrderHeaderList {
 	public void setTrailList(List<GetOrderTrailList> trailList) {
 		this.trailList = trailList;
 	}
-
-	
-	
+ 
 	public List<GetOrderTrailDisplay> getTrailDetailList() {
 		return trailDetailList;
 	}
 
 	public void setTrailDetailList(List<GetOrderTrailDisplay> trailDetailList) {
 		this.trailDetailList = trailDetailList;
+	}
+
+	public String getUuidNo() {
+		return uuidNo;
+	}
+
+	public void setUuidNo(String uuidNo) {
+		this.uuidNo = uuidNo;
 	}
 
 	@Override
@@ -751,8 +760,8 @@ public class GetOrderHeaderList {
 				+ ", deliveryType=" + deliveryType + ", deliveryInstId=" + deliveryInstId + ", areaName=" + areaName
 				+ ", cityName=" + cityName + ", custName=" + custName + ", frName=" + frName + ", deliveryKm="
 				+ deliveryKm + ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode
-				+ ", isAgent=" + isAgent + ", detailList=" + detailList + ", trailList=" + trailList
-				+ ", trailDetailList=" + trailDetailList + "]";
+				+ ", isAgent=" + isAgent + ", uuidNo=" + uuidNo + ", detailList=" + detailList + ", trailList="
+				+ trailList + ", trailDetailList=" + trailDetailList + "]";
 	}
 
 

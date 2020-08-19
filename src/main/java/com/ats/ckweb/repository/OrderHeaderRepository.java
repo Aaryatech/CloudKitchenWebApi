@@ -14,6 +14,9 @@ public interface OrderHeaderRepository extends JpaRepository<OrderHeader, Intege
 	@Transactional
 	@Modifying
 	@Query("update OrderHeader set order_status=:status WHERE order_id=:orderId")
-	int updateStatus(@Param("status") int status,@Param("orderId") int orderId);
+	int updateStatus(@Param("status") int status, @Param("orderId") int orderId);
+
+	@Query(value = "select uuid_no from tn_order_header where order_id=:orderId", nativeQuery = true)
+	String getUuId(@Param("orderId") int orderId);
 
 }
