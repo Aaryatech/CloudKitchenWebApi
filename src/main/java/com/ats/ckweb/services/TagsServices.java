@@ -176,6 +176,8 @@ public interface TagsServices {
 	int deletDesignationId(int desigId);
 
 	Designation addDesignation(Designation desig);
+
+	List<GrievencesTypeInstructn> getAllGrievances();
 	
 
 	

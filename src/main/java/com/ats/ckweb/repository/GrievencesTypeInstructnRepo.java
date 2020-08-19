@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import com.ats.ckweb.model.GrievencesTypeInstructn;
 
 public interface GrievencesTypeInstructnRepo extends JpaRepository<GrievencesTypeInstructn, Integer> {
+	
+	List<GrievencesTypeInstructn> findByDelStatusOrderByGrevTypeIdDesc(int del);
 
 	List<GrievencesTypeInstructn> findByDelStatusAndCompanyIdOrderByGrevTypeIdDesc(int del, int compId);
 	

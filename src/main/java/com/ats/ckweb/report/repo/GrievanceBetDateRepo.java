@@ -48,4 +48,47 @@ public interface GrievanceBetDateRepo extends JpaRepository<GrievanceBetDate, In
 			+ " tn_order_header.delivery_date BETWEEN :fromDate and :toDate ",nativeQuery=true)
 	List<GrievanceBetDate> getGrieBetGivenDeliveryDate(@Param("fromDate") String fromDate, @Param("toDate") String toDate);
 
+	
+	@Query(value="SELECT\n" + 
+			"        UUID() as id,\n" + 
+			"        tn_order_header.order_id,\n" + 
+			"        tn_order_header.order_no,\n" + 
+			"        tn_order_header.delivery_date,\n" + 
+			"        tn_order_header.order_platform,\n" + 
+			"        tn_order_header.fr_id,\n" + 
+			"        tn_order_header.cust_id,\n" + 
+			"        tn_order_header.total_amt,\n" + 
+			"        tn_order_header.insert_user_id as order_user_id,\n" + 
+			"        m_customer.cust_name,\n" + 
+			"        m_customer.phone_number,\n" + 
+			"        m_customer.whatsapp_no,\n" + 
+			"        t_grievences.grieve_id,\n" + 
+			"        t_grievences.grievencce_no,\n" + 
+			"        t_grievences.grievence_type_id,\n" + 
+			"        t_grievences.grievence_subtype_id,\n" + 
+			"        t_grievences.current_status as griv_status,\n" + 
+			"        t_grievences.date as griv_date,\n" + 
+			"        mn_grievences_type_instructn.caption as type  ,\n" + 
+			"        mn_grievences_instruction.caption as sub_type,\n" + 
+			"        m_franchisee.fr_name,\n" + 
+			"        m_franchisee.fr_code                 \n" + 
+			"    FROM\n" + 
+			"        tn_order_header,\n" + 
+			"        m_customer,\n" + 
+			"        mn_grievences_type_instructn,\n" + 
+			"        mn_grievences_instruction,\n" + 
+			"        m_franchisee,\n" + 
+			"        t_grievences                           \n" + 
+			"    WHERE\n" + 
+			"        t_grievences.order_id=tn_order_header.order_id         \n" + 
+			"        AND t_grievences.grievence_type_id=mn_grievences_type_instructn.grev_type_id         \n" + 
+			"        AND t_grievences.grievence_subtype_id=mn_grievences_instruction.grievance_id         \n" + 
+			"        AND m_customer.cust_id=tn_order_header.cust_id         \n" + 
+			"        AND m_franchisee.fr_id=tn_order_header.fr_id \n" + 
+			"        AND m_franchisee.fr_id=:frId\n" + 
+			"        AND mn_grievences_type_instructn.grev_type_id IN (:grevTypeIds)\n" + 
+			"        AND  tn_order_header.delivery_date BETWEEN :fromDate AND :toDate", nativeQuery=true)
+	List<GrievanceBetDate> getGrieBetGivenDtl(@Param("fromDate") String fromDate, @Param("toDate") String toDate, 
+			@Param("frId") int frId, @Param("grevTypeIds") List<Integer> grevTypeIds);
+
 }

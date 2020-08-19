@@ -554,4 +554,10 @@ public class TagServiceImpl implements TagsServices {
 		return res;
 	}
 
+	@Override
+	public List<GrievencesTypeInstructn> getAllGrievances() {
+		List<GrievencesTypeInstructn> list = grievTypeInstructRepo.findByDelStatusOrderByGrevTypeIdDesc(0);
+		return list;
+	}
+
 }

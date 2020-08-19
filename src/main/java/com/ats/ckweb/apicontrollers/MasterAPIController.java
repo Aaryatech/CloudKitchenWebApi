@@ -818,6 +818,18 @@ public class MasterAPIController {
 		}
 		return grievTypeList;
 	}
+	
+	@RequestMapping(value = { "/getAllGrievType" }, method = RequestMethod.GET)
+	public @ResponseBody List<GrievencesTypeInstructn> getAllGrievType() {
+
+		List<GrievencesTypeInstructn> grievTypeList = new ArrayList<GrievencesTypeInstructn>();
+		try {
+			grievTypeList = tagService.getAllGrievances();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return grievTypeList;
+	}
 
 	@RequestMapping(value = { "/getGrievTypeInstructById" }, method = RequestMethod.POST)
 	public @ResponseBody GrievencesTypeInstructn getGrievTypeInstructById(@RequestParam int grievTypeId,

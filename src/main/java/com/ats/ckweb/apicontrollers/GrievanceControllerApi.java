@@ -320,4 +320,24 @@ public class GrievanceControllerApi {
 		return getOrderHeaderList;
 	}
 
+	//Mahendra Singh //19-08-2020
+	@RequestMapping(value = { "/getGrievanceBetOrderDetail" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GrievanceBetDate> getGrievanceBetOrderDetail(@RequestParam String fromDate,
+			@RequestParam String toDate, @RequestParam int frId, @RequestParam("grevTypeIds") List<Integer> grevTypeIds) {
+
+		List<GrievanceBetDate> grivList = null;
+		try {
+			grivList = grievanceBetDateRepo.getGrieBetGivenDtl(fromDate, toDate,frId, grevTypeIds);
+			if (grivList == null) {
+				grivList = new ArrayList<GrievanceBetDate>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			grivList = new ArrayList<GrievanceBetDate>();
+		}
+
+		return grivList;
+	}
+	
 }
