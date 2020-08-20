@@ -182,7 +182,7 @@ public class OrderApiController {
 			int update = orderHeaderRepository.updateStatus(status, orderId);
 
 			String UUID = orderHeaderRepository.getUuId(orderId);
-			
+
 			OrderTrail orderTrail = new OrderTrail();
 			orderTrail.setOrderId(orderId);
 			orderTrail.setActionByUserId(userId);
@@ -194,6 +194,42 @@ public class OrderApiController {
 
 			info.setError(false);
 			info.setMessage(UUID);
+
+		} catch (Exception e) {
+			info.setError(true);
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	@RequestMapping(value = { "/updatePaymentSuccessful" }, method = RequestMethod.POST)
+	public @ResponseBody Info updatePaymentSuccessful(@RequestParam("status") int status,
+			@RequestParam("paid") int paid, @RequestParam("orderId") String orderId,
+			@RequestParam("txStatus") String txStatus) {
+
+		Info info = new Info();
+
+		try {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date dt = new Date();
+
+			int update = orderHeaderRepository.updateStatusAndIsPaid(status, paid, orderId);
+
+			if (status == 8) {
+
+				OrderHeader orderHeader = orderHeaderRepository.findByUuidNo(orderId);
+				OrderTrail orderTrail = new OrderTrail();
+				orderTrail.setOrderId(orderHeader.getOrderId());
+				orderTrail.setActionByUserId(orderHeader.getCustId());
+				orderTrail.setActionDateTime(sf.format(dt));
+				orderTrail.setStatus(status);
+				orderTrail.setExVar1("Payment : " + txStatus);
+				orderTrail.setExInt1(2);
+				OrderTrail orderRes = orderTrailRepository.save(orderTrail);
+			}
+
+			info.setError(false);
+			info.setMessage("Success");
 
 		} catch (Exception e) {
 			info.setError(true);
@@ -349,7 +385,7 @@ public class OrderApiController {
 					.getGriviencevDetailByGrvId(grvId);
 
 			getGrievienceList.setGetGrievienceTailList(getGrievienceTailList);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
