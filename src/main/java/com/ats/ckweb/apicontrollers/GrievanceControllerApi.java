@@ -330,7 +330,7 @@ public class GrievanceControllerApi {
 			List<GetGrievienceTailList> grievTrailList = getGrievienceTailListRepository.getGriviencevDetailByGrvId(gervData.getGrieveId());			
 			getOrderHeaderList.setGrievTrailList(grievTrailList);
 			
-			System.err.println("Griev Trail----------->"+getOrderHeaderList);
+		//	System.err.println("Griev Trail----------->"+getOrderHeaderList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
