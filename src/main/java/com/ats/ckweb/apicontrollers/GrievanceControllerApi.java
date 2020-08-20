@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.GetGrievanceHeader;
 import com.ats.ckweb.model.GetGrievanceTrail;
+import com.ats.ckweb.model.GetGrievienceTailList;
 import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.GrievanceActionMaster;
 import com.ats.ckweb.model.MnUser;
+import com.ats.ckweb.model.OrderGrievance;
 import com.ats.ckweb.model.OrderGrievanceTrail;
 import com.ats.ckweb.report.model.GetOrderHeaderDisplay;
 import com.ats.ckweb.report.model.GetOrderTrailDisplay;
@@ -28,11 +30,13 @@ import com.ats.ckweb.report.repo.GrievanceBetDateRepo;
 import com.ats.ckweb.report.repo.GrievanceDatewiseRepo;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
+import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.GetOrderTrailListRepository;
 import com.ats.ckweb.repository.GrievanceActionMasterRepo;
 import com.ats.ckweb.repository.MnUserRepo;
+import com.ats.ckweb.repository.OrderGrievanceRepo;
 import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
 
 @RestController
@@ -295,6 +299,12 @@ public class GrievanceControllerApi {
 	GetOrderTrailListRepository getOrderTrailListRepository;
 	@Autowired
 	GetOrderTrailDisplayRepo getOrderTrailDisplayRepo;
+	
+	 @Autowired
+	GetGrievienceTailListRepository getGrievienceTailListRepository;
+		
+	@Autowired
+	OrderGrievanceRepo orderGrievanceRepo;
 
 	@RequestMapping(value = { "/getOrderDataByOrderId" }, method = RequestMethod.POST)
 	public @ResponseBody GetOrderHeaderList getOrderDataByOrderId(
@@ -312,7 +322,14 @@ public class GrievanceControllerApi {
 			
 			List<GetOrderTrailDisplay> trailDetailList = getOrderTrailDisplayRepo.getOrderTrailDataOrderId(orderId);
 			getOrderHeaderList.setTrailDetailList(trailDetailList);
-
+			
+			//Mahendra //20-08-2020
+			OrderGrievance gervData = orderGrievanceRepo.findByOrderId(getOrderHeaderList.getOrderId());
+			
+			List<GetGrievienceTailList> grievTrailList = getGrievienceTailListRepository.getGriviencevDetailByGrvId(gervData.getGrieveId());			
+			getOrderHeaderList.setGrievTrailList(grievTrailList);
+			
+			System.err.println("Griev Trail----------->"+getOrderHeaderList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
