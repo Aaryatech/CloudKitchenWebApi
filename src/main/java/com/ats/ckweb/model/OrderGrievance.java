@@ -1,5 +1,7 @@
 package com.ats.ckweb.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "t_grievences")
@@ -45,7 +49,7 @@ public class OrderGrievance {
 	private String grievenceSubtypeName;
 
 	@Column(name = "date")
-	private String date;
+	private Date date;
 
 	@Column(name = "extra_int1")
 	private int extraInt1;
@@ -140,12 +144,12 @@ public class OrderGrievance {
 	public void setGrievenceSubtypeName(String grievenceSubtypeName) {
 		this.grievenceSubtypeName = grievenceSubtypeName;
 	}
-
-	public String getDate() {
+	@JsonFormat(locale = "English", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm a")
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 

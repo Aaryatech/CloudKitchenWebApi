@@ -325,6 +325,7 @@ public class GrievanceControllerApi {
 			
 			//Mahendra //20-08-2020
 			OrderGrievance gervData = orderGrievanceRepo.findByOrderId(getOrderHeaderList.getOrderId());
+			getOrderHeaderList.setOrderGriev(gervData);
 			
 			List<GetGrievienceTailList> grievTrailList = getGrievienceTailListRepository.getGriviencevDetailByGrvId(gervData.getGrieveId());			
 			getOrderHeaderList.setGrievTrailList(grievTrailList);

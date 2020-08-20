@@ -215,8 +215,9 @@ public class GetOrderHeaderList {
 	
 	@Transient
 	private List<GetOrderTrailDisplay> trailDetailList;
-
 	
+	@Transient
+	private OrderGrievance orderGriev;
 	
 	public int getOrderId() {
 		return orderId;
@@ -750,6 +751,14 @@ public class GetOrderHeaderList {
 		this.grievTrailList = grievTrailList;
 	}
 
+	public OrderGrievance getOrderGriev() {
+		return orderGriev;
+	}
+
+	public void setOrderGriev(OrderGrievance orderGriev) {
+		this.orderGriev = orderGriev;
+	}
+
 	@Override
 	public String toString() {
 		return "GetOrderHeaderList [orderId=" + orderId + ", orderNo=" + orderNo + ", orderDate=" + orderDate
@@ -771,8 +780,11 @@ public class GetOrderHeaderList {
 				+ ", cityName=" + cityName + ", custName=" + custName + ", frName=" + frName + ", deliveryKm="
 				+ deliveryKm + ", deliveryCharges=" + deliveryCharges + ", paymentSubMode=" + paymentSubMode
 				+ ", isAgent=" + isAgent + ", uuidNo=" + uuidNo + ", detailList=" + detailList + ", trailList="
-				+ trailList + ", grievTrailList=" + grievTrailList + ", trailDetailList=" + trailDetailList + "]";
+				+ trailList + ", grievTrailList=" + grievTrailList + ", trailDetailList=" + trailDetailList
+				+ ", orderGriev=" + orderGriev + "]";
 	}
+
+	
 
 	
 }
