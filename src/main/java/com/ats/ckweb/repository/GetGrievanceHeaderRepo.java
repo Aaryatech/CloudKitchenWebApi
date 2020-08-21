@@ -22,7 +22,7 @@ public interface GetGrievanceHeaderRepo extends JpaRepository<GetGrievanceHeader
 			"m_customer.cust_name,m_customer.phone_number,m_customer.whatsapp_no,\n" + 
 			"mn_grievences_type_instructn.caption as type ,mn_grievences_instruction.caption as sub_type,m_franchisee.fr_name,m_franchisee.fr_code,\n" + 
 			"COALESCE((user.user_name),0) as insert_user_name,"
-			+ " COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count   \n" + 
+			+ " COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count, t_grievences.extra_int1    \n" + 
 			"from  tn_order_header,m_customer,mn_grievences_type_instructn,mn_grievences_instruction,m_franchisee,t_grievences\n" + 
 			"left JOIN mn_user user  on t_grievences.insert_by_id=user.user_id  \n" +
 			//" t_grievences.grieve_id=trail.grievences_id \n" + 
@@ -39,7 +39,7 @@ public interface GetGrievanceHeaderRepo extends JpaRepository<GetGrievanceHeader
 			"m_customer.cust_name,m_customer.phone_number,m_customer.whatsapp_no,\n" + 
 			"mn_grievences_type_instructn.caption as type ,mn_grievences_instruction.caption as sub_type,m_franchisee.fr_name,m_franchisee.fr_code,\n" + 
 			"COALESCE((user.user_name),0) as insert_user_name ,"
-			+ "  COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count   " + 
+			+ "  COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count , t_grievences.extra_int1  " + 
 			"  " + 
 			" \n" + 
 			"from  tn_order_header,m_customer,mn_grievences_type_instructn,mn_grievences_instruction,m_franchisee,t_grievences\n" + 
@@ -59,7 +59,7 @@ public interface GetGrievanceHeaderRepo extends JpaRepository<GetGrievanceHeader
 			"m_customer.cust_name,m_customer.phone_number,m_customer.whatsapp_no,\n" + 
 			"mn_grievences_type_instructn.caption as type ,mn_grievences_instruction.caption as sub_type,m_franchisee.fr_name,m_franchisee.fr_code,\n" + 
 			"COALESCE((user.user_name),0) as insert_user_name ,"
-			+ " COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count  " + 
+			+ " COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count , t_grievences.extra_int1 " + 
 			"from  tn_order_header,m_customer,mn_grievences_type_instructn,mn_grievences_instruction,m_franchisee,t_grievences\n" + 
 			"left JOIN mn_user user  on t_grievences.insert_by_id=user.user_id \n" + 
 			//"left JOIN t_grievences_trail trail  on t_grievences.grieve_id=trail.grievences_id \n" + 
@@ -79,7 +79,7 @@ public interface GetGrievanceHeaderRepo extends JpaRepository<GetGrievanceHeader
 	  "mn_grievences_type_instructn.caption as type ,mn_grievences_instruction.caption as sub_type,m_franchisee.fr_name,m_franchisee.fr_code, "
 	  +
 	  "COALESCE((user.user_name),0) as insert_user_name , "
-	  + "COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count   "
+	  + "COALESCE((SELECT COUNT(*) FROM t_grievences_trail WHERE t_grievences_trail.grievences_id=t_grievences.grieve_id),0)   as griv_trail_count  , t_grievences.extra_int1 "
 	  +
 	  "from tn_order_header,m_customer,mn_grievences_type_instructn,mn_grievences_instruction,m_franchisee,t_grievences "
 	  + "left JOIN mn_user user  on t_grievences.insert_by_id=user.user_id \n" +

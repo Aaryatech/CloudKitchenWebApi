@@ -1,7 +1,10 @@
 package com.ats.ckweb.apicontrollers;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +21,18 @@ import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.GrievanceActionMaster;
+import com.ats.ckweb.model.GrievanceHeaderWithOrderData;
+import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.OrderGrievance;
 import com.ats.ckweb.model.OrderGrievanceTrail;
+import com.ats.ckweb.report.model.GetOrderDetailDisplay;
+import com.ats.ckweb.report.model.GetOrderDisplay;
 import com.ats.ckweb.report.model.GetOrderHeaderDisplay;
 import com.ats.ckweb.report.model.GetOrderTrailDisplay;
 import com.ats.ckweb.report.model.GrievanceBetDate;
 import com.ats.ckweb.report.model.GrievanceDatewise;
+import com.ats.ckweb.report.repo.GetOrderDisplayRepo;
 import com.ats.ckweb.report.repo.GetOrderTrailDisplayRepo;
 import com.ats.ckweb.report.repo.GrievanceBetDateRepo;
 import com.ats.ckweb.report.repo.GrievanceDatewiseRepo;
@@ -38,6 +46,7 @@ import com.ats.ckweb.repository.GrievanceActionMasterRepo;
 import com.ats.ckweb.repository.MnUserRepo;
 import com.ats.ckweb.repository.OrderGrievanceRepo;
 import com.ats.ckweb.repository.OrderGrievanceTrailRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 
@@ -53,6 +62,12 @@ public class GrievanceControllerApi {
 
 	@Autowired
 	OrderGrievanceTrailRepo grievTrailRepo;
+	
+	@Autowired
+	GetOrderDisplayRepo getOrderDisplayRepo;
+
+	@Autowired
+	OrderGrievanceRepo orderGrievanceRepo;
 
 	@RequestMapping(value = { "/getGrievanceHeaderList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -303,8 +318,7 @@ public class GrievanceControllerApi {
 	 @Autowired
 	GetGrievienceTailListRepository getGrievienceTailListRepository;
 		
-	@Autowired
-	OrderGrievanceRepo orderGrievanceRepo;
+	
 
 	@RequestMapping(value = { "/getOrderDataByOrderId" }, method = RequestMethod.POST)
 	public @ResponseBody GetOrderHeaderList getOrderDataByOrderId(
@@ -357,5 +371,183 @@ public class GrievanceControllerApi {
 
 		return grivList;
 	}
+	
+	// Anmol 20-08-2020 Get Grievance header with order data
+		@RequestMapping(value = { "/getGrievanceHeaderWithOrder" }, method = RequestMethod.POST)
+		@ResponseBody
+		public GrievanceHeaderWithOrderData getGrievanceHeaderWithOrderData(@RequestParam("grieveId") int grieveId) {
+			GrievanceHeaderWithOrderData grievData = new GrievanceHeaderWithOrderData();
+			try {
+				GetGrievanceHeader grivHeader = getGrievanceHeaderRepo.getGrievanceHeaderByGrieveId(grieveId);
+
+				List<GetOrderDisplay> res = new ArrayList<>();
+				List<GetOrderHeaderDisplay> orderList = new ArrayList<>();
+
+				if (grivHeader != null) {
+
+					res = getOrderDisplayRepo.getOrderById(grivHeader.getOrderId());
+
+					try {
+
+						List<GetOrderTrailDisplay> allTrailList = getOrderTrailDisplayRepo
+								.getOrderTrailDataOrderId(grivHeader.getOrderId());
+
+						if (res != null) {
+
+							Set<Integer> setOrderIds = new HashSet<Integer>();
+							for (GetOrderDisplay order : res) {
+								setOrderIds.add(order.getOrderId());
+							}
+
+							List<Integer> orderIds = new ArrayList<>();
+							orderIds.addAll(setOrderIds);
+
+							if (orderIds.size() > 0) {
+
+								// ----------HEADER LIST---------
+								for (int i = 0; i < orderIds.size(); i++) {
+									for (GetOrderDisplay order : res) {
+
+										if (orderIds.get(i) == order.getOrderId()) {
+
+											List<GetOrderTrailDisplay> trailList = new ArrayList<>();
+
+											if (allTrailList != null) {
+												for (GetOrderTrailDisplay trail : allTrailList) {
+													if (order.getOrderId() == trail.getOrderId()) {
+														trailList.add(trail);
+													}
+												}
+
+											}
+
+											List<GetOrderDetailDisplay> detailList = new ArrayList<>();
+
+											GetOrderHeaderDisplay header = new GetOrderHeaderDisplay(order.getOrderId(),
+													order.getOrderNo(), order.getOrderDate(), order.getFrId(),
+													order.getCustId(), order.getStatus(), order.getTaxableAmt(),
+													order.getCgstAmt(), order.getSgstAmt(), order.getIgstAmt(),
+													order.getDiscAmt(), order.getItemDiscAmt(), order.getTaxAmt(),
+													order.getTotalAmt(), order.getOrderStatus(), order.getPaidStatus(),
+													order.getPaymentMethod(), order.getPaymentRemark(), order.getCityId(),
+													order.getAreaId(), order.getAddressId(), order.getAddress(),
+													order.getWhatsappNo(), order.getLandmark(), order.getDeliveryDate(),
+													order.getDeliveryTime(), order.getInsertDateTime(),
+													order.getInsertUserId(), order.getOrderPlatform(), order.getDelStatus(),
+													order.getOfferId(), order.getRemark(), order.getOrderDeliveredBy(),
+													order.getExInt1(), order.getExInt2(), order.getExInt3(),
+													order.getExInt4(), order.getExVar1(), order.getExVar2(),
+													order.getExVar3(), order.getExVar4(), order.getExFloat1(),
+													order.getExFloat2(), order.getExFloat3(), order.getExFloat4(),
+													order.getExDate1(), order.getExDate2(), order.getBillingName(),
+													order.getBillingAddress(), order.getCustomerGstnNo(),
+													order.getDeliveryType(), order.getDeliveryInstId(),
+													order.getDeliveryInstText(), order.getDeliveryKm(),
+													order.getDeliveryCharges(), order.getPaymentSubMode(),
+													order.getIsAgent(), order.getOrderDeliveredByName(),
+													order.getCustName(), order.getCustMobile(), order.getCustWhatsappNo(),
+													order.getFrName(), order.getCityName(), order.getAreaName(),
+													order.getOfferName(), order.getOfferDesc(), order.getDeliveryMonth(),
+													order.getDeliveryYear(), order.getDeliveryDateDisplay(),
+													order.getDeliveryTimeDisplay(), order.getMonthName(), detailList,
+													trailList);
+
+											orderList.add(header);
+
+											break;
+
+										}
+
+									}
+								}
+
+								// ----------DETAIL LIST--------------
+								for (int i = 0; i < orderList.size(); i++) {
+
+									List<GetOrderDetailDisplay> detailList = new ArrayList<>();
+
+									for (GetOrderDisplay order : res) {
+
+										if (orderList.get(i).getOrderId() == order.getOrderId()) {
+
+											GetOrderDetailDisplay detail = new GetOrderDetailDisplay(
+													order.getOrderDetailId(), order.getOrderId(), order.getItemId(),
+													order.getHsnCode(), order.getQty(), order.getMrp(), order.getRate(),
+													order.getDetailTaxableAmt(), order.getCgstPer(), order.getSgstPer(),
+													order.getIgstPer(), order.getDetailCgstAmt(), order.getDetailSgstAmt(),
+													order.getDetailIgstAmt(), order.getDetailDiscAmt(),
+													order.getDetailTaxAmt(), order.getDetailTotalAmt(),
+													order.getDelStatus(), order.getDetailRemark(), order.getDetailExInt1(),
+													order.getDetailExInt2(), order.getDetailExInt3(),
+													order.getDetailExInt4(), order.getDetailExVar1(),
+													order.getDetailExVar2(), order.getDetailExVar3(),
+													order.getDetailExVar4(), order.getDetailExFloat1(),
+													order.getDetailExFloat2(), order.getDetailExFloat3(),
+													order.getDetailExFloat4(), order.getItemName(), order.getCatId(),
+													order.getCatName(), order.getItemUom(), order.getUomId());
+											detailList.add(detail);
+
+										}
+
+									}
+
+									orderList.get(i).setOrderDetailList(detailList);
+								}
+
+							}
+
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+
+				grievData.setGrievanceHeader(grivHeader);
+
+				if (orderList != null) {
+					if (orderList.size() > 0) {
+
+						grievData.setOrder(orderList.get(0));
+
+						// ------------JSON STRING------------------------------
+						ObjectMapper Obj = new ObjectMapper();
+
+						try {
+							String jsonStr = Obj.writeValueAsString(orderList.get(0));
+							grievData.setOrderJson(jsonStr);
+						} catch (IOException e) {
+						}
+
+					}
+				}
+
+			} catch (Exception e) {
+			}
+
+			return grievData;
+		}
+
+		@RequestMapping(value = { "/updateGrievanceHeaderWalletStatus" }, method = RequestMethod.POST)
+		@ResponseBody
+		public Info updateGrievanceHeaderWalletStatus(@RequestParam int status, @RequestParam int grieveId) {
+
+			Info info = new Info();
+
+			try {
+				int res = orderGrievanceRepo.updateWalletStatus(status, grieveId);
+				if (res > 0) {
+					info.setError(false);
+				} else {
+					info.setError(true);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				info.setError(true);
+			}
+
+			return info;
+		}
 	
 }
