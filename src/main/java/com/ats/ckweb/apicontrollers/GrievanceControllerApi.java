@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.model.GetGrievanceHeader;
 import com.ats.ckweb.model.GetGrievanceTrail;
+import com.ats.ckweb.model.GetGrievienceList;
 import com.ats.ckweb.model.GetGrievienceTailList;
 import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
@@ -38,6 +39,7 @@ import com.ats.ckweb.report.repo.GrievanceBetDateRepo;
 import com.ats.ckweb.report.repo.GrievanceDatewiseRepo;
 import com.ats.ckweb.repository.GetGrievanceHeaderRepo;
 import com.ats.ckweb.repository.GetGrievanceTrailRepo;
+import com.ats.ckweb.repository.GetGrievienceListRepository;
 import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
@@ -68,6 +70,9 @@ public class GrievanceControllerApi {
 
 	@Autowired
 	OrderGrievanceRepo orderGrievanceRepo;
+	
+	@Autowired
+	GetGrievienceListRepository grevListRepo;
 
 	@RequestMapping(value = { "/getGrievanceHeaderList" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -338,7 +343,7 @@ public class GrievanceControllerApi {
 			getOrderHeaderList.setTrailDetailList(trailDetailList);
 			
 			//Mahendra //20-08-2020
-			OrderGrievance gervData = orderGrievanceRepo.findByOrderId(getOrderHeaderList.getOrderId());
+			GetGrievienceList gervData = grevListRepo.findByOrderId(getOrderHeaderList.getOrderId());
 			getOrderHeaderList.setOrderGriev(gervData);
 			
 			List<GetGrievienceTailList> grievTrailList = getGrievienceTailListRepository.getGriviencevDetailByGrvId(gervData.getGrieveId());			

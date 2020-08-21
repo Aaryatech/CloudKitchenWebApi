@@ -217,7 +217,7 @@ public class GetOrderHeaderList {
 	private List<GetOrderTrailDisplay> trailDetailList;
 	
 	@Transient
-	private OrderGrievance orderGriev;
+	private GetGrievienceList orderGriev;
 	
 	public int getOrderId() {
 		return orderId;
@@ -751,11 +751,11 @@ public class GetOrderHeaderList {
 		this.grievTrailList = grievTrailList;
 	}
 
-	public OrderGrievance getOrderGriev() {
+	public GetGrievienceList getOrderGriev() {
 		return orderGriev;
 	}
 
-	public void setOrderGriev(OrderGrievance orderGriev) {
+	public void setOrderGriev(GetGrievienceList orderGriev) {
 		this.orderGriev = orderGriev;
 	}
 
