@@ -49,7 +49,7 @@ public class OrderGrievance {
 	private String grievenceSubtypeName;
 
 	@Column(name = "date")
-	private Date date;
+	private String date;
 
 	@Column(name = "extra_int1")
 	private int extraInt1;
@@ -144,12 +144,12 @@ public class OrderGrievance {
 	public void setGrievenceSubtypeName(String grievenceSubtypeName) {
 		this.grievenceSubtypeName = grievenceSubtypeName;
 	}
-	@JsonFormat(locale = "English", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm a")
-	public Date getDate() {
+	 
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
