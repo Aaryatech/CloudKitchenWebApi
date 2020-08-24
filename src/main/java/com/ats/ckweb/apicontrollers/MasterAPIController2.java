@@ -1,6 +1,8 @@
 package com.ats.ckweb.apicontrollers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import com.ats.ckweb.model.ItemListForOfferDetail;
 import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
+import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.model.ShowItemDetailNewList;
 import com.ats.ckweb.model.SubCategory;
 import com.ats.ckweb.repository.CustomerAddressDisplayRepo;
@@ -48,6 +51,8 @@ import com.ats.ckweb.repository.ItemListForOfferDetailRepo;
 import com.ats.ckweb.repository.LanguageRepo;
 import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
+import com.ats.ckweb.repository.OrderHeaderRepository;
+import com.ats.ckweb.repository.OrderTrailRepository;
 import com.ats.ckweb.repository.ShowItemDetailNewListRepo;
 import com.ats.ckweb.services.CategoryService;
 import com.ats.ckweb.services.ImagesService;
@@ -120,6 +125,12 @@ public class MasterAPIController2 {
 
 	@Autowired
 	ItemConfigDisplayRepo itemConfigDisplayRepo;
+	
+	@Autowired
+	OrderHeaderRepository orderHeaderRepository;
+	
+	@Autowired
+	OrderTrailRepository orderTrailRepository;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -719,4 +730,79 @@ public class MasterAPIController2 {
 		return franchisee;
 	}
 
+	
+	// ACCEPT AND PROCESS ORDER-------------------
+		@RequestMapping(value = { "/acceptAndProcessOrderOPS" }, method = RequestMethod.POST)
+		public @ResponseBody Info acceptAndProcessOrderOPS(@RequestParam("orderId") int orderId,
+				@RequestParam("status") int status, @RequestParam("userId") int userId,
+				@RequestParam("remark") String remark, @RequestParam("type") int type) {
+
+			Info info = new Info();
+
+			try {
+				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date dt = new Date();
+
+				System.err.println("Status = " + status + " ORder id = " + orderId);
+				int update = orderHeaderRepository.updateStatus(status,orderId);
+				System.err.println("update res = " + update);
+				if (update > 0) {
+
+					OrderTrail orderTrail1 = new OrderTrail();
+					orderTrail1.setOrderId(orderId);
+					orderTrail1.setActionByUserId(userId);
+					orderTrail1.setActionDateTime(sf.format(dt));
+					orderTrail1.setStatus(2);
+					orderTrail1.setExVar1(remark);
+					orderTrail1.setExInt1(type);
+					OrderTrail orderRes1 = orderTrailRepository.save(orderTrail1);
+
+					OrderTrail orderTrail2 = new OrderTrail();
+					orderTrail2.setOrderId(orderId);
+					orderTrail2.setActionByUserId(userId);
+					orderTrail2.setActionDateTime(sf.format(dt));
+					orderTrail2.setStatus(status);
+					orderTrail2.setExVar1(remark);
+					orderTrail2.setExInt1(type);
+					OrderTrail orderRes2 = orderTrailRepository.save(orderTrail2);
+
+					info.setError(false);
+					info.setMessage("updated");
+				} else {
+					info.setError(true);
+				}
+
+			} catch (Exception e) {
+				info.setError(true);
+				e.printStackTrace();
+			}
+			return info;
+		}
+		
+		
+		// -----------UPDATE DELIVERY BOY----------------
+		@RequestMapping(value = { "/updateDeliveryBoy" }, method = RequestMethod.POST)
+		public @ResponseBody Info updateDeliveryBoy(@RequestParam("orderId") int orderId,
+				@RequestParam("delBoyId") int delBoyId) {
+
+			Info info = new Info();
+			try {
+
+				int res = orderHeaderRepository.updateDeliveryBoy(orderId, delBoyId);
+				if (res > 0) {
+					info.setError(false);
+					info.setMessage("Success");
+				} else {
+					info.setError(true);
+					info.setMessage("Failed");
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				info.setError(true);
+				info.setMessage("Failed");
+			}
+			return info;
+		}
+		
 }

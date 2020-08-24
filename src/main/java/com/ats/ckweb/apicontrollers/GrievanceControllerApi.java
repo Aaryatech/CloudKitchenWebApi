@@ -554,5 +554,36 @@ public class GrievanceControllerApi {
 
 			return info;
 		}
+		
+		
+		@RequestMapping(value = { "/saveGrievTrailAndUpdateHeaderAmt" }, method = RequestMethod.POST)
+		@ResponseBody
+		public OrderGrievanceTrail saveGrievTrailAndUpdateHeaderAmt(@RequestBody OrderGrievanceTrail grivTrail) {
+			OrderGrievanceTrail trailRes = new OrderGrievanceTrail();
+
+			try {
+
+				GrievanceActionMaster actionName = grievanceActionMasterRepo
+						.findByGrivActionValue(grivTrail.getGrivActionValue());
+
+				grivTrail.setGrivActionText("" + actionName.getGrivActionText());
+
+				trailRes = grievTrailRepo.save(grivTrail);
+
+				if (trailRes != null) {
+
+					int x = orderGrievanceRepo.updateGrievHeaderStatusAndAmt(trailRes.getGrievencesId(),
+							trailRes.getStatus(),trailRes.getRepayAmt(),trailRes.getFrAffectAmt());
+
+				}
+
+			} catch (Exception e) {
+				trailRes = new OrderGrievanceTrail();
+
+			}
+
+			return trailRes;
+
+		}
 	
 }

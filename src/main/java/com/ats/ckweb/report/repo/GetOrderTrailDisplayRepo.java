@@ -18,27 +18,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
-			"    FROM\r\n" + 
-			"        (\r\n" + 
-			"        SELECT\r\n" + 
-			"    t.*\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
 			"FROM\r\n" + 
-			"    tn_order_trail t\r\n" + 
-			"WHERE\r\n" + 
-			"    t.order_id IN(\r\n" + 
+			"    (\r\n" + 
 			"    SELECT\r\n" + 
-			"        order_id\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        tn_order_header\r\n" + 
+			"        tn_order_trail t\r\n" + 
 			"    WHERE\r\n" + 
-			"        del_status = 0 AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
-			") " + 
-			"    ) t1\r\n" + 
+			"        t.order_id IN(\r\n" + 
+			"        SELECT\r\n" + 
+			"            order_id\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_order_header\r\n" + 
+			"        WHERE\r\n" + 
+			"            del_status = 0 AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -56,6 +58,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 
@@ -69,27 +93,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
-			"    FROM\r\n" + 
-			"        (\r\n" + 
-			"        SELECT\r\n" + 
-			"    t.*\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
 			"FROM\r\n" + 
-			"    tn_order_trail t\r\n" + 
-			"WHERE\r\n" + 
-			"    t.order_id IN(\r\n" + 
+			"    (\r\n" + 
 			"    SELECT\r\n" + 
-			"        order_id\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        tn_order_header\r\n" + 
+			"        tn_order_trail t\r\n" + 
 			"    WHERE\r\n" + 
-			"        del_status = 0 AND order_status IN(:status) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
-			") " + 
-			"    ) t1\r\n" + 
+			"        t.order_id IN(\r\n" + 
+			"        SELECT\r\n" + 
+			"            order_id\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_order_header\r\n" + 
+			"        WHERE\r\n" + 
+			"            del_status = 0 AND order_status IN(:status) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -107,6 +133,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 
@@ -120,27 +168,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
+			"FROM\r\n" + 
+			"    (\r\n" + 
+			"    SELECT\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        (\r\n" + 
+			"        tn_order_trail t\r\n" + 
+			"    WHERE\r\n" + 
+			"        t.order_id IN(\r\n" + 
 			"        SELECT\r\n" + 
-			"            t.*\r\n" + 
+			"            order_id\r\n" + 
 			"        FROM\r\n" + 
-			"            tn_order_trail t\r\n" + 
+			"            tn_order_header\r\n" + 
 			"        WHERE\r\n" + 
-			"            t.order_id IN(\r\n" + 
-			"            SELECT\r\n" + 
-			"                order_id\r\n" + 
-			"            FROM\r\n" + 
-			"                tn_order_header\r\n" + 
-			"            WHERE\r\n" + 
-			"                del_status = 0 AND order_status IN(:status) AND fr_id IN(:frIds) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
-			"        )\r\n" + 
-			"    ) t1\r\n" + 
+			"            del_status = 0 AND order_status IN(:status) AND fr_id IN(:frIds) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -158,6 +208,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 
@@ -172,27 +244,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
+			"FROM\r\n" + 
+			"    (\r\n" + 
+			"    SELECT\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        (\r\n" + 
+			"        tn_order_trail t\r\n" + 
+			"    WHERE\r\n" + 
+			"        t.order_id IN(\r\n" + 
 			"        SELECT\r\n" + 
-			"            t.*\r\n" + 
+			"            order_id\r\n" + 
 			"        FROM\r\n" + 
-			"            tn_order_trail t\r\n" + 
+			"            tn_order_header\r\n" + 
 			"        WHERE\r\n" + 
-			"            t.order_id IN(\r\n" + 
-			"            SELECT\r\n" + 
-			"                order_id\r\n" + 
-			"            FROM\r\n" + 
-			"                tn_order_header\r\n" + 
-			"            WHERE\r\n" + 
-			"                del_status = 0 AND order_status IN(:status) AND cust_id IN(:custIds) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
-			"        )\r\n" + 
-			"    ) t1\r\n" + 
+			"            del_status = 0 AND order_status IN(:status) AND cust_id IN(:custIds) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -210,6 +284,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 
@@ -223,27 +319,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
+			"FROM\r\n" + 
+			"    (\r\n" + 
+			"    SELECT\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        (\r\n" + 
+			"        tn_order_trail t\r\n" + 
+			"    WHERE\r\n" + 
+			"        t.order_id IN(\r\n" + 
 			"        SELECT\r\n" + 
-			"            t.*\r\n" + 
+			"            order_id\r\n" + 
 			"        FROM\r\n" + 
-			"            tn_order_trail t\r\n" + 
+			"            tn_order_header\r\n" + 
 			"        WHERE\r\n" + 
-			"            t.order_id IN(\r\n" + 
-			"            SELECT\r\n" + 
-			"                order_id\r\n" + 
-			"            FROM\r\n" + 
-			"                tn_order_header\r\n" + 
-			"            WHERE\r\n" + 
-			"                del_status = 0 AND order_status IN(:status) AND order_platform IN(:platform) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
-			"        )\r\n" + 
-			"    ) t1\r\n" + 
+			"            del_status = 0 AND order_status IN(:status) AND order_platform IN(:platform) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -261,6 +359,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 
@@ -274,27 +394,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
+			"FROM\r\n" + 
+			"    (\r\n" + 
+			"    SELECT\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        (\r\n" + 
+			"        tn_order_trail t\r\n" + 
+			"    WHERE\r\n" + 
+			"        t.order_id IN(\r\n" + 
 			"        SELECT\r\n" + 
-			"            t.*\r\n" + 
+			"            order_id\r\n" + 
 			"        FROM\r\n" + 
-			"            tn_order_trail t\r\n" + 
+			"            tn_order_header\r\n" + 
 			"        WHERE\r\n" + 
-			"            t.order_id IN(\r\n" + 
-			"            SELECT\r\n" + 
-			"                order_id\r\n" + 
-			"            FROM\r\n" + 
-			"                tn_order_header\r\n" + 
-			"            WHERE\r\n" + 
-			"                del_status = 0 AND order_status IN(:status) AND payment_method IN(:payment) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
-			"        )\r\n" + 
-			"    ) t1\r\n" + 
+			"            del_status = 0 AND order_status IN(:status) AND payment_method IN(:payment) AND delivery_date BETWEEN :fromDate AND :toDate \r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -312,6 +434,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 
@@ -328,27 +472,29 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			"    (\r\n" + 
 			"    SELECT\r\n" + 
 			"        t1.*,\r\n" + 
-			"        COALESCE(t2.user_name, '') AS user_name,\r\n" + 
-			"        DATE_FORMAT(\r\n" + 
-			"            t1.action_date_time,\r\n" + 
-			"            '%d-%m-%Y %h:%i %p'\r\n" + 
-			"        ) AS trail_date\r\n" + 
-			"    FROM\r\n" + 
-			"        (\r\n" + 
-			"        SELECT\r\n" + 
-			"    t.*\r\n" + 
+			"        CASE WHEN t1.ex_int1 = 1 THEN COALESCE(t2.user_name, '') ELSE CASE WHEN t1.ex_int1 = 4 THEN COALESCE(t3.user_name, '') ELSE COALESCE(t4.user_name, '')\r\n" + 
+			"END\r\n" + 
+			"END AS user_name,\r\n" + 
+			"DATE_FORMAT(\r\n" + 
+			"    t1.action_date_time,\r\n" + 
+			"    '%d-%m-%Y %h:%i %p'\r\n" + 
+			") AS trail_date\r\n" + 
 			"FROM\r\n" + 
-			"    tn_order_trail t\r\n" + 
-			"WHERE\r\n" + 
-			"    t.order_id IN(\r\n" + 
+			"    (\r\n" + 
 			"    SELECT\r\n" + 
-			"        order_id\r\n" + 
+			"        t.*\r\n" + 
 			"    FROM\r\n" + 
-			"        tn_order_header\r\n" + 
+			"        tn_order_trail t\r\n" + 
 			"    WHERE\r\n" + 
-			"        del_status = 0 and tn_order_header.order_id=:orderId   \r\n" + 
-			") " + 
-			"    ) t1\r\n" + 
+			"        t.order_id IN(\r\n" + 
+			"        SELECT\r\n" + 
+			"            order_id\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_order_header\r\n" + 
+			"        WHERE\r\n" + 
+			"            del_status = 0 AND tn_order_header.order_id = :orderId\r\n" + 
+			"    )\r\n" + 
+			") t1\r\n" + 
 			"LEFT JOIN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        u.user_id,\r\n" + 
@@ -366,6 +512,28 @@ public interface GetOrderTrailDisplayRepo extends JpaRepository<GetOrderTrailDis
 			") t2\r\n" + 
 			"ON\r\n" + 
 			"    t1.action_by_user_id = t2.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        e.fr_emp_id AS user_id,\r\n" + 
+			"        CONCAT(e.fr_emp_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_fr_emp e\r\n" + 
+			"    WHERE\r\n" + 
+			"        e.del_status = 0\r\n" + 
+			") t3\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t3.user_id\r\n" + 
+			"LEFT JOIN(\r\n" + 
+			"    SELECT\r\n" + 
+			"        c.cust_id AS user_id,\r\n" + 
+			"        CONCAT(c.cust_name) AS user_name\r\n" + 
+			"    FROM\r\n" + 
+			"        m_customer c\r\n" + 
+			"    WHERE\r\n" + 
+			"        c.del_status = 0\r\n" + 
+			") t4\r\n" + 
+			"ON\r\n" + 
+			"    t1.action_by_user_id = t4.user_id\r\n" + 
 			") tbl\r\n" + 
 			"ORDER BY\r\n" + 
 			"    order_id,\r\n" + 

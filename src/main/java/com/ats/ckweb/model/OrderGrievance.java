@@ -23,7 +23,7 @@ public class OrderGrievance {
 
 	@Column(name = "order_id")
 	private int orderId;
-	
+
 	@Column(name = "grievence_type_id")
 	private int grievenceTypeId;
 
@@ -62,13 +62,19 @@ public class OrderGrievance {
 
 	@Column(name = "extra_var2")
 	private String extraVar2;
-	
+
 	@Column(name = "platform")
 	private int platform;
-	
+
 	@Column(name = "grievencce_no")
 	private String grievencceNo;
-	
+
+	@Column(name = "wallet_amt")
+	private float walletAmt;
+
+	@Column(name = "fr_affect_amt")
+	private float frAffectAmt;
+
 	@Transient
 	private OrderGrievanceTrail orderGrievanceTrail;
 
@@ -112,7 +118,6 @@ public class OrderGrievance {
 		this.currentStatus = currentStatus;
 	}
 
-	 
 	public String getInsertDateTime() {
 		return insertDateTime;
 	}
@@ -144,7 +149,7 @@ public class OrderGrievance {
 	public void setGrievenceSubtypeName(String grievenceSubtypeName) {
 		this.grievenceSubtypeName = grievenceSubtypeName;
 	}
-	 
+
 	public String getDate() {
 		return date;
 	}
@@ -217,6 +222,22 @@ public class OrderGrievance {
 		this.grievencceNo = grievencceNo;
 	}
 
+	public float getWalletAmt() {
+		return walletAmt;
+	}
+
+	public void setWalletAmt(float walletAmt) {
+		this.walletAmt = walletAmt;
+	}
+
+	public float getFrAffectAmt() {
+		return frAffectAmt;
+	}
+
+	public void setFrAffectAmt(float frAffectAmt) {
+		this.frAffectAmt = frAffectAmt;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderGrievance [grieveId=" + grieveId + ", orderId=" + orderId + ", grievenceTypeId=" + grievenceTypeId
@@ -225,9 +246,8 @@ public class OrderGrievance {
 				+ ", grievenceTypeName=" + grievenceTypeName + ", grievenceSubtypeName=" + grievenceSubtypeName
 				+ ", date=" + date + ", extraInt1=" + extraInt1 + ", extraInt2=" + extraInt2 + ", extraVar1="
 				+ extraVar1 + ", extraVar2=" + extraVar2 + ", platform=" + platform + ", grievencceNo=" + grievencceNo
-				+ ", orderGrievanceTrail=" + orderGrievanceTrail + "]";
+				+ ", walletAmt=" + walletAmt + ", frAffectAmt=" + frAffectAmt + ", orderGrievanceTrail="
+				+ orderGrievanceTrail + "]";
 	}
-	
-	
 
 }

@@ -98,4 +98,5 @@ public interface GetGrievanceHeaderRepo extends JpaRepository<GetGrievanceHeader
 	@Query(value="UPDATE t_grievences SET current_status=:status  WHERE grieve_id=:grieveId",nativeQuery=true)
 	int updateGrievHeaderStatus(@Param("grieveId") int grieveId,@Param("status") int status);
 	
+	
 }

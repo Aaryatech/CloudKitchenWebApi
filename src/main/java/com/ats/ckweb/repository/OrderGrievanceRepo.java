@@ -63,4 +63,10 @@ public interface OrderGrievanceRepo extends JpaRepository<OrderGrievance, Intege
 	@Modifying
 	@Query("update OrderGrievance set extra_int1=:status WHERE grieve_id=:grieveId")
 	int updateWalletStatus(@Param("status") int status, @Param("grieveId") int grieveId);
+	
+	@Transactional
+	@Modifying
+	@Query(value="UPDATE t_grievences SET current_status=:status , wallet_amt=:walletAmt , fr_affect_amt=:frAffectAmt  WHERE grieve_id=:grieveId",nativeQuery=true)
+	int updateGrievHeaderStatusAndAmt(@Param("grieveId") int grieveId,@Param("status") int status,@Param("walletAmt") float walletAmt,@Param("frAffectAmt") float frAffectAmt);
+	
 }

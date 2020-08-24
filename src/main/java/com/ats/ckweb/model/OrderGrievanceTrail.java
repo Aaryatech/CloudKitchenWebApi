@@ -62,6 +62,9 @@ public class OrderGrievanceTrail {
 	@Column(name = "griv_action_text")
 	private String grivActionText;
 
+	@Column(name = "fr_affect_amt")
+	private float frAffectAmt;
+
 	public int getTrailId() {
 		return trailId;
 	}
@@ -198,6 +201,18 @@ public class OrderGrievanceTrail {
 		this.grivActionText = grivActionText;
 	}
 
+	public float getFrAffectAmt() {
+		return frAffectAmt;
+	}
+
+	public void setFrAffectAmt(float frAffectAmt) {
+		this.frAffectAmt = frAffectAmt;
+	}
+
+	public void setRepayAmt(float repayAmt) {
+		this.repayAmt = repayAmt;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderGrievanceTrail [trailId=" + trailId + ", grievencesId=" + grievencesId + ", remark=" + remark
@@ -205,7 +220,8 @@ public class OrderGrievanceTrail {
 				+ ", extraInt1=" + extraInt1 + ", extraInt2=" + extraInt2 + ", extraVar1=" + extraVar1 + ", extraVar2="
 				+ extraVar2 + ", identifiedRootCause=" + identifiedRootCause + ", grievenceResType=" + grievenceResType
 				+ ", resolutionDetail=" + resolutionDetail + ", repayAmt=" + repayAmt + ", repayDetails=" + repayDetails
-				+ ", grivActionValue=" + grivActionValue + ", grivActionText=" + grivActionText + "]";
+				+ ", grivActionValue=" + grivActionValue + ", grivActionText=" + grivActionText + ", frAffectAmt="
+				+ frAffectAmt + "]";
 	}
 
 }
