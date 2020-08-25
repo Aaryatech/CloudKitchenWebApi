@@ -101,10 +101,10 @@ public class DashApiController {
 	public List<GetGrievanceCntByType> getGrievenceCntByTypeId(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,
 			@RequestParam("grievTypeId") List<Integer> grievTypeId) {
 		List<GetGrievanceCntByType> res = new ArrayList<GetGrievanceCntByType>();
-		try {
+		try {	
 			
-			res = grievCntRepo.getGrievCnt(fromDate, toDate, grievTypeId);
-			System.err.println("Griev Cnt------------>"+res);
+				res = grievCntRepo.getGrievCnt(fromDate, toDate, grievTypeId);
+			
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -119,8 +119,8 @@ public class DashApiController {
 		List<GetGreivFrDtl> res = new ArrayList<GetGreivFrDtl>();
 		try {
 			
-			res = getGrievDtlRepo.getGrievFrDtlList(fromDate, toDate, frId, grievTypeId);
-			System.err.println("Griev Dtl ------------>"+res);
+				res = getGrievDtlRepo.getGrievFrDtlList(fromDate, toDate, frId, grievTypeId);
+			
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
