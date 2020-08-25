@@ -122,13 +122,26 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"ON " + 
 			"    t2.item_id = t4.item_id " + 
 			"LEFT JOIN( " + 
-			"    SELECT " + 
-			"        r.product_id AS item_id, " + 
-			"        r.configr_related_product_ids AS rel_item_ids " + 
-			"    FROM " + 
-			"        tn_config_related_product r " + 
-			"    WHERE " + 
-			"        r.del_status = 0 AND r.is_active = 0 " + 
+			"    SELECT\r\n" + 
+			"    d.item_id,\r\n" + 
+			"    COALESCE(\r\n" + 
+			"        (\r\n" + 
+			"        SELECT\r\n" + 
+			"            GROUP_CONCAT(r.product_id)\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_config_related_product r\r\n" + 
+			"        WHERE\r\n" + 
+			"            r.del_status = 0 AND r.is_active=0 AND FIND_IN_SET(\r\n" + 
+			"                d.item_id,\r\n" + 
+			"                r.configr_related_product_ids\r\n" + 
+			"            )\r\n" + 
+			"    ),\r\n" + 
+			"    0\r\n" + 
+			"    ) AS rel_item_ids\r\n" + 
+			"FROM\r\n" + 
+			"    mn_detail d\r\n" + 
+			"WHERE\r\n" + 
+			"    d.del_status = 0 " + 
 			") t5 " + 
 			"ON " + 
 			"    t2.item_id = t5.item_id " + 
@@ -328,13 +341,26 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"ON " + 
 			"    t2.item_id = t4.item_id " + 
 			"LEFT JOIN( " + 
-			"    SELECT " + 
-			"        r.product_id AS item_id, " + 
-			"        r.configr_related_product_ids AS rel_item_ids " + 
-			"    FROM " + 
-			"        tn_config_related_product r " + 
-			"    WHERE " + 
-			"        r.del_status = 0 AND r.is_active = 0 " + 
+			"    SELECT\r\n" + 
+			"    d.item_id,\r\n" + 
+			"    COALESCE(\r\n" + 
+			"        (\r\n" + 
+			"        SELECT\r\n" + 
+			"            GROUP_CONCAT(r.product_id)\r\n" + 
+			"        FROM\r\n" + 
+			"            tn_config_related_product r\r\n" + 
+			"        WHERE\r\n" + 
+			"            r.del_status = 0 AND r.is_active=0 AND FIND_IN_SET(\r\n" + 
+			"                d.item_id,\r\n" + 
+			"                r.configr_related_product_ids\r\n" + 
+			"            )\r\n" + 
+			"    ),\r\n" + 
+			"    0\r\n" + 
+			"    ) AS rel_item_ids\r\n" + 
+			"FROM\r\n" + 
+			"    mn_detail d\r\n" + 
+			"WHERE\r\n" + 
+			"    d.del_status = 0 " + 
 			") t5 " + 
 			"ON " + 
 			"    t2.item_id = t5.item_id " + 
