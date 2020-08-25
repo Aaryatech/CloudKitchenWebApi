@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.report.model.GetDashPieStatusCnt;
+import com.ats.ckweb.report.model.GetGreivFrDtl;
 import com.ats.ckweb.report.model.GrievanceDetailDash;
 import com.ats.ckweb.report.model.GrievenceCnt;
+import com.ats.ckweb.report.model.GetGrievanceCntByType;
 import com.ats.ckweb.report.repo.GetDashPieStatusCntRepo;
+import com.ats.ckweb.report.repo.GetGreivFrDtlRepo;
 import com.ats.ckweb.report.repo.GrievanceDetailDashRepo;
 import com.ats.ckweb.report.repo.GrievenceCntRepo;
+import com.ats.ckweb.report.repo.GriveanceCntRepo;
 
 @RestController
 public class DashApiController {
@@ -27,6 +31,10 @@ public class DashApiController {
 	@Autowired GrievenceCntRepo grevCntRepo;
 	
 	@Autowired GrievanceDetailDashRepo grievDtlRepo;
+	
+	@Autowired GriveanceCntRepo grievCntRepo;
+	
+	@Autowired GetGreivFrDtlRepo getGrievDtlRepo;
 	
 	@RequestMapping(value = { "/getAllStatusCount" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -82,6 +90,37 @@ public class DashApiController {
 			
 			res = grievDtlRepo.getGrievanceData(fromDate, toDate, grievStatus, setUnset);
 			
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		return res;
+	}
+	
+	@RequestMapping(value = { "/getGrievenceCntByTypeId" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GetGrievanceCntByType> getGrievenceCntByTypeId(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,
+			@RequestParam("grievTypeId") List<Integer> grievTypeId) {
+		List<GetGrievanceCntByType> res = new ArrayList<GetGrievanceCntByType>();
+		try {
+			
+			res = grievCntRepo.getGrievCnt(fromDate, toDate, grievTypeId);
+			System.err.println("Griev Cnt------------>"+res);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		return res;
+	}
+	
+	
+	@RequestMapping(value = { "/getGrievenceFrDtl" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GetGreivFrDtl> getGrievenceFrDtl(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,
+			@RequestParam("grievTypeId") int grievTypeId, @RequestParam("frId") int frId) {
+		List<GetGreivFrDtl> res = new ArrayList<GetGreivFrDtl>();
+		try {
+			
+			res = getGrievDtlRepo.getGrievFrDtlList(fromDate, toDate, frId, grievTypeId);
+			System.err.println("Griev Dtl ------------>"+res);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
