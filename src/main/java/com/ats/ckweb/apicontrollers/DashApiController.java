@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.report.model.GetDashPieStatusCnt;
+import com.ats.ckweb.report.model.GrievanceDetailDash;
 import com.ats.ckweb.report.model.GrievenceCnt;
 import com.ats.ckweb.report.repo.GetDashPieStatusCntRepo;
+import com.ats.ckweb.report.repo.GrievanceDetailDashRepo;
 import com.ats.ckweb.report.repo.GrievenceCntRepo;
 
 @RestController
@@ -22,6 +25,8 @@ public class DashApiController {
 	@Autowired GetDashPieStatusCntRepo dashRepo;
 	
 	@Autowired GrievenceCntRepo grevCntRepo;
+	
+	@Autowired GrievanceDetailDashRepo grievDtlRepo;
 	
 	@RequestMapping(value = { "/getAllStatusCount" }, method = RequestMethod.POST)
 	@ResponseBody
@@ -60,6 +65,22 @@ public class DashApiController {
 		try {
 			
 			res = grevCntRepo.getGrievenceCntData(fromDate, toDate);
+			
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		return res;
+	}
+	
+	@RequestMapping(value = { "/getGrievenceDtlByStatus" }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<GrievanceDetailDash> getGrievenceDtlByStatus(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,
+			@RequestParam("grievStatus") List<String> grievStatus, @RequestParam("setUnset") List<String> setUnset) {
+		List<GrievanceDetailDash> res = new ArrayList<GrievanceDetailDash>();
+		try {
+			System.out.println(grievStatus+" "+setUnset);
+			
+			res = grievDtlRepo.getGrievanceData(fromDate, toDate, grievStatus, setUnset);
 			
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
