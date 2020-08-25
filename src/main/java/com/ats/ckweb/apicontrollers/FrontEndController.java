@@ -25,6 +25,7 @@ import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaData;
 import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
+import com.ats.ckweb.model.CustWalletTotal;
 import com.ats.ckweb.model.FrItemStock;
 import com.ats.ckweb.model.FranchiseData;
 import com.ats.ckweb.model.Franchisee;
@@ -40,15 +41,18 @@ import com.ats.ckweb.model.ItemDisplay;
 import com.ats.ckweb.model.ItemWiseOfferData;
 import com.ats.ckweb.model.ItemWiseOfferDetailDisplay;
 import com.ats.ckweb.model.ItemWiseOfferHeaderDisplay;
+import com.ats.ckweb.model.NewSetting;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.PostFrItemStockHeader;
 import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.SubCategoryData;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.report.repo.WalletRepo;
 import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.AreaDataRepo;
 import com.ats.ckweb.repository.CategoryDataRepo;
 import com.ats.ckweb.repository.CityDataRepo;
+import com.ats.ckweb.repository.CustWalletTotalRepo;
 import com.ats.ckweb.repository.FrItemStockRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
@@ -56,6 +60,7 @@ import com.ats.ckweb.repository.ImagesRepo;
 import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.ItemDisplayRepo;
 import com.ats.ckweb.repository.ItemWiseOfferDataRepo;
+import com.ats.ckweb.repository.NewSettingRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.PostFrItemStockHeaderRepo;
 import com.ats.ckweb.repository.SettingRepository;
@@ -118,7 +123,14 @@ public class FrontEndController {
 
 	@Autowired
 	SettingRepository settingRepository;
+	
+	@Autowired WalletRepo walletRepo;
+	
+	@Autowired NewSettingRepo newSettingRepo;
 
+	@Autowired
+	CustWalletTotalRepo custWalletTotalRepo;
+	
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
 	@RequestMapping(value = { "/getFranchiseList" }, method = RequestMethod.GET)
@@ -1845,5 +1857,62 @@ public class FrontEndController {
 
 		return setting;
 	}
+	
+	
+	@RequestMapping(value = { "/getNewSettingByKey" }, method = RequestMethod.POST)
+	public @ResponseBody NewSetting getNewSettingByKey(@RequestParam("key") String key) {
+
+		NewSetting setting = new NewSetting();
+
+		try {
+			setting = newSettingRepo.findBySettingKeyAndDelStatus(key, 0);
+		} catch (Exception e) {
+		}
+
+		return setting;
+	}
+	
+	
+	@RequestMapping(value = { "/getCustomerWalletAmt" }, method = RequestMethod.POST)
+	public @ResponseBody CustWalletTotal getCustomerWalletAmt(@RequestParam("custId") int custId) {
+
+		CustWalletTotal wallet = new CustWalletTotal();
+
+		try {
+			wallet = custWalletTotalRepo.getCustTotalWalletAmt(custId);
+			if(wallet==null) {
+				wallet = new CustWalletTotal();
+			}
+			
+			
+			NewSetting applyLimit = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_on_rs", 0);
+			NewSetting walletPer = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_percent", 0);
+			NewSetting walletRs = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_rs", 0);
+			
+			if(applyLimit!=null) {
+				wallet.setWalletLimitRs(Float.parseFloat(applyLimit.getSettingValue1()));
+			}else {
+				wallet.setWalletLimitRs(0);
+			}
+
+			if(walletPer!=null) {
+				wallet.setWalletPercent(Float.parseFloat(walletPer.getSettingValue1()));
+			}else {
+				wallet.setWalletPercent(0);
+			}
+
+			if(walletRs!=null) {
+				wallet.setWalletMinAmt(Float.parseFloat(walletRs.getSettingValue1()));
+			}else {
+				wallet.setWalletMinAmt(0);
+			}
+
+			
+		} catch (Exception e) {
+		}
+
+		return wallet;
+	}
+	
 
 }
