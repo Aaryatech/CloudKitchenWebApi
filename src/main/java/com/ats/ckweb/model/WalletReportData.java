@@ -1,7 +1,11 @@
 package com.ats.ckweb.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 public class WalletReportData {
@@ -9,7 +13,7 @@ public class WalletReportData {
 	@Id
 	private int orderId;
 	private String orderNo;
-	private String orderDate;
+	private Date orderDate;
 	private float orderAmt;
 	private float drAmt;
 	private float crAmt;
@@ -25,10 +29,11 @@ public class WalletReportData {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	public String getOrderDate() {
+	@JsonFormat(locale = "hi", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getOrderDate() {
 		return orderDate;
 	}
-	public void setOrderDate(String orderDate) {
+	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
 	}
 	public float getOrderAmt() {

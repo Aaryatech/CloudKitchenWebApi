@@ -15,6 +15,7 @@ import com.ats.ckweb.model.CustWalletTotal;
 import com.ats.ckweb.model.CustWalletTransaction;
 import com.ats.ckweb.model.FrWiseGrievenceReportData;
 import com.ats.ckweb.model.FrWiseOrderReportData;
+import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.Wallet;
 import com.ats.ckweb.model.WalletReportData;
 import com.ats.ckweb.report.repo.WalletRepo;
@@ -22,6 +23,7 @@ import com.ats.ckweb.repository.CustWalletTotalRepo;
 import com.ats.ckweb.repository.CustWalletTransactionRepo;
 import com.ats.ckweb.repository.FrWiseGrievenceReportDataRepo;
 import com.ats.ckweb.repository.FrWiseOrderReportDataRepo;
+import com.ats.ckweb.repository.SettingRepository;
 import com.ats.ckweb.repository.WalletReportDataRepo;
 
 @RestController
@@ -43,6 +45,9 @@ public class WalletController {
 	FrWiseOrderReportDataRepo frWiseOrderReportDataRepo;
 	
 	@Autowired FrWiseGrievenceReportDataRepo frWiseGrievenceReportDataRepo;
+	
+	@Autowired
+	SettingRepository settingRepository;
 
 	@RequestMapping(value = { "/saveWallet" }, method = RequestMethod.POST)
 	public @ResponseBody Wallet saveWallet(@RequestBody Wallet wallet) {
@@ -93,4 +98,9 @@ public class WalletController {
 		return res;
 	}
 
+	@RequestMapping(value = { "/getPdfSettingsByKey" }, method = RequestMethod.POST)
+	public @ResponseBody Setting getPdfSettingsByKey(int settingId) {
+		Setting res = settingRepository.findBySettingId(settingId);
+		return res;
+	}
 }

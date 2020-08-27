@@ -11,5 +11,6 @@ import com.ats.ckweb.model.Customer;
 public interface CustomerRepo extends JpaRepository<Customer, Integer> {
 
 	List<Customer> findByDelStatusAndCompIdOrderByCustIdDesc(int del, int compId);
+	List<Customer> findByDelStatusAndCustId(int del, int custId);
 	
 }

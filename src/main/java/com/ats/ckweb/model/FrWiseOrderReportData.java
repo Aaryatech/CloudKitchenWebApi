@@ -15,7 +15,7 @@ public class FrWiseOrderReportData {
 	private String frName;
 	private float cash;
 	private float online;
-	private float frToCompany;
+	private float frToComp;
 	private float compToFr;
 
 	public String getId() {
@@ -82,12 +82,13 @@ public class FrWiseOrderReportData {
 		this.online = online;
 	}
 
-	public float getFrToCompany() {
-		return frToCompany;
+
+	public float getFrToComp() {
+		return frToComp;
 	}
 
-	public void setFrToCompany(float frToCompany) {
-		this.frToCompany = frToCompany;
+	public void setFrToComp(float frToComp) {
+		this.frToComp = frToComp;
 	}
 
 	public float getCompToFr() {
@@ -102,7 +103,8 @@ public class FrWiseOrderReportData {
 	public String toString() {
 		return "FrWiseOrderReportData [id=" + id + ", orderId=" + orderId + ", orderDate=" + orderDate + ", orderAmt="
 				+ orderAmt + ", frId=" + frId + ", frName=" + frName + ", cash=" + cash + ", online=" + online
-				+ ", frToCompany=" + frToCompany + ", compToFr=" + compToFr + "]";
+				+ ", frToComp=" + frToComp + ", compToFr=" + compToFr + "]";
 	}
 
+	
 }
