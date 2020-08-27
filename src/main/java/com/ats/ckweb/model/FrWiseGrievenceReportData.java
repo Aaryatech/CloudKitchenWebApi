@@ -13,6 +13,8 @@ public class FrWiseGrievenceReportData {
 	private float frAffectAmt;
 	private int frId;
 	private String frName;
+	private float dr;
+	private float cr;
 
 	public String getId() {
 		return id;
@@ -62,10 +64,27 @@ public class FrWiseGrievenceReportData {
 		this.frName = frName;
 	}
 
+	public float getDr() {
+		return dr;
+	}
+
+	public void setDr(float dr) {
+		this.dr = dr;
+	}
+
+	public float getCr() {
+		return cr;
+	}
+
+	public void setCr(float cr) {
+		this.cr = cr;
+	}
+
 	@Override
 	public String toString() {
 		return "FrWiseGrievenceReportData [id=" + id + ", grieveId=" + grieveId + ", grieveDate=" + grieveDate
-				+ ", frAffectAmt=" + frAffectAmt + ", frId=" + frId + ", frName=" + frName + "]";
+				+ ", frAffectAmt=" + frAffectAmt + ", frId=" + frId + ", frName=" + frName + ", dr=" + dr + ", cr=" + cr
+				+ "]";
 	}
 
 }
