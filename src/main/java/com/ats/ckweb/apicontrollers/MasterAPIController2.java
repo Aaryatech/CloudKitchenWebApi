@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.CustomerAddress;
@@ -30,6 +31,7 @@ import com.ats.ckweb.model.ItemConfigHeader;
 import com.ats.ckweb.model.ItemDetailNew;
 import com.ats.ckweb.model.ItemListForOfferDetail;
 import com.ats.ckweb.model.Language;
+import com.ats.ckweb.model.NewSetting;
 import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.OrderTrail;
@@ -49,6 +51,7 @@ import com.ats.ckweb.repository.ItemConfigHeaderRepo;
 import com.ats.ckweb.repository.ItemDetailNewRepo;
 import com.ats.ckweb.repository.ItemListForOfferDetailRepo;
 import com.ats.ckweb.repository.LanguageRepo;
+import com.ats.ckweb.repository.NewSettingRepo;
 import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
@@ -131,6 +134,9 @@ public class MasterAPIController2 {
 	
 	@Autowired
 	OrderTrailRepository orderTrailRepository;
+	
+	@Autowired NewSettingRepo newSettingRepo;
+	
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -577,12 +583,22 @@ public class MasterAPIController2 {
 			res.setError(true);
 			res.setMessage("Failed");
 			res.setLangName("");
+			
+			
+			
+			
 		} else {
 			res.setError(false);
 			res.setMessage("Success");
 
 			Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
 			res.setLangName(lang.getLangName());
+			
+			try {
+				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
+				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1());
+			}catch(Exception e) {}
+			
 		}
 
 		return res;
@@ -768,6 +784,19 @@ public class MasterAPIController2 {
 
 					info.setError(false);
 					info.setMessage("updated");
+					
+					try {
+
+						NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
+
+						Customer cust = customerRepo.getCustomerByOrderId(orderId);
+
+						SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+
+					} catch (Exception e) {
+					}
+					
+					
 				} else {
 					info.setError(true);
 				}

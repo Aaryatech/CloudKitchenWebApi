@@ -15,7 +15,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
-			"        fr.fr_name\n" + 
+			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name\n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct, \n" + 
@@ -35,7 +35,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
-			"        fr.fr_name     \n" + 
+			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name     \n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct, \n" + 
@@ -57,7 +57,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
-			"        fr.fr_name          \n" + 
+			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name          \n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct, \n" + 
@@ -77,7 +77,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        '' as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
-			"        fr.fr_name          \n" + 
+			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name          \n" + 
 			"    from\n" + 
 			"        tn_order_header oh,\n" + 
 			"        mn_city ct, \n" + 

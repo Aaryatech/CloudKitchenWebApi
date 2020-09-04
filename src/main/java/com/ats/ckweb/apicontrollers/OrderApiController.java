@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.commons.SMSUtility;
+import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.CustomerDisplay;
 import com.ats.ckweb.model.GetGrievienceList;
 import com.ats.ckweb.model.GetGrievienceTailList;
@@ -20,6 +22,7 @@ import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.Info;
+import com.ats.ckweb.model.NewSetting;
 import com.ats.ckweb.model.OrderDetail;
 import com.ats.ckweb.model.OrderFeedback;
 import com.ats.ckweb.model.OrderGrievance;
@@ -30,11 +33,13 @@ import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
+import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.GetGrievienceListRepository;
 import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.GetOrderTrailListRepository;
+import com.ats.ckweb.repository.NewSettingRepo;
 import com.ats.ckweb.repository.OrderDetailRepository;
 import com.ats.ckweb.repository.OrderFeedbackRepo;
 import com.ats.ckweb.repository.OrderGrievanceRepo;
@@ -85,6 +90,12 @@ public class OrderApiController {
 	@Autowired
 	GetGrievienceTailListRepository getGrievienceTailListRepository;
 
+	@Autowired
+	NewSettingRepo newSettingRepo;
+
+	@Autowired
+	CustomerRepo customerRepo;
+
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
 
@@ -117,6 +128,23 @@ public class OrderApiController {
 			info.setError(false);
 			info.setMessage(String.valueOf(res.getOrderId()));
 
+			try {
+
+				NewSetting val = new NewSetting();
+
+				if (orderSaveData.getOrderHeader().getOrderStatus() == 0) {
+					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
+				} else if (orderSaveData.getOrderHeader().getOrderStatus() == 1) {
+					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+				}
+
+				Customer cust = customerRepo.getOne(orderSaveData.getOrderHeader().getCustId());
+
+				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+
+			} catch (Exception e) {
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -131,6 +159,24 @@ public class OrderApiController {
 		try {
 
 			res = orderHeaderRepository.save(orderHeader);
+
+			try {
+
+				NewSetting val = new NewSetting();
+
+				
+					if (orderHeader.getOrderStatus() == 0) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
+					} else if (orderHeader.getOrderStatus() == 1) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+					}
+
+					Customer cust = customerRepo.getOne(orderHeader.getCustId());
+
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+				
+			} catch (Exception e) {
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -194,6 +240,31 @@ public class OrderApiController {
 
 			info.setError(false);
 			info.setMessage(UUID);
+
+			if (update > 0) {
+				try {
+
+					NewSetting val = new NewSetting();
+
+					if (status == 2) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_accept_order", 0);
+					} else if (status == 3) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
+					} else if (status == 4) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivery_order", 0);
+					} else if (status == 5) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivered_order", 0);
+					} else if (status == 8) {
+						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_cancelled_order", 0);
+					}
+
+					Customer cust = customerRepo.getCustomerByOrderId(orderId);
+
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+
+				} catch (Exception e) {
+				}
+			}
 
 		} catch (Exception e) {
 			info.setError(true);
@@ -463,6 +534,18 @@ public class OrderApiController {
 
 			OrderGrievanceTrail orderGrievanceTrailres = orderGrievanceTrailRepo
 					.save(orderGrievance.getOrderGrievanceTrail());
+			
+			try {
+
+				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_add_grievance", 0);
+
+				Customer cust = customerRepo.getCustomerByOrderId(orderGrievance.getOrderId());
+
+				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+
+			} catch (Exception e) {
+			}			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();

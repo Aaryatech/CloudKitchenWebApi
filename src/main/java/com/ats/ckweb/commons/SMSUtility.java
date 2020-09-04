@@ -9,7 +9,7 @@ import com.ats.ckweb.model.Info;
 
 public class SMSUtility {
 
-	public static Info sendAddCustomerSMS(String phoneNo) {
+	public static Info sendSMS(String phoneNo, String msg) {
 
 		Info info = new Info();
 
@@ -18,8 +18,8 @@ public class SMSUtility {
 			RestTemplate restTemplate = new RestTemplate();
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 			
-			String msg = "Welcome to Madhvi!\r\n" + 
-					"Thank u for being a part of Madhvi Customer Loyalty Program & the Patronage for QUALITY initiatives by the People of North Gujarat.";
+//			String msg = "Welcome to Madhvi!\r\n" + 
+//					"Thank u for being a part of Madhvi Customer Loyalty Program & the Patronage for QUALITY initiatives by the People of North Gujarat.";
 
 			map.add("APIKEY", "pJMAaVPuGbh");
 			map.add("MobileNo", phoneNo);
@@ -31,6 +31,7 @@ public class SMSUtility {
 
 			info.setError(false);
 			info.setMessage(sms);
+			System.err.println("SMS --------------- "+sms);
 
 		} catch (Exception e) {
 
