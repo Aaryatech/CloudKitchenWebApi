@@ -11,7 +11,7 @@ public class CustWalletTransaction {
 	private int orderId;
 	private String orderNo;
 	private String orderDate;
-	private float orderAmt;
+	private float totalAmt;
 	private float amount;
 	private String walletDate;
 	private String transcType;
@@ -49,12 +49,12 @@ public class CustWalletTransaction {
 		this.orderDate = orderDate;
 	}
 
-	public float getOrderAmt() {
-		return orderAmt;
+	public float getTotalAmt() {
+		return totalAmt;
 	}
 
-	public void setOrderAmt(float orderAmt) {
-		this.orderAmt = orderAmt;
+	public void setTotalAmt(float totalAmt) {
+		this.totalAmt = totalAmt;
 	}
 
 	public float getAmount() {
@@ -92,7 +92,7 @@ public class CustWalletTransaction {
 	@Override
 	public String toString() {
 		return "CustWalletTransaction [walletId=" + walletId + ", orderId=" + orderId + ", orderNo=" + orderNo
-				+ ", orderDate=" + orderDate + ", orderAmt=" + orderAmt + ", amount=" + amount + ", walletDate="
+				+ ", orderDate=" + orderDate + ", totalAmt=" + totalAmt + ", amount=" + amount + ", walletDate="
 				+ walletDate + ", transcType=" + transcType + ", billNo=" + billNo + "]";
 	}
 
