@@ -1,6 +1,13 @@
 package com.ats.ckweb.apicontrollers;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -123,14 +132,16 @@ public class FrontEndController {
 
 	@Autowired
 	SettingRepository settingRepository;
-	
-	@Autowired WalletRepo walletRepo;
-	
-	@Autowired NewSettingRepo newSettingRepo;
+
+	@Autowired
+	WalletRepo walletRepo;
+
+	@Autowired
+	NewSettingRepo newSettingRepo;
 
 	@Autowired
 	CustWalletTotalRepo custWalletTotalRepo;
-	
+
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
 	@RequestMapping(value = { "/getFranchiseList" }, method = RequestMethod.GET)
@@ -243,17 +254,15 @@ public class FrontEndController {
 			frData = new FranchiseData();
 		} else {
 
-			/*List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.getFrId());
-			if (cityList == null) {
-				cityList = new ArrayList<>();
-			}
-			frData.setCityList(cityList);
-
-			List<AreaData> areaList = areaDataRepo.getAllAreasByFr(frData.getFrId());
-			if (areaList == null) {
-				areaList = new ArrayList<>();
-			}
-			frData.setAreaList(areaList);*/
+			/*
+			 * List<CityData> cityList = cityDataRepo.getAllCityByFr(frData.getFrId()); if
+			 * (cityList == null) { cityList = new ArrayList<>(); }
+			 * frData.setCityList(cityList);
+			 * 
+			 * List<AreaData> areaList = areaDataRepo.getAllAreasByFr(frData.getFrId()); if
+			 * (areaList == null) { areaList = new ArrayList<>(); }
+			 * frData.setAreaList(areaList);
+			 */
 		}
 
 		return frData;
@@ -769,6 +778,8 @@ public class FrontEndController {
 		}
 
 		res.setInfo(info);
+
+		publishData(res, frId);
 
 		return res;
 	}
@@ -1857,8 +1868,7 @@ public class FrontEndController {
 
 		return setting;
 	}
-	
-	
+
 	@RequestMapping(value = { "/getNewSettingByKey" }, method = RequestMethod.POST)
 	public @ResponseBody NewSetting getNewSettingByKey(@RequestParam("key") String key) {
 
@@ -1871,8 +1881,7 @@ public class FrontEndController {
 
 		return setting;
 	}
-	
-	
+
 	@RequestMapping(value = { "/getCustomerWalletAmt" }, method = RequestMethod.POST)
 	public @ResponseBody CustWalletTotal getCustomerWalletAmt(@RequestParam("custId") int custId) {
 
@@ -1880,39 +1889,113 @@ public class FrontEndController {
 
 		try {
 			wallet = custWalletTotalRepo.getCustTotalWalletAmt(custId);
-			if(wallet==null) {
+			if (wallet == null) {
 				wallet = new CustWalletTotal();
 			}
-			
-			
+
 			NewSetting applyLimit = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_on_rs", 0);
 			NewSetting walletPer = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_percent", 0);
 			NewSetting walletRs = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_rs", 0);
-			
-			if(applyLimit!=null) {
+
+			if (applyLimit != null) {
 				wallet.setWalletLimitRs(Float.parseFloat(applyLimit.getSettingValue1()));
-			}else {
+			} else {
 				wallet.setWalletLimitRs(0);
 			}
 
-			if(walletPer!=null) {
+			if (walletPer != null) {
 				wallet.setWalletPercent(Float.parseFloat(walletPer.getSettingValue1()));
-			}else {
+			} else {
 				wallet.setWalletPercent(0);
 			}
 
-			if(walletRs!=null) {
+			if (walletRs != null) {
 				wallet.setWalletMinAmt(Float.parseFloat(walletRs.getSettingValue1()));
-			}else {
+			} else {
 				wallet.setWalletMinAmt(0);
 			}
 
-			
 		} catch (Exception e) {
 		}
 
 		return wallet;
 	}
-	
+
+	public void publishData(GetAllDataByFr allData, int frId) {
+
+		final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
+		
+		//final String JSON_SAVE_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/ckjson/";
+		//final String TALLY_VIEW = "http://107.180.91.43:8080/uploads/ckuploads/ckjson/";
+
+		ObjectMapper Obj = new ObjectMapper();
+		String json = "";
+		try {
+			json = Obj.writeValueAsString(allData);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		if (json != null) {
+
+			try {
+				Writer output = null;
+				File file = new File(JSON_SAVE_URL + frId + ".json");
+				output = new BufferedWriter(new FileWriter(file));
+				output.write(json.toString());
+				output.close();
+
+				String fileName = JSON_SAVE_URL + frId + ".zip";
+				String sourceFile = JSON_SAVE_URL + frId + ".json";
+
+				FileOutputStream fos = new FileOutputStream(fileName);
+				ZipOutputStream zipOut = new ZipOutputStream(fos);
+				File fileToZip = new File(sourceFile);
+				FileInputStream fis = new FileInputStream(fileToZip);
+				ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+
+				zipOut.putNextEntry(zipEntry);
+				byte[] bytes = new byte[1024];
+				int length;
+				while ((length = fis.read(bytes)) >= 0) {
+					zipOut.write(bytes, 0, length);
+				}
+				zipOut.close();
+				fis.close();
+				fos.close();
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	@RequestMapping(value = { "/publishAllFrData" }, method = RequestMethod.GET)
+	public @ResponseBody Info publishAllFrData() {
+
+		Info info = new Info();
+
+		try {
+
+			List<Franchisee> frList = franchiseeRepository.findAllByDelStatus(0);
+
+			for (int i = 0; i < frList.size(); i++) {
+
+				getAllDataByFr(frList.get(i).getFrId(), 2, 1, 1);
+
+			}
+
+			info.setError(false);
+
+		} catch (Exception e) {
+			info.setError(true);
+		}
+
+		return info;
+	}
 
 }

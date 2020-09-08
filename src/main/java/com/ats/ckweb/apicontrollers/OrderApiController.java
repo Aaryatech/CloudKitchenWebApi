@@ -242,6 +242,50 @@ public class OrderApiController {
 			info.setMessage(UUID);
 
 			if (update > 0) {
+				
+				try {
+					
+					if(status==7 && type==4) {
+						
+						SimpleDateFormat dttime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						SimpleDateFormat yy = new SimpleDateFormat("yyyy-MM-dd");
+						Date ct = new Date();
+						
+						OrderGrievance orderGrievance = new OrderGrievance();
+						orderGrievance.setOrderId(orderId);
+						orderGrievance.setInsertById(userId);
+						orderGrievance.setInsertDateTime(dttime.format(ct));
+						orderGrievance.setRemark(remark);
+						orderGrievance.setPlatform(1);
+						orderGrievance.setGrievenceSubtypeId(0);
+						orderGrievance.setCurrentStatus(0);
+						orderGrievance.setDate(yy.format(ct));
+						orderGrievance.setGrievencceNo("1");
+
+//						for (int i = 0; i < grievencesInstructionList.size(); i++) {
+//
+//							if (grievencesInstructionList.get(i).getGrievanceId() == grievencesInstructionId) {
+//								orderGrievance.setGrievenceTypeId(grievencesInstructionList.get(i).getGrievenceTypeId());
+//								break;
+//							}
+//						}
+
+						OrderGrievanceTrail orderGrievanceTrail = new OrderGrievanceTrail();
+						orderGrievanceTrail.setActionByUserId(userId);
+						orderGrievanceTrail.setActionDateTime(dttime.format(ct));
+						orderGrievanceTrail.setStatus(0);
+						orderGrievanceTrail.setRemark(remark);
+						orderGrievance.setOrderGrievanceTrail(orderGrievanceTrail);
+
+						saveFeedBackOfOrder(orderGrievance);
+						
+					}
+					
+				
+					
+				}catch (Exception e) {
+				}
+				
 				try {
 
 					NewSetting val = new NewSetting();

@@ -34,6 +34,7 @@ import com.ats.ckweb.model.Language;
 import com.ats.ckweb.model.NewSetting;
 import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
+import com.ats.ckweb.model.OrderRemark;
 import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.model.ShowItemDetailNewList;
 import com.ats.ckweb.model.SubCategory;
@@ -55,6 +56,7 @@ import com.ats.ckweb.repository.NewSettingRepo;
 import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
+import com.ats.ckweb.repository.OrderRemarkRepo;
 import com.ats.ckweb.repository.OrderTrailRepository;
 import com.ats.ckweb.repository.ShowItemDetailNewListRepo;
 import com.ats.ckweb.services.CategoryService;
@@ -128,15 +130,18 @@ public class MasterAPIController2 {
 
 	@Autowired
 	ItemConfigDisplayRepo itemConfigDisplayRepo;
-	
+
 	@Autowired
 	OrderHeaderRepository orderHeaderRepository;
-	
+
 	@Autowired
 	OrderTrailRepository orderTrailRepository;
-	
-	@Autowired NewSettingRepo newSettingRepo;
-	
+
+	@Autowired
+	NewSettingRepo newSettingRepo;
+
+	@Autowired
+	OrderRemarkRepo orderRemarkRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -583,22 +588,20 @@ public class MasterAPIController2 {
 			res.setError(true);
 			res.setMessage("Failed");
 			res.setLangName("");
-			
-			
-			
-			
+
 		} else {
 			res.setError(false);
 			res.setMessage("Success");
 
 			Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
 			res.setLangName(lang.getLangName());
-			
+
 			try {
 				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
 				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1());
-			}catch(Exception e) {}
-			
+			} catch (Exception e) {
+			}
+
 		}
 
 		return res;
@@ -746,92 +749,119 @@ public class MasterAPIController2 {
 		return franchisee;
 	}
 
-	
 	// ACCEPT AND PROCESS ORDER-------------------
-		@RequestMapping(value = { "/acceptAndProcessOrderOPS" }, method = RequestMethod.POST)
-		public @ResponseBody Info acceptAndProcessOrderOPS(@RequestParam("orderId") int orderId,
-				@RequestParam("status") int status, @RequestParam("userId") int userId,
-				@RequestParam("remark") String remark, @RequestParam("type") int type) {
+	@RequestMapping(value = { "/acceptAndProcessOrderOPS" }, method = RequestMethod.POST)
+	public @ResponseBody Info acceptAndProcessOrderOPS(@RequestParam("orderId") int orderId,
+			@RequestParam("status") int status, @RequestParam("userId") int userId,
+			@RequestParam("remark") String remark, @RequestParam("type") int type) {
 
-			Info info = new Info();
+		Info info = new Info();
 
-			try {
-				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date dt = new Date();
+		try {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date dt = new Date();
 
-				System.err.println("Status = " + status + " ORder id = " + orderId);
-				int update = orderHeaderRepository.updateStatus(status,orderId);
-				System.err.println("update res = " + update);
-				if (update > 0) {
+			System.err.println("Status = " + status + " ORder id = " + orderId);
+			int update = orderHeaderRepository.updateStatus(status, orderId);
+			System.err.println("update res = " + update);
+			if (update > 0) {
 
-					OrderTrail orderTrail1 = new OrderTrail();
-					orderTrail1.setOrderId(orderId);
-					orderTrail1.setActionByUserId(userId);
-					orderTrail1.setActionDateTime(sf.format(dt));
-					orderTrail1.setStatus(2);
-					orderTrail1.setExVar1(remark);
-					orderTrail1.setExInt1(type);
-					OrderTrail orderRes1 = orderTrailRepository.save(orderTrail1);
+				OrderTrail orderTrail1 = new OrderTrail();
+				orderTrail1.setOrderId(orderId);
+				orderTrail1.setActionByUserId(userId);
+				orderTrail1.setActionDateTime(sf.format(dt));
+				orderTrail1.setStatus(2);
+				orderTrail1.setExVar1(remark);
+				orderTrail1.setExInt1(type);
+				OrderTrail orderRes1 = orderTrailRepository.save(orderTrail1);
 
-					OrderTrail orderTrail2 = new OrderTrail();
-					orderTrail2.setOrderId(orderId);
-					orderTrail2.setActionByUserId(userId);
-					orderTrail2.setActionDateTime(sf.format(dt));
-					orderTrail2.setStatus(status);
-					orderTrail2.setExVar1(remark);
-					orderTrail2.setExInt1(type);
-					OrderTrail orderRes2 = orderTrailRepository.save(orderTrail2);
+				OrderTrail orderTrail2 = new OrderTrail();
+				orderTrail2.setOrderId(orderId);
+				orderTrail2.setActionByUserId(userId);
+				orderTrail2.setActionDateTime(sf.format(dt));
+				orderTrail2.setStatus(status);
+				orderTrail2.setExVar1(remark);
+				orderTrail2.setExInt1(type);
+				OrderTrail orderRes2 = orderTrailRepository.save(orderTrail2);
 
-					info.setError(false);
-					info.setMessage("updated");
-					
-					try {
+				info.setError(false);
+				info.setMessage("updated");
 
-						NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
+				try {
 
-						Customer cust = customerRepo.getCustomerByOrderId(orderId);
+					NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
 
-						SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 
-					} catch (Exception e) {
-					}
-					
-					
-				} else {
-					info.setError(true);
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+
+				} catch (Exception e) {
 				}
 
-			} catch (Exception e) {
+			} else {
 				info.setError(true);
-				e.printStackTrace();
 			}
-			return info;
+
+		} catch (Exception e) {
+			info.setError(true);
+			e.printStackTrace();
 		}
-		
-		
-		// -----------UPDATE DELIVERY BOY----------------
-		@RequestMapping(value = { "/updateDeliveryBoy" }, method = RequestMethod.POST)
-		public @ResponseBody Info updateDeliveryBoy(@RequestParam("orderId") int orderId,
-				@RequestParam("delBoyId") int delBoyId) {
+		return info;
+	}
 
-			Info info = new Info();
-			try {
+	// -----------UPDATE DELIVERY BOY----------------
+	@RequestMapping(value = { "/updateDeliveryBoy" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateDeliveryBoy(@RequestParam("orderId") int orderId,
+			@RequestParam("delBoyId") int delBoyId) {
 
-				int res = orderHeaderRepository.updateDeliveryBoy(orderId, delBoyId);
-				if (res > 0) {
-					info.setError(false);
-					info.setMessage("Success");
-				} else {
-					info.setError(true);
-					info.setMessage("Failed");
-				}
+		Info info = new Info();
+		try {
 
-			} catch (Exception e) {
-				e.printStackTrace();
+			int res = orderHeaderRepository.updateDeliveryBoy(orderId, delBoyId);
+			if (res > 0) {
+				info.setError(false);
+				info.setMessage("Success");
+			} else {
 				info.setError(true);
 				info.setMessage("Failed");
 			}
-			return info;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
 		}
-		
+		return info;
+	}
+
+	@RequestMapping(value = { "/getAllRemarksByType" }, method = RequestMethod.POST)
+	public @ResponseBody List<OrderRemark> getAllRemarksByType(@RequestParam("type") int type) {
+
+		List<OrderRemark> res = null;
+
+		res = orderRemarkRepo.findAllByRkTypeAndDelStatus(type, 0);
+
+		if (res == null) {
+			res = new ArrayList<OrderRemark>();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/getNewSettingsValueByKey" }, method = RequestMethod.POST)
+	public @ResponseBody NewSetting getNewSettingsValueByKey(@RequestParam("orderId") int orderId,
+			@RequestParam("key") String key) {
+
+		NewSetting settings = new NewSetting();
+		try {
+
+			settings = newSettingRepo.findBySettingKeyAndDelStatus(key, 0);
+			Customer cust = customerRepo.getCustomerByOrderId(orderId);
+			settings.setSettingValue2(cust.getPhoneNumber());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return settings;
+	}
+
 }
