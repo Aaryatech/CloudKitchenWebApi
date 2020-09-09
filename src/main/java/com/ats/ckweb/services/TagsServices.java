@@ -178,6 +178,10 @@ public interface TagsServices {
 	Designation addDesignation(Designation desig);
 
 	List<GrievencesTypeInstructn> getAllGrievances();
+
+	MnUser getMnUserByEmail(String email);
+
+	MnUser getMnUserByEmailAndUserId(String email, int userId);
 	
 
 	

@@ -153,4 +153,8 @@ public interface MnUserRepo extends JpaRepository<MnUser, Integer> {
 			"    user.designation_id=desig.designation_id and type.user_type_id=:userType " + 
 			"    ORDER BY user.user_id DESC",nativeQuery=true)
 	List<MnUser> getUserListByTypeAndCompId(@Param("compId") int compId,@Param("userType") int userType);
+	
+	MnUser findByUserEmailAndDelStatus(String email, int del);
+	
+	MnUser findByUserEmailAndDelStatusAndUserIdNot(String email, int del, int userId);
 }

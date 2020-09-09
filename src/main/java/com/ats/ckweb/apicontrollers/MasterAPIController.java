@@ -39,10 +39,12 @@ import com.ats.ckweb.model.MCategory;
 import com.ats.ckweb.model.MnUser;
 import com.ats.ckweb.model.OfferConfig;
 import com.ats.ckweb.model.OfferHeader;
+import com.ats.ckweb.model.OrderRemark;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
 import com.ats.ckweb.repository.AreaRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
+import com.ats.ckweb.repository.OrderRemarkRepo;
 import com.ats.ckweb.services.CompanyServices;
 import com.ats.ckweb.services.TagsServices;
 
@@ -57,6 +59,9 @@ public class MasterAPIController {
 
 	@Autowired
 	AreaRepo areaRepo;
+	
+	@Autowired
+	OrderRemarkRepo remarkRepo;
 	
 	@RequestMapping(value = { "/insertDesignation" }, method = RequestMethod.POST)
 	public @ResponseBody Designation insertDesignation(@RequestBody Designation desig) {
@@ -1017,6 +1022,25 @@ public class MasterAPIController {
 		}
 		return user;
 	}
+	
+	@RequestMapping(value = { "/getMnUserByEmail" }, method = RequestMethod.POST)
+	public @ResponseBody MnUser getMnUserByEmail(@RequestParam String email, @RequestParam int userId) {
+
+		MnUser user = new MnUser();
+		try {
+			if (userId == 0) {
+
+				user = tagService.getMnUserByEmail(email);
+			} else {
+
+				user = tagService.getMnUserByEmailAndUserId(email, userId);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
 
 	@RequestMapping(value = { "/deleteMnUserById" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteMnUserById(@RequestParam int userId) {
@@ -1413,6 +1437,64 @@ public class MasterAPIController {
 			e.printStackTrace();
 		}
 		return agent;
+	}
+	
+	/******************************************************************************************/
+	// Remark
+
+	@RequestMapping(value = { "/getAllRemarks" }, method = RequestMethod.GET)
+	public @ResponseBody List<OrderRemark> getAllRemarks() {
+
+		List<OrderRemark> remarkList = new ArrayList<OrderRemark>();
+		try {
+			remarkList = remarkRepo.findByDelStatusOrderByRkIdDesc(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return remarkList;
+	}
+	
+	@RequestMapping(value = { "/addNewRemark" }, method = RequestMethod.POST)
+	public @ResponseBody OrderRemark addNewRemark(@RequestBody OrderRemark remark) {
+
+		OrderRemark saveRemark = new OrderRemark();
+		try {
+			saveRemark = remarkRepo.save(remark);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return saveRemark;
+	}
+	
+	@RequestMapping(value = { "/deleteRemarkById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteRemarkById(@RequestParam int remarkId) {
+
+		Info info = new Info();
+		try {
+			int res = remarkRepo.deleteRemark(remarkId);
+			if (res > 0) {
+				info.setError(false);
+				info.setMessage("Remark Deleted Successfully");
+			} else {
+				info.setError(true);
+				info.setMessage("Failed To Delete Remark");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+	@RequestMapping(value = { "/getRemarkById" }, method = RequestMethod.POST)
+	public @ResponseBody OrderRemark getRemarkById(@RequestParam int remarkId) {
+
+		OrderRemark remark = new OrderRemark();
+		try {
+			remark = remarkRepo.findByRkId(remarkId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return remark;
 	}
 
 }

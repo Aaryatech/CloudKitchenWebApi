@@ -560,4 +560,16 @@ public class TagServiceImpl implements TagsServices {
 		return list;
 	}
 
+	@Override
+	public MnUser getMnUserByEmail(String email) {
+		MnUser user = mnUserRepo.findByUserEmailAndDelStatus(email, 0);
+		return user;
+	}
+
+	@Override
+	public MnUser getMnUserByEmailAndUserId(String email, int userId) {
+		MnUser user = mnUserRepo.findByUserEmailAndDelStatusAndUserIdNot(email, 0, userId);
+		return user;
+	}
+
 }
