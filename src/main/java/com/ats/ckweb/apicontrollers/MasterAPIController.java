@@ -18,6 +18,7 @@ import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.City;
 import com.ats.ckweb.model.Company;
 import com.ats.ckweb.model.ConfigRelatedProduct;
+import com.ats.ckweb.model.DeliveryCharges;
 import com.ats.ckweb.model.DeliveryInstruction;
 import com.ats.ckweb.model.Designation;
 import com.ats.ckweb.model.Franchisee;
@@ -43,6 +44,7 @@ import com.ats.ckweb.model.OrderRemark;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
 import com.ats.ckweb.repository.AreaRepo;
+import com.ats.ckweb.repository.DeliveryChargesRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
 import com.ats.ckweb.repository.OrderRemarkRepo;
 import com.ats.ckweb.services.CompanyServices;
@@ -62,6 +64,9 @@ public class MasterAPIController {
 	
 	@Autowired
 	OrderRemarkRepo remarkRepo;
+	
+	@Autowired
+	DeliveryChargesRepo deliveryChargeRepo;
 	
 	@RequestMapping(value = { "/insertDesignation" }, method = RequestMethod.POST)
 	public @ResponseBody Designation insertDesignation(@RequestBody Designation desig) {
@@ -1496,5 +1501,65 @@ public class MasterAPIController {
 		}
 		return remark;
 	}
+	
+	/******************************************************************************************/
+	// Remark
+
+	@RequestMapping(value = { "/getAllDeliveryCharges" }, method = RequestMethod.GET)
+	public @ResponseBody List<DeliveryCharges> getAllDeliveryCharges() {
+
+		List<DeliveryCharges> chagesList = new ArrayList<DeliveryCharges>();
+		try {
+			chagesList = deliveryChargeRepo.findByDelStatusOrderByChIdDesc(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return chagesList;
+	}
+	
+	@RequestMapping(value = { "/addNewDeliveryCharge" }, method = RequestMethod.POST)
+	public @ResponseBody DeliveryCharges addNewDeliveryCharge(@RequestBody DeliveryCharges delCharge) {
+
+		DeliveryCharges saveDelCharge = new DeliveryCharges();
+		try {
+			saveDelCharge = deliveryChargeRepo.save(delCharge);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return saveDelCharge;
+	}
+	
+	@RequestMapping(value = { "/deleteDeliverChargeById" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteDeliverChargeById(@RequestParam int chargeId) {
+
+		Info info = new Info();
+		try {
+			int res = deliveryChargeRepo.deleteDeliveryCharges(chargeId);
+			if (res > 0) {
+				info.setError(false);
+				info.setMessage("Deliver Charge Deleted Successfully");
+			} else {
+				info.setError(true);
+				info.setMessage("Failed To Delete Deliver Charge");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+
+	@RequestMapping(value = { "/getDeliveryChargeById" }, method = RequestMethod.POST)
+	public @ResponseBody DeliveryCharges getDeliveryChargeById(@RequestParam int chargeId) {
+
+		DeliveryCharges charge = new DeliveryCharges();
+		try {
+			charge = deliveryChargeRepo.findByChId(chargeId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return charge;
+	}
+	
 
 }
