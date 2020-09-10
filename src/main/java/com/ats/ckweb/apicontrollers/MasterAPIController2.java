@@ -593,8 +593,11 @@ public class MasterAPIController2 {
 			res.setError(false);
 			res.setMessage("Success");
 
-			Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
+			try {
+				Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
 			res.setLangName(lang.getLangName());
+			} catch (Exception e) {
+			}
 
 			try {
 				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
