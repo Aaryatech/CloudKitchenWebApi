@@ -34,6 +34,7 @@ import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaData;
 import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
+import com.ats.ckweb.model.CkDeliveryCharges;
 import com.ats.ckweb.model.CustWalletTotal;
 import com.ats.ckweb.model.FrItemStock;
 import com.ats.ckweb.model.FranchiseData;
@@ -61,6 +62,7 @@ import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.AreaDataRepo;
 import com.ats.ckweb.repository.CategoryDataRepo;
 import com.ats.ckweb.repository.CityDataRepo;
+import com.ats.ckweb.repository.CkDeliveryChargesRepo;
 import com.ats.ckweb.repository.CustWalletTotalRepo;
 import com.ats.ckweb.repository.FrItemStockRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
@@ -141,6 +143,9 @@ public class FrontEndController {
 
 	@Autowired
 	CustWalletTotalRepo custWalletTotalRepo;
+
+	@Autowired
+	CkDeliveryChargesRepo ckDeliveryChargesRepo;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -1924,9 +1929,11 @@ public class FrontEndController {
 	public void publishData(GetAllDataByFr allData, int frId) {
 
 		final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
-		
-		//final String JSON_SAVE_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/ckjson/";
-		//final String TALLY_VIEW = "http://107.180.91.43:8080/uploads/ckuploads/ckjson/";
+
+		// final String JSON_SAVE_URL =
+		// "/opt/apache-tomcat-8.5.49/webapps/uploads/ckjson/";
+		// final String TALLY_VIEW =
+		// "http://107.180.91.43:8080/uploads/ckuploads/ckjson/";
 
 		ObjectMapper Obj = new ObjectMapper();
 		String json = "";
@@ -1996,6 +2003,22 @@ public class FrontEndController {
 		}
 
 		return info;
+	}
+
+	@RequestMapping(value = { "/getDeliveryCharges" }, method = RequestMethod.POST)
+	public @ResponseBody CkDeliveryCharges getDeliveryCharges(@RequestParam("km") float km) {
+		CkDeliveryCharges res = new CkDeliveryCharges();
+		try {
+			res = ckDeliveryChargesRepo.getDeliveryCharges(km);
+			if(res==null) {
+				res=new CkDeliveryCharges();
+			}
+			//System.err.println("-------------------------------------------------------- "+km+" ==> "+res);
+			
+		} catch (Exception e) {
+			res=new CkDeliveryCharges();
+		}
+		return res;
 	}
 
 }
