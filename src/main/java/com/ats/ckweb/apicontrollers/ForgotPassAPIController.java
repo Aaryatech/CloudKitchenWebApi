@@ -84,7 +84,7 @@ public class ForgotPassAPIController {
 		MnUser user = new MnUser();
 		
 		try {
-			System.err.println("OTP Found------------------"+otp+"------"+OTPVerification.getOtp()+" "+OTPVerification.getUserId());
+		//	System.err.println("OTP Found------------------"+otp+"------"+OTPVerification.getOtp()+" "+OTPVerification.getUserId());
 			if (otp.equals(OTPVerification.getOtp()) == true) {
 				info.setError(false);
 				info.setMessage("success");
