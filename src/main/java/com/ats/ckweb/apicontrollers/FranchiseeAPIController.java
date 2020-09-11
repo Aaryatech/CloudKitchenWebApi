@@ -11,15 +11,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.model.FrCharges;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetFrConfigList;
 import com.ats.ckweb.model.Info;
+import com.ats.ckweb.repository.FrChargesRepo;
 import com.ats.ckweb.services.CompanyServices;
 
 @RestController
 public class FranchiseeAPIController {
 	
 	@Autowired CompanyServices companyService;
+	
+	@Autowired FrChargesRepo frChargRepo;
 	
 	 @RequestMapping(value = { "/saveFrConfig" }, method = RequestMethod.POST)
 		public @ResponseBody FrConfig saveFrConfig(@RequestBody FrConfig frConfig){
@@ -76,5 +80,29 @@ public class FranchiseeAPIController {
 				e.printStackTrace();
 			}
 			return list;
+		}
+	 
+	 @RequestMapping(value = { "/saveFrCharges" }, method = RequestMethod.POST)
+		public @ResponseBody FrCharges saveFrCharges(@RequestBody FrCharges charges){
+			
+		 FrCharges saveCharges = new FrCharges();
+			try {
+				saveCharges = frChargRepo.save(charges);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return saveCharges;
+		}
+	 
+	 @RequestMapping(value = { "/getFrChargesByFrId" }, method = RequestMethod.POST)
+		public @ResponseBody FrCharges getFrChargesByFrId(@RequestParam int frId){
+			
+		 FrCharges charges = new FrCharges();
+			try {
+				charges = frChargRepo.findByfrId(frId);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return charges;
 		}
 }
