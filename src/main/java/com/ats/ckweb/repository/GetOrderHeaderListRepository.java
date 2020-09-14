@@ -12,7 +12,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        '' as area_name,\n" + 
+			"        cm.phone_number as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name\n" + 
@@ -32,7 +32,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 	
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        '' as area_name,\n" + 
+			"        cm.phone_number as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name     \n" + 
@@ -54,7 +54,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        '' as area_name,\n" + 
+			"        cm.phone_number as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name          \n" + 
@@ -74,7 +74,7 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 
 	@Query(value = "select\n" + 
 			"        oh.*,\n" + 
-			"        '' as area_name,\n" + 
+			"        cm.phone_number as area_name,\n" + 
 			"        ct.city_name,\n" + 
 			"        cm.cust_name,\n" + 
 			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name          \n" + 
