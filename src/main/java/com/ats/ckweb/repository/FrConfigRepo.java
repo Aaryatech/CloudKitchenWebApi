@@ -17,4 +17,6 @@ public interface FrConfigRepo extends JpaRepository<FrConfig, Integer> {
 	@Modifying
 	@Query(value="UPDATE tn_fr_config SET del_status=0 WHERE fr_config_id=:configId",nativeQuery=true)
 	public int deleteConfigurationById(@Param("configId") int configId);
+	
+	FrConfig findByFrId(int frId);
 }

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.ckweb.commons.SMSUtility;
+import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.CustomerDisplay;
+import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.GetGrievienceList;
 import com.ats.ckweb.model.GetGrievienceTailList;
 import com.ats.ckweb.model.GetOrderDetailList;
@@ -32,8 +34,10 @@ import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.model.Setting;
+import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.CustomerRepo;
+import com.ats.ckweb.repository.FrConfigRepo;
 import com.ats.ckweb.repository.GetGrievienceListRepository;
 import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
@@ -96,6 +100,12 @@ public class OrderApiController {
 	@Autowired
 	CustomerRepo customerRepo;
 
+	@Autowired
+	FrConfigRepo frConfigRepo;
+
+	@Autowired
+	AgentRepo agentRepo;
+
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
 
@@ -130,17 +140,49 @@ public class OrderApiController {
 
 			try {
 
+				Customer cust = customerRepo.getOne(orderSaveData.getOrderHeader().getCustId());
+				FrConfig frConfig = frConfigRepo.findByFrId(orderSaveData.getOrderHeader().getFrId());
+
 				NewSetting val = new NewSetting();
+
+				String msg = "", msgAgent = "";
 
 				if (orderSaveData.getOrderHeader().getOrderStatus() == 0) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
+
+					msg = val.getSettingValue1();
+					msg = msg.replace("###", cust.getCustName());
+
+					if (frConfig != null) {
+						String type = "dairy";
+						if (frConfig.getFrType() == 2) {
+							type = "restro";
+						}
+						msg = msg.replace("***", type);
+					}
+
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+
 				} else if (orderSaveData.getOrderHeader().getOrderStatus() == 1) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+					msg = val.getSettingValue1();
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+
+					if (orderSaveData.getOrderHeader().getIsAgent() == 1) {
+						NewSetting val1 = new NewSetting();
+						val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+						msgAgent = val1.getSettingValue1();
+
+						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
+								orderSaveData.getOrderHeader().getOrderDeliveredBy(), 1, 0);
+						
+						if (agent != null) {
+							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent);
+						}
+					}
 				}
 
-				Customer cust = customerRepo.getOne(orderSaveData.getOrderHeader().getCustId());
-
-				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+				System.err.println("MSG - " + msg);
 
 			} catch (Exception e) {
 			}
@@ -163,18 +205,34 @@ public class OrderApiController {
 			try {
 
 				NewSetting val = new NewSetting();
+				Customer cust = customerRepo.getOne(orderHeader.getCustId());
+				String msg="",msgAgent="";
 
-				
-					if (orderHeader.getOrderStatus() == 0) {
-						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
-					} else if (orderHeader.getOrderStatus() == 1) {
-						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+				if (orderHeader.getOrderStatus() == 0) {
+					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
+					msg=val.getSettingValue1();
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+					
+				} else if (orderHeader.getOrderStatus() == 1) {
+					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+					msg=val.getSettingValue1();
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+					
+					if (orderHeader.getIsAgent() == 1) {
+						NewSetting val1 = new NewSetting();
+						val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+						msgAgent = val1.getSettingValue1();
+
+						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
+								orderHeader.getOrderDeliveredBy(), 1, 0);
+						
+						if (agent != null) {
+							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent);
+						}
 					}
+					
+				}
 
-					Customer cust = customerRepo.getOne(orderHeader.getCustId());
-
-					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
-				
 			} catch (Exception e) {
 			}
 
@@ -242,15 +300,15 @@ public class OrderApiController {
 			info.setMessage(UUID);
 
 			if (update > 0) {
-				
+
 				try {
-					
-					if(status==7 && type==4) {
-						
+
+					if (status == 7 && type == 4) {
+
 						SimpleDateFormat dttime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 						SimpleDateFormat yy = new SimpleDateFormat("yyyy-MM-dd");
 						Date ct = new Date();
-						
+
 						OrderGrievance orderGrievance = new OrderGrievance();
 						orderGrievance.setOrderId(orderId);
 						orderGrievance.setInsertById(userId);
@@ -278,14 +336,12 @@ public class OrderApiController {
 						orderGrievance.setOrderGrievanceTrail(orderGrievanceTrail);
 
 						saveFeedBackOfOrder(orderGrievance);
-						
+
 					}
-					
-				
-					
-				}catch (Exception e) {
+
+				} catch (Exception e) {
 				}
-				
+
 				try {
 
 					NewSetting val = new NewSetting();
@@ -578,7 +634,7 @@ public class OrderApiController {
 
 			OrderGrievanceTrail orderGrievanceTrailres = orderGrievanceTrailRepo
 					.save(orderGrievance.getOrderGrievanceTrail());
-			
+
 			try {
 
 				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_add_grievance", 0);
@@ -588,8 +644,7 @@ public class OrderApiController {
 				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
 
 			} catch (Exception e) {
-			}			
-			
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
