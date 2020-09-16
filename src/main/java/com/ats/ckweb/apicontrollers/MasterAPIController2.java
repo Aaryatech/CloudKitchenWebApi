@@ -36,6 +36,7 @@ import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.OrderRemark;
 import com.ats.ckweb.model.OrderTrail;
+import com.ats.ckweb.model.SettingsUpdateModel;
 import com.ats.ckweb.model.ShowItemDetailNewList;
 import com.ats.ckweb.model.SubCategory;
 import com.ats.ckweb.repository.CustomerAddressDisplayRepo;
@@ -58,6 +59,7 @@ import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
 import com.ats.ckweb.repository.OrderRemarkRepo;
 import com.ats.ckweb.repository.OrderTrailRepository;
+import com.ats.ckweb.repository.SettingsUpdateModelRepo;
 import com.ats.ckweb.repository.ShowItemDetailNewListRepo;
 import com.ats.ckweb.services.CategoryService;
 import com.ats.ckweb.services.ImagesService;
@@ -142,6 +144,9 @@ public class MasterAPIController2 {
 
 	@Autowired
 	OrderRemarkRepo orderRemarkRepo;
+
+	@Autowired
+	SettingsUpdateModelRepo settingsUpdateModelRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -595,7 +600,7 @@ public class MasterAPIController2 {
 
 			try {
 				Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(res.getLangId(), 0, res.getCompId());
-			res.setLangName(lang.getLangName());
+				res.setLangName(lang.getLangName());
 			} catch (Exception e) {
 			}
 
@@ -865,6 +870,40 @@ public class MasterAPIController2 {
 			e.printStackTrace();
 		}
 		return settings;
+	}
+
+	@RequestMapping(value = { "/getSettingsListForUpdate" }, method = RequestMethod.GET)
+	public @ResponseBody List<SettingsUpdateModel> getSettingsListForUpdate() {
+
+		List<SettingsUpdateModel> res = null;
+
+		res = settingsUpdateModelRepo.settingsList();
+
+		if (res == null) {
+			res = new ArrayList<SettingsUpdateModel>();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/updateSettingsValById" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateSettingsValById(@RequestParam("settingId") int settingId,
+			@RequestParam("val") String val) {
+
+		Info info = new Info();
+		try {
+
+			int res = newSettingRepo.updateSettingsValueById(settingId, val);
+			if (res > 0) {
+				info.setError(false);
+			} else {
+				info.setError(true);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+		}
+		return info;
 	}
 
 }

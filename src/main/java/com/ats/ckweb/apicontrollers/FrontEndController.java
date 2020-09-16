@@ -563,24 +563,24 @@ public class FrontEndController {
 			if (month < calCurrentMonth) {
 
 				isMonthCloseApplicable = true;
-				System.out.println("Day Of Month End ......");
+				//System.out.println("Day Of Month End ......");
 
 			} else if (month == 12 && calCurrentMonth == 1) {
 				isMonthCloseApplicable = true;
 			}
 
 			if (isMonthCloseApplicable) {
-				System.err.println("Inside iMonthclose app");
+				//System.err.println("Inside iMonthclose app");
 				String strDate;
 				int year;
 				if (month == 12) {
-					System.err.println("running month =12");
+					//System.err.println("running month =12");
 					year = (Calendar.getInstance().getWeekYear() - 1);
-					System.err.println("year value " + year);
+					//System.err.println("year value " + year);
 				} else {
-					System.err.println("running month not eq 12");
+					//System.err.println("running month not eq 12");
 					year = Calendar.getInstance().getWeekYear();
-					System.err.println("year value " + year);
+					//System.err.println("year value " + year);
 				}
 
 				if (month < 10) {
@@ -604,7 +604,7 @@ public class FrontEndController {
 			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
 					type);
 
-			System.err.println("FR STOCk = " + frStock);
+			//System.err.println("FR STOCk = " + frStock);
 
 			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
 
