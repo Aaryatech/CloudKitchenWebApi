@@ -54,9 +54,9 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"        d.hsncd " + 
 			"    FROM " + 
 			"        tn_item_config_header h, " + 
-			"        tn_item_config_detail d " + 
+			"        tn_item_config_detail d, m_item i  " + 
 			"    WHERE " + 
-			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND h.is_active = 0 AND d.del_status = 0 AND d.is_active=0 AND h.fr_id = :frId AND d.status = 0 AND h.config_type = :type " + 
+			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND h.is_active = 0 AND d.del_status = 0 AND d.is_active=0 AND h.fr_id = :frId AND d.status = 0 AND h.config_type = :type AND d.item_id=i.id AND i.del_status=0 AND i.item_is_used=1 AND i.is_saleable=1 " + 
 			") t1 " + 
 			"LEFT JOIN( " + 
 			"    SELECT " + 
@@ -273,9 +273,9 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"        d.hsncd " + 
 			"    FROM " + 
 			"        tn_item_config_header h, " + 
-			"        tn_item_config_detail d " + 
+			"        tn_item_config_detail d, m_item i " + 
 			"    WHERE " + 
-			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND h.is_active = 0 AND d.del_status = 0 AND d.is_active=0 AND h.fr_id = :frId AND d.status = 0 AND h.config_type = :type " + 
+			"        h.item_config_id = d.item_config_id AND h.del_status = 0 AND h.is_active = 0 AND d.del_status = 0 AND d.is_active=0 AND h.fr_id = :frId AND d.status = 0 AND h.config_type = :type AND d.item_id=i.id AND i.del_status=0 AND i.item_is_used=1 AND i.is_saleable=1 " + 
 			") t1 " + 
 			"LEFT JOIN( " + 
 			"    SELECT " + 

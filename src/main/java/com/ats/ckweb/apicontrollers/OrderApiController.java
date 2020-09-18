@@ -385,6 +385,7 @@ public class OrderApiController {
 			Date dt = new Date();
 
 			int update = orderHeaderRepository.updateStatusAndIsPaid(status, paid, orderId);
+			System.err.println("RESULT - "+update);
 
 			if (status == 8) {
 
