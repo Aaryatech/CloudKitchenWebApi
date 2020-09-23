@@ -17,7 +17,11 @@ public class ShowItemDetailNewList {
 	private int productCategory;
 	private String productStatus;
 	private int productShowIn;
-
+	
+	//22-09-2020
+	private float rating;
+	private String preperationTime;	
+	
 	public int getItemDId() {
 		return itemDId;
 	}
@@ -74,11 +78,28 @@ public class ShowItemDetailNewList {
 		this.productShowIn = productShowIn;
 	}
 
+	public float getRating() {
+		return rating;
+	}
+
+	public void setRating(float rating) {
+		this.rating = rating;
+	}
+
+	public String getPreperationTime() {
+		return preperationTime;
+	}
+
+	public void setPreperationTime(String preperationTime) {
+		this.preperationTime = preperationTime;
+	}
+
 	@Override
 	public String toString() {
 		return "ShowItemDetailNewList [itemDId=" + itemDId + ", itemId=" + itemId + ", itemName=" + itemName
 				+ ", productType=" + productType + ", productCategory=" + productCategory + ", productStatus="
-				+ productStatus + ", productShowIn=" + productShowIn + "]";
+				+ productStatus + ", productShowIn=" + productShowIn + ", rating=" + rating + ", preperationTime="
+				+ preperationTime + "]";
 	}
 
 }
