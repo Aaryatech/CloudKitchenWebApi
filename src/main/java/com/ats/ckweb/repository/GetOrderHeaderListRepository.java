@@ -91,5 +91,25 @@ public interface GetOrderHeaderListRepository extends JpaRepository<GetOrderHead
 			"        and oh.order_id=:orderId\n" + 
 			"    order by order_id desc", nativeQuery = true)
 	GetOrderHeaderList getOrderOrderId(@Param("orderId") int orderId);
+	
+	@Query(value = "select\n" + 
+			"        oh.*,\n" + 
+			"        cm.phone_number as area_name,\n" + 
+			"        ct.city_name,\n" + 
+			"        cm.cust_name,\n" + 
+			"        CONCAT(fr.fr_name,' - ',fr.fr_code) as fr_name          \n" + 
+			"    from\n" + 
+			"        tn_order_header oh,\n" + 
+			"        mn_city ct, \n" + 
+			"        m_customer cm,\n" + 
+			"        m_franchisee fr          \n" + 
+			"    where\n" + 
+			"        oh.del_status=0      \n" + 
+			"        and ct.city_id=oh.city_id                   \n" + 
+			"        and cm.cust_id=oh.cust_id                  \n" + 
+			"        and oh.fr_id=fr.fr_id\n" + 
+			"        and oh.uuid_no=:orderUUId\n" + 
+			"    order by order_id desc", nativeQuery = true)
+	GetOrderHeaderList getOrderOrderUUId(@Param("orderUUId") String orderUUId);
 
 }

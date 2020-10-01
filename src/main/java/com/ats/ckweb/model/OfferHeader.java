@@ -109,6 +109,9 @@ public class OfferHeader {
 	@Transient
 	List<Images> imageList;
 
+	@Transient
+	List<OfferDetail> offerDetailList;
+
 	public int getOfferId() {
 		return offerId;
 	}
@@ -357,6 +360,14 @@ public class OfferHeader {
 		this.imageList = imageList;
 	}
 
+	public List<OfferDetail> getOfferDetailList() {
+		return offerDetailList;
+	}
+
+	public void setOfferDetailList(List<OfferDetail> offerDetailList) {
+		this.offerDetailList = offerDetailList;
+	}
+
 	@Override
 	public String toString() {
 		return "OfferHeader [offerId=" + offerId + ", offerName=" + offerName + ", offerDesc=" + offerDesc + ", type="
@@ -367,7 +378,7 @@ public class OfferHeader {
 				+ isActive + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3="
 				+ exInt3 + ", exInt4=" + exInt4 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3
-				+ ", exFloat4=" + exFloat4 + ", imageList=" + imageList + "]";
+				+ ", exFloat4=" + exFloat4 + ", imageList=" + imageList + ", offerDetailList=" + offerDetailList + "]";
 	}
 
 }

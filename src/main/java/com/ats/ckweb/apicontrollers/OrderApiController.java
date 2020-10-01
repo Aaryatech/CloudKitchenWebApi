@@ -151,33 +151,44 @@ public class OrderApiController {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
 
 					msg = val.getSettingValue1();
-					msg = msg.replace("###", cust.getCustName());
+//					msg = msg.replace("###", cust.getCustName());
+//
+//					if (frConfig != null) {
+//						String type = "dairy";
+//						if (frConfig.getFrType() == 2) {
+//							type = "restro";
+//						}
+//						msg = msg.replace("***", type);
+//					}
 
-					if (frConfig != null) {
-						String type = "dairy";
-						if (frConfig.getFrType() == 2) {
-							type = "restro";
-						}
-						msg = msg.replace("***", type);
-					}
-
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
 
 				} else if (orderSaveData.getOrderHeader().getOrderStatus() == 1) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
 					msg = val.getSettingValue1();
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+					
+					msg = msg.replace("###", cust.getCustName());
+					msg = msg.replace("$$$", orderSaveData.getOrderHeader().getOrderNo());
+					//msg = msg.replace("@@@", "1234567899");
+					
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
 
 					if (orderSaveData.getOrderHeader().getIsAgent() == 1) {
-						NewSetting val1 = new NewSetting();
-						val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
-						msgAgent = val1.getSettingValue1();
-
+						
 						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
 								orderSaveData.getOrderHeader().getOrderDeliveredBy(), 1, 0);
 						
+						NewSetting val1 = new NewSetting();
+						val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+						msgAgent = val1.getSettingValue1();
+						
+						msgAgent = msgAgent.replace("###", cust.getCustName());
+						msgAgent = msgAgent.replace("$$$", orderSaveData.getOrderHeader().getOrderNo());
+						//msgAgent = msgAgent.replace("@@@", "1234567899");
+						
+						
 						if (agent != null) {
-							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent);
+							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent,"MDVDRY");
 						}
 					}
 				}
@@ -211,12 +222,19 @@ public class OrderApiController {
 				if (orderHeader.getOrderStatus() == 0) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
 					msg=val.getSettingValue1();
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
 					
 				} else if (orderHeader.getOrderStatus() == 1) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
 					msg=val.getSettingValue1();
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg);
+					
+					msg = val.getSettingValue1();
+					
+					msg = msg.replace("###", cust.getCustName());
+					msg = msg.replace("$$$", res.getOrderNo());
+					//msg = msg.replace("@@@", "1234567899");
+					
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
 					
 					if (orderHeader.getIsAgent() == 1) {
 						NewSetting val1 = new NewSetting();
@@ -226,8 +244,11 @@ public class OrderApiController {
 						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
 								orderHeader.getOrderDeliveredBy(), 1, 0);
 						
+						msgAgent = msgAgent.replace("###", cust.getCustName());
+						msgAgent = msgAgent.replace("$$$", res.getOrderNo());
+						
 						if (agent != null) {
-							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent);
+							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent,"MDVDRY");
 						}
 					}
 					
@@ -343,11 +364,18 @@ public class OrderApiController {
 				}
 
 				try {
+					OrderHeader order = orderHeaderRepository.findByOrderId(orderId);
+					
+					String msg="";
 
 					NewSetting val = new NewSetting();
 
 					if (status == 2) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_accept_order", 0);
+						
+						msg = val.getSettingValue1();
+						msg = msg.replace("$$$", order.getOrderNo());
+						
 					} else if (status == 3) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
 					} else if (status == 4) {
@@ -360,7 +388,7 @@ public class OrderApiController {
 
 					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 
-					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
 
 				} catch (Exception e) {
 				}
@@ -582,6 +610,21 @@ public class OrderApiController {
 		}
 		return getOrderHeaderList;
 	}
+	
+	@RequestMapping(value = { "/getOrderHeaderByOrderUUId" }, method = RequestMethod.POST)
+	public @ResponseBody GetOrderHeaderList getOrderOrderUUId(@RequestParam("orderUUId") String orderUUId) {
+
+		GetOrderHeaderList getOrderHeaderList = new GetOrderHeaderList();
+
+		try {
+
+			getOrderHeaderList = getOrderHeaderListRepository.getOrderOrderUUId(orderUUId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return getOrderHeaderList;
+	}
 
 	@RequestMapping(value = { "/getCustomerByMobileNo" }, method = RequestMethod.POST)
 	public @ResponseBody List<CustomerDisplay> getCustomerByMobileNo(@RequestParam("mobileNo") String mobileNo) {
@@ -642,7 +685,7 @@ public class OrderApiController {
 
 				Customer cust = customerRepo.getCustomerByOrderId(orderGrievance.getOrderId());
 
-				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(),"MDVDRY");
 
 			} catch (Exception e) {
 			}

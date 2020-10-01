@@ -434,6 +434,32 @@ public class MasterAPIController2 {
 
 		Info info = new Info();
 
+//		int offerId = 0, type = 0;
+//		if (offerDetailList != null) {
+//			if (offerDetailList.size() > 0) {
+//				offerId = offerDetailList.get(0).getOfferId();
+//				type = offerDetailList.get(0).getExInt4();
+//			}
+//		}
+//
+//		if (type == 1) {
+//
+//			List<OfferDetail> detail = offerDetailRepo.findAllByOfferId(offerId);
+//			if (detail != null) {
+//				if (detail.size() > 0) {
+//
+//					if (offerDetailList != null) {
+//						if (offerDetailList.size() > 0) {
+//							for (int i = 0; i < offerDetailList.size(); i++) {
+//								offerDetailList.get(i).setOfferDetailId(detail.get(0).getOfferDetailId());
+//							}
+//						}
+//					}
+//
+//				}
+//			}
+//		}
+
 		List<OfferDetail> res = offerDetailRepo.saveAll(offerDetailList);
 		if (res != null) {
 			info.setError(false);
@@ -510,6 +536,24 @@ public class MasterAPIController2 {
 		Info info = new Info();
 
 		int res = offerHeaderRepo.updateOfferType(offerId, type);
+		if (res > 0) {
+			info.setError(false);
+			info.setMessage("Success");
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
+	@RequestMapping(value = { "/updateBillWiseOfferType" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateOfferType(@RequestParam("offerId") int offerId, @RequestParam("type") int type,
+			@RequestParam("billType") int billType) {
+
+		Info info = new Info();
+		
+		int res = offerHeaderRepo.updateBillWiseOfferType(offerId, type, billType);
 		if (res > 0) {
 			info.setError(false);
 			info.setMessage("Success");
@@ -606,7 +650,7 @@ public class MasterAPIController2 {
 
 			try {
 				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
-				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1());
+				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1(),"MADHVI");
 			} catch (Exception e) {
 			}
 
@@ -801,7 +845,7 @@ public class MasterAPIController2 {
 
 					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 
-					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1());
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(),"MDVDRY");
 
 				} catch (Exception e) {
 				}

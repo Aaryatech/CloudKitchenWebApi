@@ -9,7 +9,7 @@ import com.ats.ckweb.model.Info;
 
 public class SMSUtility {
 
-	public static Info sendSMS(String phoneNo, String msg) {
+	public static Info sendSMS(String phoneNo, String msg,String senderId) {
 
 		Info info = new Info();
 
@@ -23,7 +23,7 @@ public class SMSUtility {
 
 			map.add("APIKEY", "pJMAaVPuGbh");
 			map.add("MobileNo", phoneNo);
-			map.add("SenderID", "MADHVI");
+			map.add("SenderID", senderId);//MADHVI
 			map.add("Message", msg);
 			map.add("ServiceName", "TEMPLATE_BASED");
 			String sms = restTemplate.postForObject("https://smsapi.24x7sms.com/api_2.0/SendSMS.aspx", map,

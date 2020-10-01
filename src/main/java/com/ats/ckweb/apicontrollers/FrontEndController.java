@@ -36,6 +36,7 @@ import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
 import com.ats.ckweb.model.CkDeliveryCharges;
 import com.ats.ckweb.model.CustWalletTotal;
+import com.ats.ckweb.model.FrCharges;
 import com.ats.ckweb.model.FrItemStock;
 import com.ats.ckweb.model.FranchiseData;
 import com.ats.ckweb.model.Franchisee;
@@ -52,7 +53,9 @@ import com.ats.ckweb.model.ItemWiseOfferData;
 import com.ats.ckweb.model.ItemWiseOfferDetailDisplay;
 import com.ats.ckweb.model.ItemWiseOfferHeaderDisplay;
 import com.ats.ckweb.model.NewSetting;
+import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
+import com.ats.ckweb.model.OrderCheckoutData;
 import com.ats.ckweb.model.PostFrItemStockHeader;
 import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.SubCategoryData;
@@ -64,6 +67,7 @@ import com.ats.ckweb.repository.CategoryDataRepo;
 import com.ats.ckweb.repository.CityDataRepo;
 import com.ats.ckweb.repository.CkDeliveryChargesRepo;
 import com.ats.ckweb.repository.CustWalletTotalRepo;
+import com.ats.ckweb.repository.FrChargesRepo;
 import com.ats.ckweb.repository.FrItemStockRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
@@ -72,6 +76,7 @@ import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.ItemDisplayRepo;
 import com.ats.ckweb.repository.ItemWiseOfferDataRepo;
 import com.ats.ckweb.repository.NewSettingRepo;
+import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.PostFrItemStockHeaderRepo;
 import com.ats.ckweb.repository.SettingRepository;
@@ -146,6 +151,12 @@ public class FrontEndController {
 
 	@Autowired
 	CkDeliveryChargesRepo ckDeliveryChargesRepo;
+
+	@Autowired
+	FrChargesRepo frChargesRepo;
+
+	@Autowired
+	OfferDetailRepo offerDetailRepo;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -537,7 +548,7 @@ public class FrontEndController {
 
 			for (PostFrItemStockHeader header : list) {
 				month = header.getMonth();
-				break;
+				//break;
 			}
 
 			Date todaysDate = new Date();
@@ -563,24 +574,24 @@ public class FrontEndController {
 			if (month < calCurrentMonth) {
 
 				isMonthCloseApplicable = true;
-				//System.out.println("Day Of Month End ......");
+				// System.out.println("Day Of Month End ......");
 
 			} else if (month == 12 && calCurrentMonth == 1) {
 				isMonthCloseApplicable = true;
 			}
 
 			if (isMonthCloseApplicable) {
-				//System.err.println("Inside iMonthclose app");
+				// System.err.println("Inside iMonthclose app");
 				String strDate;
 				int year;
 				if (month == 12) {
-					//System.err.println("running month =12");
+					// System.err.println("running month =12");
 					year = (Calendar.getInstance().getWeekYear() - 1);
-					//System.err.println("year value " + year);
+					// System.err.println("year value " + year);
 				} else {
-					//System.err.println("running month not eq 12");
+					// System.err.println("running month not eq 12");
 					year = Calendar.getInstance().getWeekYear();
-					//System.err.println("year value " + year);
+					// System.err.println("year value " + year);
 				}
 
 				if (month < 10) {
@@ -601,33 +612,35 @@ public class FrontEndController {
 
 			int year = Integer.parseInt(yearFormat.format(todaysDate));
 
-			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
-					type);
-
-			//System.err.println("FR STOCk = " + frStock);
+			//List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType, type);
 
 			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
-
-			if (tempItemData != null) {
-				if (frStock != null) {
-
-					for (ItemDisplay item : tempItemData) {
-						for (FrItemStock stock : frStock) {
-							if (item.getItemId() == stock.getId()) {
-								if (stock.getCurrentStock() > stock.getReorder()) {
-									item.setIsAvailable(0);
-								} else {
-									item.setIsAvailable(1);
-								}
-								break;
-							}
-						}
-					}
-
-					itemData = tempItemData;
-
-				}
-			}
+			itemData = tempItemData;
+			
+//			if (tempItemData != null) {
+//				if (frStock != null) {
+//					
+//					itemData=new ArrayList<ItemDisplay>();
+//
+//					for (ItemDisplay item : tempItemData) {
+//						for (FrItemStock stock : frStock) {
+//							if (item.getItemId() == stock.getId()) {
+//								if (stock.getCurrentStock() > stock.getReorder()) {
+//									item.setIsAvailable(0);
+//									//itemData.add(item);
+//									
+//								} else {
+//									item.setIsAvailable(1);
+//								}
+//								break;
+//							}
+//						}
+//					}
+//
+//					itemData = tempItemData;
+//
+//				}
+//			}
 
 			if (itemData == null) {
 				itemData = new ArrayList<ItemDisplay>();
@@ -2007,18 +2020,153 @@ public class FrontEndController {
 
 	@RequestMapping(value = { "/getDeliveryCharges" }, method = RequestMethod.POST)
 	public @ResponseBody CkDeliveryCharges getDeliveryCharges(@RequestParam("km") float km) {
+
 		CkDeliveryCharges res = new CkDeliveryCharges();
+
 		try {
+			// Delivery Charges
 			res = ckDeliveryChargesRepo.getDeliveryCharges(km);
-			if(res==null) {
-				res=new CkDeliveryCharges();
+			if (res == null) {
+				res = new CkDeliveryCharges();
 			}
-			//System.err.println("-------------------------------------------------------- "+km+" ==> "+res);
-			
+
 		} catch (Exception e) {
-			res=new CkDeliveryCharges();
 		}
 		return res;
+	}
+
+	@RequestMapping(value = { "/getOrderCheckoutData" }, method = RequestMethod.POST)
+	public @ResponseBody OrderCheckoutData getOrderCheckoutData(@RequestParam("km") float km,
+			@RequestParam("frId") int frId) {
+
+		System.err.println("KM = " + km + "           FR ID = " + frId + "------------------------------");
+
+		OrderCheckoutData res = new OrderCheckoutData();
+
+		try {
+			// Delivery Charges
+
+			try {
+				CkDeliveryCharges delCh = ckDeliveryChargesRepo.getDeliveryCharges(km);
+				if (delCh == null) {
+					delCh = new CkDeliveryCharges();
+				}
+				res.setDeliveryCharges(delCh);
+				System.err.println("delCh ------------------------------------------------------------- " + delCh);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			try {
+				// Additional Charges By Franchise
+				FrCharges addCh = frChargesRepo.findByfrId(frId);
+				if (addCh == null) {
+					addCh = new FrCharges();
+				}
+				res.setAdditionalCharges(addCh);
+				System.err.println("addCh ------------------------------------------------------------- " + addCh);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			try {
+				// Offers By Franchisee FOR Executive - bill offers
+				List<OfferHeader> offerHeaderList = offerHeaderRepo.getBillOfferHeaderByFr(frId, 2, 1, 1);
+
+				List<OfferDetail> offerDetailList = offerDetailRepo.getOfferDetailByFr(frId);
+
+				System.err.println("offerHeaderList ------------------------------------------------------------- "
+						+ offerHeaderList);
+
+				if (offerHeaderList != null) {
+					if (offerHeaderList.size() > 0) {
+
+						for (OfferHeader header : offerHeaderList) {
+
+							List<OfferDetail> detailList = new ArrayList<>();
+							if (offerDetailList != null) {
+
+								for (OfferDetail detail : offerDetailList) {
+									if (header.getOfferId() == detail.getOfferId()) {
+										detailList.add(detail);
+									}
+								}
+
+							}
+							header.setOfferDetailList(detailList);
+						}
+					}
+				}
+				res.setOfferList(offerHeaderList);
+				res.setOfferDetailList(offerDetailList);
+
+				System.err.println("offerDetailList ------------------------------------------------------------- "
+						+ offerDetailList);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			System.err.println("Res ------------------------------------------------------------- " + res);
+
+		} catch (Exception e) {
+			System.err.println("in e");
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/checkIsValidOffer" }, method = RequestMethod.POST)
+	public @ResponseBody Info checkIsValidOffer(@RequestParam("offerId") int offerId,
+			@RequestParam("coupon") String coupon, @RequestParam("custId") int custId) {
+
+		Info info = new Info();
+		try {
+			int res = offerHeaderRepo.checkIsValidOffer(offerId, coupon, custId);
+			if (res == 1) {
+				info.setError(false);
+			} else {
+				info.setError(true);
+			}
+		} catch (Exception e) {
+			info.setError(true);
+		}
+
+		return info;
+
+	}
+
+	// GET COUPON WISE OFFERS
+	@RequestMapping(value = { "/getCouponWiseBillOffers" }, method = RequestMethod.POST)
+	public @ResponseBody List<OfferHeader> getCouponWiseOffers(@RequestParam("frId") int frId) {
+
+		List<OfferHeader> offerHeaderList = new ArrayList<>();
+
+		try {
+			offerHeaderList = offerHeaderRepo.getBillOfferHeaderByFrCouponWise(frId, 2, 1, 1);
+		} catch (Exception e) {
+		}
+
+		return offerHeaderList;
+
+	}
+
+	// GET CUSTOMER WISE OFFERS
+	@RequestMapping(value = { "/getCustomerWiseBillOffers" }, method = RequestMethod.POST)
+	public @ResponseBody List<OfferHeader> getCustomerWiseBillOffers(@RequestParam("frId") int frId,
+			@RequestParam("custId") int custId) {
+
+		List<OfferHeader> offerHeaderList = new ArrayList<>();
+		
+		System.err.println("frId - "+frId+"    Cust - "+custId);
+
+		try {
+			offerHeaderList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, 1, 1, custId);
+		} catch (Exception e) {
+		}
+
+		return offerHeaderList;
+
 	}
 
 }

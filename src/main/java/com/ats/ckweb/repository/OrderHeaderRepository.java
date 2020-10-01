@@ -26,6 +26,8 @@ public interface OrderHeaderRepository extends JpaRepository<OrderHeader, Intege
 
 	OrderHeader findByUuidNo(String orderId);
 	
+	OrderHeader findByOrderId(int orderId);
+	
 	@Transactional
 	@Modifying
 	@Query(" UPDATE OrderHeader SET order_delivered_by=:delBoyId WHERE order_id=:orderId")
