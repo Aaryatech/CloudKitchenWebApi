@@ -26,4 +26,11 @@ public interface AgentRepo extends JpaRepository<Agent, Integer> {
 
 	@Query(value = "select * from mn_agent where del_status=0 and is_active=0 and FIND_IN_SET(:cityId,mn_agent.area_ids) and FIND_IN_SET(:shopId,mn_agent.franchise_id)", nativeQuery = true)
 	List<Agent> getAgetListByShopId(@Param("cityId")int cityId, @Param("shopId")int shopId);
+	
+	@Query(value = "SELECT e.fr_emp_name FROM m_fr_emp e WHERE e.fr_emp_id=:delId AND e.del_status=0", nativeQuery = true)
+	String getDeliveryBoyNameById(@Param("delId") int delId);
+	
+	@Query(value = "SELECT e.fr_emp_contact FROM m_fr_emp e WHERE e.fr_emp_id=:delId AND e.del_status=0", nativeQuery = true)
+	String getDeliveryBoyMobById(@Param("delId") int delId);
+	
 }

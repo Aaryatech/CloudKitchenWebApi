@@ -537,80 +537,73 @@ public class FrontEndController {
 
 			Franchisee fr = franchiseeRepository.findByFrId(frId);
 
-			boolean isMonthCloseApplicable = false;
-			String fromDate = "", toDate = "";
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			DateFormat yearFormat = new SimpleDateFormat("yyyy");
-
-			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
-
-			int month = 0;
-
-			for (PostFrItemStockHeader header : list) {
-				month = header.getMonth();
-				//break;
-			}
-
-			Date todaysDate = new Date();
-
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(todaysDate);
-
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-
-			Date firstDay = cal.getTime();
-
-			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-			Date date = new Date();
-			System.out.println(dateFormat1.format(date));
-
-			Calendar cal1 = Calendar.getInstance();
-			cal1.setTime(date);
-
-			int dayOfMonth = cal1.get(Calendar.DATE);
-
-			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
-
-			if (month < calCurrentMonth) {
-
-				isMonthCloseApplicable = true;
-				// System.out.println("Day Of Month End ......");
-
-			} else if (month == 12 && calCurrentMonth == 1) {
-				isMonthCloseApplicable = true;
-			}
-
-			if (isMonthCloseApplicable) {
-				// System.err.println("Inside iMonthclose app");
-				String strDate;
-				int year;
-				if (month == 12) {
-					// System.err.println("running month =12");
-					year = (Calendar.getInstance().getWeekYear() - 1);
-					// System.err.println("year value " + year);
-				} else {
-					// System.err.println("running month not eq 12");
-					year = Calendar.getInstance().getWeekYear();
-					// System.err.println("year value " + year);
-				}
-
-				if (month < 10) {
-					strDate = year + "-0" + month + "-01";
-				} else {
-					strDate = year + "-" + month + "-01";
-				}
-				fromDate = strDate;
-
-			} else {
-				fromDate = dateFormat.format(firstDay);
-			}
-
-			int stockType = 1;
-			if (fr != null) {
-				stockType = fr.getStockType();
-			}
-
-			int year = Integer.parseInt(yearFormat.format(todaysDate));
+//			boolean isMonthCloseApplicable = false;
+//			String fromDate = "", toDate = "";
+//			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//			DateFormat yearFormat = new SimpleDateFormat("yyyy");
+//
+//			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
+//
+//			int month = 0;
+//
+//			for (PostFrItemStockHeader header : list) {
+//				month = header.getMonth();
+//			}
+//
+//			Date todaysDate = new Date();
+//
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(todaysDate);
+//
+//			cal.set(Calendar.DAY_OF_MONTH, 1);
+//
+//			Date firstDay = cal.getTime();
+//
+//			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+//			Date date = new Date();
+//			System.out.println(dateFormat1.format(date));
+//
+//			Calendar cal1 = Calendar.getInstance();
+//			cal1.setTime(date);
+//
+//			int dayOfMonth = cal1.get(Calendar.DATE);
+//
+//			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
+//
+//			if (month < calCurrentMonth) {
+//
+//				isMonthCloseApplicable = true;
+//
+//			} else if (month == 12 && calCurrentMonth == 1) {
+//				isMonthCloseApplicable = true;
+//			}
+//
+//			if (isMonthCloseApplicable) {
+//				String strDate;
+//				int year;
+//				if (month == 12) {
+//					year = (Calendar.getInstance().getWeekYear() - 1);
+//				} else {
+//					year = Calendar.getInstance().getWeekYear();
+//				}
+//
+//				if (month < 10) {
+//					strDate = year + "-0" + month + "-01";
+//				} else {
+//					strDate = year + "-" + month + "-01";
+//				}
+//				fromDate = strDate;
+//
+//			} else {
+//				fromDate = dateFormat.format(firstDay);
+//			}
+//
+//			int stockType = 1;
+//			if (fr != null) {
+//				stockType = fr.getStockType();
+//			}
+//
+//			int year = Integer.parseInt(yearFormat.format(todaysDate));
 
 			//List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType, type);
 

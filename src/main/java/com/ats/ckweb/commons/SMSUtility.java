@@ -14,6 +14,8 @@ public class SMSUtility {
 		Info info = new Info();
 
 		try {
+			
+			System.err.println("SMS TEXT --------------- "+msg);
 
 			RestTemplate restTemplate = new RestTemplate();
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();

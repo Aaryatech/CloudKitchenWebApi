@@ -18,6 +18,7 @@ import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.CustomerDisplay;
 import com.ats.ckweb.model.FrConfig;
+import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetGrievienceList;
 import com.ats.ckweb.model.GetGrievienceTailList;
 import com.ats.ckweb.model.GetOrderDetailList;
@@ -38,6 +39,7 @@ import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
+import com.ats.ckweb.repository.FranchiseeRepository;
 import com.ats.ckweb.repository.GetGrievienceListRepository;
 import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
@@ -106,6 +108,11 @@ public class OrderApiController {
 	@Autowired
 	AgentRepo agentRepo;
 
+	@Autowired
+	FranchiseeRepository franchiseeRepository;
+	
+	
+
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
 
@@ -151,44 +158,43 @@ public class OrderApiController {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
 
 					msg = val.getSettingValue1();
-//					msg = msg.replace("###", cust.getCustName());
-//
-//					if (frConfig != null) {
-//						String type = "dairy";
-//						if (frConfig.getFrType() == 2) {
-//							type = "restro";
-//						}
-//						msg = msg.replace("***", type);
-//					}
+					msg = msg.replace("###", cust.getCustName());
 
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
+					if (frConfig != null) {
+						String type = "dairy";
+						if (frConfig.getFrType() == 2) {
+							type = "restro";
+						}
+						msg = msg.replace("@@@", type);
+					}
+
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
 
 				} else if (orderSaveData.getOrderHeader().getOrderStatus() == 1) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
 					msg = val.getSettingValue1();
-					
+
 					msg = msg.replace("###", cust.getCustName());
 					msg = msg.replace("$$$", orderSaveData.getOrderHeader().getOrderNo());
-					//msg = msg.replace("@@@", "1234567899");
-					
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
+					// msg = msg.replace("@@@", "1234567899");
+
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
 
 					if (orderSaveData.getOrderHeader().getIsAgent() == 1) {
-						
+
 						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
 								orderSaveData.getOrderHeader().getOrderDeliveredBy(), 1, 0);
-						
+
 						NewSetting val1 = new NewSetting();
 						val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
 						msgAgent = val1.getSettingValue1();
-						
+
 						msgAgent = msgAgent.replace("###", cust.getCustName());
 						msgAgent = msgAgent.replace("$$$", orderSaveData.getOrderHeader().getOrderNo());
-						//msgAgent = msgAgent.replace("@@@", "1234567899");
-						
-						
+						// msgAgent = msgAgent.replace("@@@", "1234567899");
+
 						if (agent != null) {
-							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent,"MDVDRY");
+							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent, "MDVDRY");
 						}
 					}
 				}
@@ -217,41 +223,56 @@ public class OrderApiController {
 
 				NewSetting val = new NewSetting();
 				Customer cust = customerRepo.getOne(orderHeader.getCustId());
-				String msg="",msgAgent="";
+				String msg = "", msgAgent = "";
+				FrConfig frConfig = frConfigRepo.findByFrId(orderHeader.getFrId());
 
 				if (orderHeader.getOrderStatus() == 0) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
-					msg=val.getSettingValue1();
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
-					
-				} else if (orderHeader.getOrderStatus() == 1) {
-					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
-					msg=val.getSettingValue1();
-					
 					msg = val.getSettingValue1();
 					
+					
+					msg = val.getSettingValue1();
+					msg = msg.replace("###", cust.getCustName());
+
+					if (frConfig != null) {
+						String type = "dairy";
+						if (frConfig.getFrType() == 2) {
+							type = "restro";
+						}
+						msg = msg.replace("@@@", type);
+					}
+
+					
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
+
+				} else if (orderHeader.getOrderStatus() == 1) {
+					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+					msg = val.getSettingValue1();
+
+					msg = val.getSettingValue1();
+
 					msg = msg.replace("###", cust.getCustName());
 					msg = msg.replace("$$$", res.getOrderNo());
-					//msg = msg.replace("@@@", "1234567899");
-					
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
-					
+					// msg = msg.replace("@@@", "1234567899");
+
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
+
 					if (orderHeader.getIsAgent() == 1) {
 						NewSetting val1 = new NewSetting();
 						val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
 						msgAgent = val1.getSettingValue1();
 
-						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
-								orderHeader.getOrderDeliveredBy(), 1, 0);
-						
+						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(orderHeader.getOrderDeliveredBy(),
+								1, 0);
+
 						msgAgent = msgAgent.replace("###", cust.getCustName());
 						msgAgent = msgAgent.replace("$$$", res.getOrderNo());
-						
+
 						if (agent != null) {
-							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent,"MDVDRY");
+							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent, "MDVDRY");
 						}
 					}
-					
+
 				}
 
 			} catch (Exception e) {
@@ -320,6 +341,7 @@ public class OrderApiController {
 			info.setError(false);
 			info.setMessage(UUID);
 
+			System.err.println("UPDATE RES ======> "+update);
 			if (update > 0) {
 
 				try {
@@ -365,30 +387,125 @@ public class OrderApiController {
 
 				try {
 					OrderHeader order = orderHeaderRepository.findByOrderId(orderId);
+					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 					
-					String msg="";
+					String msg = "";
 
 					NewSetting val = new NewSetting();
+					
+					System.err.println("STATUS ---------------------======> "+status);
 
 					if (status == 2) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_accept_order", 0);
-						
+
 						msg = val.getSettingValue1();
 						msg = msg.replace("$$$", order.getOrderNo());
-						
+
 					} else if (status == 3) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
 					} else if (status == 4) {
-						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivery_order", 0);
+						
+						try {
+							val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivery_order", 0);
+							
+							msg = val.getSettingValue1();
+							msg = msg.replace("CUSTNAME", cust.getCustName());
+							msg = msg.replace("###", order.getOrderNo());
+							
+
+							String agentNm = "",agentMob="";
+							if (order.getIsAgent() == 1) {
+
+								Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(order.getOrderDeliveredBy(),
+										1, 0);
+								agentNm = agent.getAgentName();
+								agentMob=agent.getMobileNo();
+								
+								msg = msg.replace("AGNAME", agentNm.toUpperCase());
+								msg = msg.replace("AGMOB", agentMob);
+
+							} else {
+								
+								if(order.getOrderDeliveredBy()!=0) {
+									agentNm = agentRepo.getDeliveryBoyNameById(order.getOrderDeliveredBy());
+									agentMob=agentRepo.getDeliveryBoyMobById(order.getOrderDeliveredBy());
+									msg = msg.replace("AGNAME", agentNm.toUpperCase());
+									msg = msg.replace("AGMOB", agentMob);
+								}
+							}
+
+							
+
+							System.err.println("DELIVERY SMS - "+msg);
+						}catch(Exception e) {e.printStackTrace();}
+						
+						
 					} else if (status == 5) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivered_order", 0);
+						
+						msg = val.getSettingValue1();
+						msg = msg.replace("###", order.getOrderNo());
+						
 					} else if (status == 8) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_cancelled_order", 0);
+						
+						OrderTrail trail=orderTrailRepository.findByOrderIdAndStatus(order.getOrderId(), 8);
+						
+						msg = val.getSettingValue1();
+						msg = msg.replace("###", trail.getExVar1());
+						
+						System.err.println("CANCEL - "+msg);
+						
 					}
 
-					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg,"MDVDRY");
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
+
+					if (status == 4) {
+						
+						try {
+							
+							NewSetting val1 = new NewSetting();
+							val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivery_order_agent", 0);
+							String sms = val1.getSettingValue1();
+
+							sms = sms.replace("###", cust.getCustName());
+							sms = sms.replace("@@@", cust.getPhoneNumber());
+
+							String pmode = "";
+							if (order.getPaymentMethod() == 1) {
+								pmode = "COD";
+							} else if (order.getPaymentMethod() == 2) {
+								pmode = "Online Payment";
+							}
+
+							sms = sms.replace("PMODE", pmode);
+							sms = sms.replace("OAMT", "" + order.getTotalAmt());
+
+							Franchisee fr = franchiseeRepository.findByFrId(order.getFrId());
+							sms = sms.replace("FRCODE", "" + fr.getFrCode());
+
+							String agentMob = "";
+							if (order.getIsAgent() == 1) {
+
+								Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(order.getOrderDeliveredBy(),
+										1, 0);
+								agentMob = agent.getMobileNo();
+
+							} else {
+								agentMob = agentRepo.getDeliveryBoyMobById(order.getOrderDeliveredBy());
+							}
+
+							System.err.println("AGENT DELIVERY SMS - "+sms);
+
+							
+							SMSUtility.sendSMS(agentMob, sms, "MDVDRY");
+
+							
+						}catch(Exception e) {e.printStackTrace();}
+						
+						
+					}
 
 				} catch (Exception e) {
 				}
@@ -413,7 +530,7 @@ public class OrderApiController {
 			Date dt = new Date();
 
 			int update = orderHeaderRepository.updateStatusAndIsPaid(status, paid, orderId);
-			System.err.println("RESULT - "+update);
+			System.err.println("RESULT - " + update);
 
 			if (status == 8) {
 
@@ -610,7 +727,7 @@ public class OrderApiController {
 		}
 		return getOrderHeaderList;
 	}
-	
+
 	@RequestMapping(value = { "/getOrderHeaderByOrderUUId" }, method = RequestMethod.POST)
 	public @ResponseBody GetOrderHeaderList getOrderOrderUUId(@RequestParam("orderUUId") String orderUUId) {
 
@@ -685,7 +802,7 @@ public class OrderApiController {
 
 				Customer cust = customerRepo.getCustomerByOrderId(orderGrievance.getOrderId());
 
-				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(),"MDVDRY");
+				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MDVDRY");
 
 			} catch (Exception e) {
 			}

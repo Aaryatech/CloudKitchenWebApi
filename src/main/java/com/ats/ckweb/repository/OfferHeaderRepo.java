@@ -42,7 +42,7 @@ public interface OfferHeaderRepo extends JpaRepository<OfferHeader, Integer> {
 			"FROM\r\n" + 
 			"    mn_offer_header h\r\n" + 
 			"WHERE\r\n" + 
-			"    FIND_IN_SET(:applicableFor, h.applicable_for) AND h.type = :type AND h.offer_id IN(\r\n" + 
+			"    FIND_IN_SET(:applicableFor, h.applicable_for) AND h.type = :type AND h.del_status=0 AND h.offer_id IN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        offer_id\r\n" + 
 			"    FROM\r\n" + 
@@ -76,7 +76,7 @@ public interface OfferHeaderRepo extends JpaRepository<OfferHeader, Integer> {
 			"FROM\r\n" + 
 			"    mn_offer_header h\r\n" + 
 			"WHERE\r\n" + 
-			"    FIND_IN_SET(:applicableFor, h.applicable_for) AND h.type = :type AND h.ex_int1=0 AND h.offer_type = :offerType AND h.offer_id IN(\r\n" + 
+			"    FIND_IN_SET(:applicableFor, h.applicable_for) AND h.type = :type AND h.ex_int1=0 AND h.del_status=0 AND h.offer_type = :offerType AND h.offer_id IN(\r\n" + 
 			"    SELECT\r\n" + 
 			"        offer_id\r\n" + 
 			"    FROM\r\n" + 
