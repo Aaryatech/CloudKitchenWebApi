@@ -154,7 +154,7 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"        mn_offer_header h, " + 
 			"        mn_offer_detail d " + 
 			"    WHERE " + 
-			"        h.offer_id = d.offer_id AND d.del_status = 0 AND h.offer_id IN( " + 
+			"        h.offer_id = d.offer_id AND h.del_status=0 AND d.del_status = 0 AND h.offer_id IN( " + 
 			"        SELECT " + 
 			"            c.offer_id " + 
 			"        FROM " + 
@@ -373,7 +373,7 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"        mn_offer_header h, " + 
 			"        mn_offer_detail d " + 
 			"    WHERE " + 
-			"        h.offer_id = d.offer_id AND d.del_status = 0 AND h.offer_id IN( " + 
+			"        h.offer_id = d.offer_id AND h.del_status=0 AND d.del_status = 0 AND h.offer_id IN( " + 
 			"        SELECT " + 
 			"            c.offer_id " + 
 			"        FROM " + 
