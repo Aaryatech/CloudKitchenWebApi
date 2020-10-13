@@ -77,7 +77,17 @@ public interface SettingsUpdateModelRepo extends JpaRepository<SettingsUpdateMod
 			"FROM\r\n" + 
 			"    t_setting_new\r\n" + 
 			"WHERE\r\n" + 
-			"    setting_id = 23", nativeQuery=true)
+			"    setting_id = 23\r\n"+
+			"UNION\r\n" + 
+			"SELECT\r\n" + 
+			"    setting_id,\r\n" + 
+			"    'Text on Bill Print' AS title,\r\n" + 
+			"    setting_key,\r\n" + 
+			"    setting_value1\r\n" + 
+			"FROM\r\n" + 
+			"    t_setting_new\r\n" + 
+			"WHERE\r\n" + 
+			"    setting_id = 28", nativeQuery=true)
 	List<SettingsUpdateModel> settingsList();
 
 }
