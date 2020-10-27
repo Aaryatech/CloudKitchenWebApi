@@ -36,6 +36,7 @@ import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.OrderRemark;
 import com.ats.ckweb.model.OrderTrail;
+import com.ats.ckweb.model.ProdRatings;
 import com.ats.ckweb.model.SettingsUpdateModel;
 import com.ats.ckweb.model.ShowItemDetailNewList;
 import com.ats.ckweb.model.SubCategory;
@@ -59,6 +60,7 @@ import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.OrderHeaderRepository;
 import com.ats.ckweb.repository.OrderRemarkRepo;
 import com.ats.ckweb.repository.OrderTrailRepository;
+import com.ats.ckweb.repository.ProdRatingsRepo;
 import com.ats.ckweb.repository.SettingsUpdateModelRepo;
 import com.ats.ckweb.repository.ShowItemDetailNewListRepo;
 import com.ats.ckweb.services.CategoryService;
@@ -147,6 +149,9 @@ public class MasterAPIController2 {
 
 	@Autowired
 	SettingsUpdateModelRepo settingsUpdateModelRepo;
+	
+	@Autowired
+	ProdRatingsRepo prodRatingsRepo;
 
 	// Author-Anmol Shirke Created On-15-07-2020
 	// Desc- Returns all category list by delete status=0.
@@ -949,5 +954,22 @@ public class MasterAPIController2 {
 		}
 		return info;
 	}
+	
+	
+	//Product Ratings
+	@RequestMapping(value = { "/saveProdRatings" }, method = RequestMethod.POST)
+	public @ResponseBody ProdRatings saveProdRatings(@RequestBody ProdRatings ProdRatings) {
+
+		ProdRatings res = new ProdRatings();
+		try {
+
+			res = prodRatingsRepo.saveAndFlush(ProdRatings);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
 
 }

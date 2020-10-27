@@ -605,11 +605,12 @@ public class FrontEndController {
 //
 //			int year = Integer.parseInt(yearFormat.format(todaysDate));
 
-			//List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType, type);
+			// List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate,
+			// toDate, month, year, stockType, type);
 
 			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
 			itemData = tempItemData;
-			
+
 //			if (tempItemData != null) {
 //				if (frStock != null) {
 //					
@@ -776,6 +777,39 @@ public class FrontEndController {
 				}
 			}
 			res.setItemData(itemData);
+
+			try {
+
+				if (subCatData != null) {
+					if (subCatData.size() > 0) {
+						for (int i = 0; i < subCatData.size(); i++) {
+
+							int count = 0;
+
+							if (itemData != null) {
+								if (itemData.size() > 0) {
+
+									for (int j = 0; j < itemData.size(); j++) {
+
+										if (subCatData.get(i).getSubCatId() == itemData.get(j).getSubCatId()) {
+											count = count + 1;
+										}
+
+									}
+
+								}
+							}
+
+							subCatData.get(i).setProdCount(count);
+
+						}
+
+						res.setSubCategoryData(subCatData);
+					}
+				}
+
+			} catch (Exception e) {
+			}
 
 			info.setError(false);
 			info.setMessage("Success");
@@ -2150,8 +2184,8 @@ public class FrontEndController {
 			@RequestParam("custId") int custId) {
 
 		List<OfferHeader> offerHeaderList = new ArrayList<>();
-		
-		System.err.println("frId - "+frId+"    Cust - "+custId);
+
+		System.err.println("frId - " + frId + "    Cust - " + custId);
 
 		try {
 			offerHeaderList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, 1, 1, custId);
