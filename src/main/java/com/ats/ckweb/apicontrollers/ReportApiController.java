@@ -13,74 +13,89 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.report.model.GetOrderTrailDetails;
+import com.ats.ckweb.report.model.OfferDetailReport;
+import com.ats.ckweb.report.model.OfferReport;
 import com.ats.ckweb.report.model.Status;
 import com.ats.ckweb.report.model.GetOrderGrpDate;
 import com.ats.ckweb.report.model.GetOrderReport;
 import com.ats.ckweb.report.repo.GetOrderDetailsRepo;
 import com.ats.ckweb.report.repo.GetOrderGrpDateRepo;
 import com.ats.ckweb.report.repo.GetOrderReportRepo;
+import com.ats.ckweb.report.repo.OfferDetailReportRepo;
+import com.ats.ckweb.report.repo.OfferReportRepo;
 import com.ats.ckweb.report.repo.StatusRepo;
 import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
 
 @RestController
 public class ReportApiController {
+
+	@Autowired
+	StatusRepo statusRepo;
+
+	@Autowired
+	FranchiseeRepository frRepo;
+
+	@Autowired
+	GetOrderReportRepo reportRepo;
+
+	@Autowired
+	GetOrderDetailsRepo detlRepo;
+
+	@Autowired
+	CustomerRepo custRepo;
+
+	@Autowired
+	GetOrderGrpDateRepo orderReportRepo;
+
+	@Autowired
+	OfferReportRepo offerReportRepo;
 	
-	@Autowired StatusRepo statusRepo;
+	@Autowired
+	OfferDetailReportRepo offerDetailReportRepo;
 	
-	@Autowired FranchiseeRepository frRepo;
-	
-	@Autowired GetOrderReportRepo reportRepo;
-	
-	@Autowired GetOrderDetailsRepo detlRepo;
-	
-	@Autowired CustomerRepo custRepo;
-	
-	@Autowired GetOrderGrpDateRepo orderReportRepo;
-	
-	  
+
 	@RequestMapping(value = { "/getOrderReportDateWise" }, method = RequestMethod.POST)
-	  public @ResponseBody List<GetOrderGrpDate> getOrderReportDateWise(@RequestParam List<String> statusIds,
-			  @RequestParam String fromDate, @RequestParam String toDate   ) {
-	  
-		  List<GetOrderGrpDate> res = new ArrayList<GetOrderGrpDate>();
-		  res = orderReportRepo.getOrderGroupByDate(statusIds, fromDate, toDate);
-		   return res; 
-	  }
-	
+	public @ResponseBody List<GetOrderGrpDate> getOrderReportDateWise(@RequestParam List<String> statusIds,
+			@RequestParam String fromDate, @RequestParam String toDate) {
+
+		List<GetOrderGrpDate> res = new ArrayList<GetOrderGrpDate>();
+		res = orderReportRepo.getOrderGroupByDate(statusIds, fromDate, toDate);
+		return res;
+	}
+
 	@RequestMapping(value = { "/getOrderReportMonthWise" }, method = RequestMethod.POST)
-	  public @ResponseBody List<GetOrderGrpDate> getOrderReportMonthWise(@RequestParam List<String> statusIds,
-			  @RequestParam String fromDate, @RequestParam String toDate   ) {
-	  
-		  List<GetOrderGrpDate> res = new ArrayList<GetOrderGrpDate>();
-		  res = orderReportRepo.getOrderGroupByMonth(statusIds, fromDate, toDate);
-		   return res; 
-	  }	
-	
-	
-	
+	public @ResponseBody List<GetOrderGrpDate> getOrderReportMonthWise(@RequestParam List<String> statusIds,
+			@RequestParam String fromDate, @RequestParam String toDate) {
+
+		List<GetOrderGrpDate> res = new ArrayList<GetOrderGrpDate>();
+		res = orderReportRepo.getOrderGroupByMonth(statusIds, fromDate, toDate);
+		return res;
+	}
+
 	@RequestMapping(value = { "/getAllStatus" }, method = RequestMethod.GET)
-	  public @ResponseBody List<Status> getAllStatus() {
-	  
-		  List<Status> res = new ArrayList<Status>();
-		  res = statusRepo.findByDelStatusOrderByStatusIdAsc(0);
-		   return res; 
-	  }
-	
+	public @ResponseBody List<Status> getAllStatus() {
+
+		List<Status> res = new ArrayList<Status>();
+		res = statusRepo.findByDelStatusOrderByStatusIdAsc(0);
+		return res;
+	}
+
 	@RequestMapping(value = { "/getAllCustomer" }, method = RequestMethod.POST)
-	  public @ResponseBody List<Customer> getOrderReportDateWise(@RequestParam int compId) {
-	  
-		   List<Customer> res = custRepo.findByDelStatusAndCompIdOrderByCustIdDesc(0, compId);
-		   return res; 
-	  }
+	public @ResponseBody List<Customer> getOrderReportDateWise(@RequestParam int compId) {
+
+		List<Customer> res = custRepo.findByDelStatusAndCompIdOrderByCustIdDesc(0, compId);
+		return res;
+	}
+
 	/*********************************************************************************************/
-	
-	  @RequestMapping(value = { "/getOrderReportByDateWise" }, method = RequestMethod.POST)
-	  public @ResponseBody List<GetOrderReport> getOrderReportByDateWise(@RequestParam int status, @RequestParam String fromDate,
-			  @RequestParam String toDate, @RequestParam int datetype) {
-	  
-		  List<GetOrderReport> res = new ArrayList<>();
-		  res = reportRepo.getOrderReportDateWise(fromDate, toDate, status);
+
+	@RequestMapping(value = { "/getOrderReportByDateWise" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetOrderReport> getOrderReportByDateWise(@RequestParam int status,
+			@RequestParam String fromDate, @RequestParam String toDate, @RequestParam int datetype) {
+
+		List<GetOrderReport> res = new ArrayList<>();
+		res = reportRepo.getOrderReportDateWise(fromDate, toDate, status);
 //		  if(datetype==1) {
 //			  System.out.println("Date Wise");
 //			  
@@ -90,10 +105,10 @@ public class ReportApiController {
 //		  }else {
 //			  
 //		  }
-		  
-		   return res; 
-	  }
-	 
+
+		return res;
+	}
+
 //	  @RequestMapping(value = { "/getOrderReportByDateWise" }, method = RequestMethod.POST)
 //	  public @ResponseBody List<JSONObject> getOrderReportByDateWise1(@RequestParam int status, @RequestParam String fromDate,
 //			  @RequestParam String toDate, @RequestParam int datetype) {
@@ -111,20 +126,40 @@ public class ReportApiController {
 //		  
 //		   return res; 
 //	  }
-	  
-	  
-	  @RequestMapping(value = { "/getOrdertrailDetail" }, method = RequestMethod.POST)
-	  public @ResponseBody List<GetOrderTrailDetails> getOrderReportByDateWise(@RequestParam int orderId) {
-	  
-		  List<GetOrderTrailDetails> res = new ArrayList<>();
-		  try {
-		  res = detlRepo.getOrderTrailDetail(orderId);
-		  }catch (Exception e) {
+
+	@RequestMapping(value = { "/getOrdertrailDetail" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetOrderTrailDetails> getOrderReportByDateWise(@RequestParam int orderId) {
+
+		List<GetOrderTrailDetails> res = new ArrayList<>();
+		try {
+			res = detlRepo.getOrderTrailDetail(orderId);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		  
-		   return res; 
-	  }
-	  
-	  
+
+		return res;
+	}
+
+	// Offer Report
+	@RequestMapping(value = { "/getOfferReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<OfferReport> getOfferReport(@RequestParam String fromDate, @RequestParam String toDate) {
+
+		List<OfferReport> res = new ArrayList<OfferReport>();
+		res = offerReportRepo.getOfferReport(fromDate, toDate);
+		return res;
+	}
+	
+	@RequestMapping(value = { "/getOfferDetailReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<OfferDetailReport> getOfferDetailReport(@RequestParam int offerId) {
+
+		List<OfferDetailReport> res = new ArrayList<OfferDetailReport>();
+		res = offerDetailReportRepo.getOfferDetailReport(offerId);
+		return res;
+	}
+	
+	
+	
+	
+	
+
 }
