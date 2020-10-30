@@ -16,6 +16,7 @@ public class OfferDetailReport {
 	private float discountAmt;
 	private float deliveryAmt;
 	private float walletAmt;
+	private float payableAmt;
 
 	public int getSellBillNo() {
 		return sellBillNo;
@@ -89,11 +90,21 @@ public class OfferDetailReport {
 		this.walletAmt = walletAmt;
 	}
 
+	public float getPayableAmt() {
+		return payableAmt;
+	}
+
+	public void setPayableAmt(float payableAmt) {
+		this.payableAmt = payableAmt;
+	}
+
 	@Override
 	public String toString() {
 		return "OfferDetailReport [sellBillNo=" + sellBillNo + ", invoiceNo=" + invoiceNo + ", billDate=" + billDate
 				+ ", custName=" + custName + ", custPhone=" + custPhone + ", grandTotal=" + grandTotal
-				+ ", discountAmt=" + discountAmt + ", deliveryAmt=" + deliveryAmt + ", walletAmt=" + walletAmt + "]";
+				+ ", discountAmt=" + discountAmt + ", deliveryAmt=" + deliveryAmt + ", walletAmt=" + walletAmt
+				+ ", payableAmt=" + payableAmt + "]";
 	}
+
 
 }
