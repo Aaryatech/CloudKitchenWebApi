@@ -40,6 +40,8 @@ import com.ats.ckweb.model.ProdRatings;
 import com.ats.ckweb.model.SettingsUpdateModel;
 import com.ats.ckweb.model.ShowItemDetailNewList;
 import com.ats.ckweb.model.SubCategory;
+import com.ats.ckweb.model.app.GetCustomerAddressList;
+import com.ats.ckweb.model.app.SaveCustomer;
 import com.ats.ckweb.repository.CustomerAddressDisplayRepo;
 import com.ats.ckweb.repository.CustomerAddressRepo;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
@@ -149,7 +151,7 @@ public class MasterAPIController2 {
 
 	@Autowired
 	SettingsUpdateModelRepo settingsUpdateModelRepo;
-	
+
 	@Autowired
 	ProdRatingsRepo prodRatingsRepo;
 
@@ -557,7 +559,7 @@ public class MasterAPIController2 {
 			@RequestParam("billType") int billType) {
 
 		Info info = new Info();
-		
+
 		int res = offerHeaderRepo.updateBillWiseOfferType(offerId, type, billType);
 		if (res > 0) {
 			info.setError(false);
@@ -655,11 +657,54 @@ public class MasterAPIController2 {
 
 			try {
 				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
-				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1(),"MADHVI");
+				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
 			} catch (Exception e) {
 			}
 
 		}
+
+		return res;
+	}
+
+	@RequestMapping(value = { "/saveCustomerForApp" }, method = RequestMethod.POST)
+	public @ResponseBody SaveCustomer saveCustomerForApp(@RequestBody Customer customer) {
+		SaveCustomer res = new SaveCustomer();
+		Info info = new Info();
+		Customer cust = new Customer();
+
+		cust = customerRepo.save(customer);
+		if (cust == null) {
+			cust = new Customer();
+			cust.setError(true);
+			cust.setMessage("Failed");
+			cust.setLangName("");
+
+			info.setError(true);
+			info.setMessage("Failed");
+
+		} else {
+			info.setError(false);
+			info.setMessage("Success");
+
+			cust.setError(false);
+			cust.setMessage("Success");
+
+			try {
+				Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(cust.getLangId(), 0, cust.getCompId());
+				cust.setLangName(lang.getLangName());
+			} catch (Exception e) {
+			}
+
+			try {
+				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
+				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
+			} catch (Exception e) {
+			}
+
+		}
+
+		res.setCustomer(cust);
+		res.setInfo(info);
 
 		return res;
 	}
@@ -744,6 +789,33 @@ public class MasterAPIController2 {
 		if (res == null) {
 			res = new ArrayList<CustomerAddressDisplay>();
 		}
+		return res;
+	}
+
+	@RequestMapping(value = { "/getCustomerAddressListForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetCustomerAddressList getCustomerAddressListForApp(@RequestParam("custId") int custId) {
+
+		GetCustomerAddressList res = new GetCustomerAddressList();
+		Info info = new Info();
+
+		try {
+			List<CustomerAddressDisplay> addList = null;
+			addList = customerAddressDisplayRepo.getCustomerAddressList(custId);
+			if (addList == null) {
+				addList = new ArrayList<CustomerAddressDisplay>();
+			}
+			res.setAddressList(addList);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
 		return res;
 	}
 
@@ -850,7 +922,7 @@ public class MasterAPIController2 {
 
 					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 
-					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(),"MDVDRY");
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MDVDRY");
 
 				} catch (Exception e) {
 				}
@@ -954,9 +1026,8 @@ public class MasterAPIController2 {
 		}
 		return info;
 	}
-	
-	
-	//Product Ratings
+
+	// Product Ratings
 	@RequestMapping(value = { "/saveProdRatings" }, method = RequestMethod.POST)
 	public @ResponseBody ProdRatings saveProdRatings(@RequestBody ProdRatings ProdRatings) {
 
@@ -964,12 +1035,44 @@ public class MasterAPIController2 {
 		try {
 
 			res = prodRatingsRepo.saveAndFlush(ProdRatings);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return res;
 	}
-	
+
+	@RequestMapping(value = { "/saveProdRatingsForApp" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveProdRatingsForApp(@RequestBody ProdRatings ProdRatings) {
+
+		Info info = new Info();
+
+		ProdRatings res = new ProdRatings();
+		try {
+
+			res = prodRatingsRepo.saveAndFlush(ProdRatings);
+
+			if (res != null) {
+				if (res.getRatingsId() > 0) {
+					info.setError(false);
+					info.setMessage("success");
+				} else {
+					info.setError(true);
+					info.setMessage("failed");
+				}
+			} else {
+				info.setError(true);
+				info.setMessage("failed");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			info.setError(true);
+			info.setMessage("failed");
+
+		}
+		return info;
+	}
 
 }

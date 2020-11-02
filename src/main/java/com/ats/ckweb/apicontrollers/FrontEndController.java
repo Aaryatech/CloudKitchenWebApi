@@ -60,6 +60,9 @@ import com.ats.ckweb.model.PostFrItemStockHeader;
 import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.SubCategoryData;
 import com.ats.ckweb.model.Tags;
+import com.ats.ckweb.model.app.AdditionalChargesForApp;
+import com.ats.ckweb.model.app.GetFreqOrderList;
+import com.ats.ckweb.model.app.GetOffersForApp;
 import com.ats.ckweb.report.repo.WalletRepo;
 import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.AreaDataRepo;
@@ -1022,111 +1025,10 @@ public class FrontEndController {
 
 			}
 
-			Franchisee fr = franchiseeRepository.findByFrId(frId);
-
-			boolean isMonthCloseApplicable = false;
-			String fromDate = "", toDate = "";
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			DateFormat yearFormat = new SimpleDateFormat("yyyy");
-
-			List<PostFrItemStockHeader> list = postFrItemStockHeaderRepo.findByFrIdAndIsMonthClosed(frId, 0);
-
-			int month = 0;
-
-			for (PostFrItemStockHeader header : list) {
-				month = header.getMonth();
-				break;
-			}
-
-			Date todaysDate = new Date();
-
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(todaysDate);
-
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-
-			Date firstDay = cal.getTime();
-
-			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-			Date date = new Date();
-			System.out.println(dateFormat1.format(date));
-
-			Calendar cal1 = Calendar.getInstance();
-			cal1.setTime(date);
-
-			int dayOfMonth = cal1.get(Calendar.DATE);
-
-			int calCurrentMonth = cal1.get(Calendar.MONTH) + 1;
-
-			if (month < calCurrentMonth) {
-
-				isMonthCloseApplicable = true;
-				System.out.println("Day Of Month End ......");
-
-			} else if (month == 12 && calCurrentMonth == 1) {
-				isMonthCloseApplicable = true;
-			}
-
-			if (isMonthCloseApplicable) {
-				System.err.println("Inside iMonthclose app");
-				String strDate;
-				int year;
-				if (month == 12) {
-					System.err.println("running month =12");
-					year = (Calendar.getInstance().getWeekYear() - 1);
-					System.err.println("year value " + year);
-				} else {
-					System.err.println("running month not eq 12");
-					year = Calendar.getInstance().getWeekYear();
-					System.err.println("year value " + year);
-				}
-
-				if (month < 10) {
-					strDate = year + "-0" + month + "-01";
-				} else {
-					strDate = year + "-" + month + "-01";
-				}
-				fromDate = strDate;
-
-			} else {
-				fromDate = dateFormat.format(firstDay);
-			}
-
-			int stockType = 1;
-			if (fr != null) {
-				stockType = fr.getStockType();
-			}
-
-			int year = Integer.parseInt(yearFormat.format(todaysDate));
-
-			List<FrItemStock> frStock = frItemStockRepo.getFrCurrStock(frId, fromDate, toDate, month, year, stockType,
-					type);
-
-			System.err.println("FR STOCk = " + frStock);
-
 			List<ItemDisplay> tempItemData = itemDisplayRepo.getFrequentlyOrderedItemListByCust(frId, type,
 					applicableFor, custId);
 
-			if (tempItemData != null) {
-				if (frStock != null) {
-
-					for (ItemDisplay item : tempItemData) {
-						for (FrItemStock stock : frStock) {
-							if (item.getItemId() == stock.getId()) {
-								if (stock.getCurrentStock() > stock.getReorder()) {
-									item.setIsAvailable(0);
-								} else {
-									item.setIsAvailable(1);
-								}
-								break;
-							}
-						}
-					}
-
-					itemData = tempItemData;
-
-				}
-			}
+			itemData = tempItemData;
 
 			if (itemData == null) {
 				itemData = new ArrayList<ItemDisplay>();
@@ -1196,6 +1098,161 @@ public class FrontEndController {
 		}
 
 		return itemData;
+	}
+
+	@RequestMapping(value = { "/getFrequentlyOrderedItemListByCustForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetFreqOrderList getFrequentlyOrderedItemListByCustForApp(@RequestParam("frId") int frId,
+			@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
+			@RequestParam("custId") int custId) {
+
+		GetFreqOrderList res = new GetFreqOrderList();
+		List<ItemDisplay> itemData = null;
+		Info info = new Info();
+
+		try {
+
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+
+			// ------------ALL OFFER--------------------
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
+					}
+				}
+
+				for (int i = 0; i < offerDisplayList.size(); i++) {
+
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
+
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
+
+						detailList.add(detail);
+
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
+
+			}
+
+			List<ItemDisplay> tempItemData = itemDisplayRepo.getFrequentlyOrderedItemListByCust(frId, type,
+					applicableFor, custId);
+
+			itemData = tempItemData;
+
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
+							}
+						}
+					}
+					itemData.get(i).setImageList(itemImgList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
+
+				}
+			}
+
+			info.setError(false);
+			info.setMessage("success");
+
+			res.setItemList(itemData);
+
+		} catch (Exception e) {
+			System.err.println("EXCEPTION IN getAllItemListByFr -> " + e.getMessage());
+			e.printStackTrace();
+
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
 	}
 
 	@RequestMapping(value = { "/getRelatedItemListByItemIds" }, method = RequestMethod.POST)
@@ -2194,6 +2251,127 @@ public class FrontEndController {
 
 		return offerHeaderList;
 
+	}
+
+	@RequestMapping(value = { "/getOffersForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetOffersForApp getOffersForApp(@RequestParam("frId") int frId,
+			@RequestParam("custId") int custId, @RequestParam("applicableFor") int applicableFor) {
+
+		GetOffersForApp res = new GetOffersForApp();
+
+		List<OfferHeader> offerHeaderList = new ArrayList<>();
+
+		List<OfferHeader> couponWiseList = new ArrayList<>();
+		List<OfferHeader> custWiseList = new ArrayList<>();
+
+		Info info = new Info();
+
+		System.err.println("frId - " + frId + "    Cust - " + custId);
+
+		try {
+			couponWiseList = offerHeaderRepo.getBillOfferHeaderByFrCouponWise(frId, 2, applicableFor, 1);
+		} catch (Exception e) {
+		}
+
+		try {
+			custWiseList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, applicableFor, 1, custId);
+		} catch (Exception e) {
+		}
+
+		if (couponWiseList != null) {
+			offerHeaderList.addAll(couponWiseList);
+		}
+
+		if (custWiseList != null) {
+			offerHeaderList.addAll(custWiseList);
+		}
+
+		res.setOfferList(offerHeaderList);
+
+		info.setError(false);
+		info.setMessage("success");
+
+		res.setInfo(info);
+
+		return res;
+
+	}
+
+	@RequestMapping(value = { "/getAdditionalChargesAndOffersData" }, method = RequestMethod.POST)
+	public @ResponseBody AdditionalChargesForApp getAdditionalChargesAndOffersData(@RequestParam("km") float km,
+			@RequestParam("frId") int frId, @RequestParam("custId") int custId,
+			@RequestParam("applicableFor") int applicableFor) {
+
+		System.err.println("KM = " + km + "           FR ID = " + frId + "------------------------------");
+
+		AdditionalChargesForApp res = new AdditionalChargesForApp();
+		Info info = new Info();
+
+		try {
+			// Delivery Charges
+
+			try {
+				CkDeliveryCharges delCh = ckDeliveryChargesRepo.getDeliveryCharges(km);
+				if (delCh == null) {
+					delCh = new CkDeliveryCharges();
+				}
+				res.setDeliveryCharges(delCh);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			try {
+				// Additional Charges By Franchise
+				FrCharges addCh = frChargesRepo.findByfrId(frId);
+				if (addCh == null) {
+					addCh = new FrCharges();
+				}
+				res.setAdditionalCharges(addCh);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			// Offers------
+
+			List<OfferHeader> offerHeaderList = new ArrayList<>();
+
+			List<OfferHeader> couponWiseList = new ArrayList<>();
+			List<OfferHeader> custWiseList = new ArrayList<>();
+
+			System.err.println("frId - " + frId + "    Cust - " + custId);
+
+			try {
+				couponWiseList = offerHeaderRepo.getBillOfferHeaderByFrCouponWise(frId, 2, applicableFor, 1);
+			} catch (Exception e) {
+			}
+
+			try {
+				custWiseList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, applicableFor, 1, custId);
+			} catch (Exception e) {
+			}
+
+			if (couponWiseList != null) {
+				offerHeaderList.addAll(couponWiseList);
+			}
+
+			if (custWiseList != null) {
+				offerHeaderList.addAll(custWiseList);
+			}
+
+			res.setOfferList(offerHeaderList);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
 	}
 
 }

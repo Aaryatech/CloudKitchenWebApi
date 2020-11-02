@@ -1,9 +1,14 @@
 package com.ats.ckweb.apicontrollers;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
+import javax.persistence.Column;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Customer;
+import com.ats.ckweb.model.CustomerAddressDisplay;
 import com.ats.ckweb.model.CustomerDisplay;
 import com.ats.ckweb.model.FrConfig;
 import com.ats.ckweb.model.Franchisee;
@@ -25,6 +31,7 @@ import com.ats.ckweb.model.GetOrderDetailList;
 import com.ats.ckweb.model.GetOrderHeaderList;
 import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.Info;
+import com.ats.ckweb.model.ItemDisplay;
 import com.ats.ckweb.model.NewSetting;
 import com.ats.ckweb.model.OrderDetail;
 import com.ats.ckweb.model.OrderFeedback;
@@ -35,7 +42,15 @@ import com.ats.ckweb.model.OrderListData;
 import com.ats.ckweb.model.OrderSaveData;
 import com.ats.ckweb.model.OrderTrail;
 import com.ats.ckweb.model.Setting;
+import com.ats.ckweb.model.Wallet;
+import com.ats.ckweb.model.app.GetOrderHistory;
+import com.ats.ckweb.model.app.GrievanceList;
+import com.ats.ckweb.model.app.PlaceOrderDetailParam;
+import com.ats.ckweb.model.app.PlaceOrderParam;
+import com.ats.ckweb.model.app.VerifyCustomer;
+import com.ats.ckweb.report.repo.WalletRepo;
 import com.ats.ckweb.repository.AgentRepo;
+import com.ats.ckweb.repository.CustomerAddressDisplayRepo;
 import com.ats.ckweb.repository.CustomerDisplayRepo;
 import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FrConfigRepo;
@@ -45,6 +60,7 @@ import com.ats.ckweb.repository.GetGrievienceTailListRepository;
 import com.ats.ckweb.repository.GetOrderDetailListRepository;
 import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.GetOrderTrailListRepository;
+import com.ats.ckweb.repository.ItemDisplayRepo;
 import com.ats.ckweb.repository.NewSettingRepo;
 import com.ats.ckweb.repository.OrderDetailRepository;
 import com.ats.ckweb.repository.OrderFeedbackRepo;
@@ -110,8 +126,15 @@ public class OrderApiController {
 
 	@Autowired
 	FranchiseeRepository franchiseeRepository;
-	
-	
+
+	@Autowired
+	ItemDisplayRepo itemDisplayRepo;
+
+	@Autowired
+	CustomerAddressDisplayRepo customerAddressDisplayRepo;
+
+	@Autowired
+	WalletRepo walletRepo;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -229,8 +252,7 @@ public class OrderApiController {
 				if (orderHeader.getOrderStatus() == 0) {
 					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_park_order", 0);
 					msg = val.getSettingValue1();
-					
-					
+
 					msg = val.getSettingValue1();
 					msg = msg.replace("###", cust.getCustName());
 
@@ -242,7 +264,6 @@ public class OrderApiController {
 						msg = msg.replace("@@@", type);
 					}
 
-					
 					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
 
 				} else if (orderHeader.getOrderStatus() == 1) {
@@ -341,7 +362,7 @@ public class OrderApiController {
 			info.setError(false);
 			info.setMessage(UUID);
 
-			System.err.println("UPDATE RES ======> "+update);
+			System.err.println("UPDATE RES ======> " + update);
 			if (update > 0) {
 
 				try {
@@ -388,12 +409,12 @@ public class OrderApiController {
 				try {
 					OrderHeader order = orderHeaderRepository.findByOrderId(orderId);
 					Customer cust = customerRepo.getCustomerByOrderId(orderId);
-					
+
 					String msg = "";
 
 					NewSetting val = new NewSetting();
-					
-					System.err.println("STATUS ---------------------======> "+status);
+
+					System.err.println("STATUS ---------------------======> " + status);
 
 					if (status == 2) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_accept_order", 0);
@@ -404,67 +425,64 @@ public class OrderApiController {
 					} else if (status == 3) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
 					} else if (status == 4) {
-						
+
 						try {
 							val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivery_order", 0);
-							
+
 							msg = val.getSettingValue1();
 							msg = msg.replace("CUSTNAME", cust.getCustName());
 							msg = msg.replace("###", order.getOrderNo());
-							
 
-							String agentNm = "",agentMob="";
+							String agentNm = "", agentMob = "";
 							if (order.getIsAgent() == 1) {
 
-								Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(order.getOrderDeliveredBy(),
-										1, 0);
+								Agent agent = agentRepo
+										.findByAgentIdAndCompanyIdAndDelStatus(order.getOrderDeliveredBy(), 1, 0);
 								agentNm = agent.getAgentName();
-								agentMob=agent.getMobileNo();
-								
+								agentMob = agent.getMobileNo();
+
 								msg = msg.replace("AGNAME", agentNm.toUpperCase());
 								msg = msg.replace("AGMOB", agentMob);
 
 							} else {
-								
-								if(order.getOrderDeliveredBy()!=0) {
+
+								if (order.getOrderDeliveredBy() != 0) {
 									agentNm = agentRepo.getDeliveryBoyNameById(order.getOrderDeliveredBy());
-									agentMob=agentRepo.getDeliveryBoyMobById(order.getOrderDeliveredBy());
+									agentMob = agentRepo.getDeliveryBoyMobById(order.getOrderDeliveredBy());
 									msg = msg.replace("AGNAME", agentNm.toUpperCase());
 									msg = msg.replace("AGMOB", agentMob);
 								}
 							}
 
-							
+							System.err.println("DELIVERY SMS - " + msg);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 
-							System.err.println("DELIVERY SMS - "+msg);
-						}catch(Exception e) {e.printStackTrace();}
-						
-						
 					} else if (status == 5) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivered_order", 0);
-						
+
 						msg = val.getSettingValue1();
 						msg = msg.replace("###", order.getOrderNo());
-						
+
 					} else if (status == 8) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_cancelled_order", 0);
-						
-						OrderTrail trail=orderTrailRepository.findByOrderIdAndStatus(order.getOrderId(), 8);
-						
+
+						OrderTrail trail = orderTrailRepository.findByOrderIdAndStatus(order.getOrderId(), 8);
+
 						msg = val.getSettingValue1();
 						msg = msg.replace("###", trail.getExVar1());
-						
-						System.err.println("CANCEL - "+msg);
-						
-					}
 
+						System.err.println("CANCEL - " + msg);
+
+					}
 
 					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
 
 					if (status == 4) {
-						
+
 						try {
-							
+
 							NewSetting val1 = new NewSetting();
 							val1 = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivery_order_agent", 0);
 							String sms = val1.getSettingValue1();
@@ -488,23 +506,22 @@ public class OrderApiController {
 							String agentMob = "";
 							if (order.getIsAgent() == 1) {
 
-								Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(order.getOrderDeliveredBy(),
-										1, 0);
+								Agent agent = agentRepo
+										.findByAgentIdAndCompanyIdAndDelStatus(order.getOrderDeliveredBy(), 1, 0);
 								agentMob = agent.getMobileNo();
 
 							} else {
 								agentMob = agentRepo.getDeliveryBoyMobById(order.getOrderDeliveredBy());
 							}
 
-							System.err.println("AGENT DELIVERY SMS - "+sms);
+							System.err.println("AGENT DELIVERY SMS - " + sms);
 
-							
 							SMSUtility.sendSMS(agentMob, sms, "MDVDRY");
 
-							
-						}catch(Exception e) {e.printStackTrace();}
-						
-						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
 					}
 
 				} catch (Exception e) {
@@ -675,6 +692,60 @@ public class OrderApiController {
 		return listbystatus;
 	}
 
+	@RequestMapping(value = { "/getOrderListByCustomerIdForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetOrderHistory getOrderListByCustomerIdForApp(@RequestParam("custId") int custId) {
+
+		GetOrderHistory res = new GetOrderHistory();
+
+		List<GetOrderHeaderList> listbystatus = new ArrayList<>();
+		Info info = new Info();
+
+		try {
+
+			listbystatus = getOrderHeaderListRepository.getOrderListByCustomerId(custId);
+
+			List<GetOrderDetailList> detailListbystatus = getOrderDetailListRepository.getOrderListByCustomerId(custId);
+
+			List<GetOrderTrailList> trailListbystatus = getOrderTrailListRepository.trailListbyByCustomerIds(custId);
+
+			for (int i = 0; i < listbystatus.size(); i++) {
+				List<GetOrderDetailList> detail = new ArrayList<>();
+
+				for (int j = 0; j < detailListbystatus.size(); j++) {
+
+					if (listbystatus.get(i).getOrderId() == detailListbystatus.get(j).getOrderId()) {
+						detail.add(detailListbystatus.get(j));
+					}
+				}
+				listbystatus.get(i).setDetailList(detail);
+
+				List<GetOrderTrailList> traildetail = new ArrayList<>();
+
+				for (int j = 0; j < trailListbystatus.size(); j++) {
+
+					if (listbystatus.get(i).getOrderId() == trailListbystatus.get(j).getOrderId()) {
+						traildetail.add(trailListbystatus.get(j));
+					}
+				}
+				listbystatus.get(i).setTrailList(traildetail);
+			}
+
+			info.setError(false);
+			info.setMessage("success");
+
+			res.setOrderList(listbystatus);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
 	@RequestMapping(value = { "/getGrievienceListByCustomerId" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetGrievienceList> getGrievienceListByCustomerId(@RequestParam("custId") int custId) {
 
@@ -688,6 +759,35 @@ public class OrderApiController {
 			e.printStackTrace();
 		}
 		return listbystatus;
+	}
+
+	@RequestMapping(value = { "/getGrievienceListByCustomerIdForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GrievanceList getGrievienceListByCustomerIdForApp(@RequestParam("custId") int custId) {
+
+		GrievanceList res = new GrievanceList();
+		Info info = new Info();
+		List<GetGrievienceList> listbystatus = new ArrayList<>();
+
+		try {
+
+			listbystatus = getGrievienceListRepository.getGrievienceListByCustomerId(custId);
+
+			res.setGrievanceList(listbystatus);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			info.setError(true);
+			info.setMessage("failed");
+
+		}
+
+		res.setInfo(info);
+
+		return res;
 	}
 
 	@RequestMapping(value = { "/getGriviencevByGrvId" }, method = RequestMethod.POST)
@@ -758,6 +858,33 @@ public class OrderApiController {
 		return res;
 	}
 
+	@RequestMapping(value = { "/getCustomerByMobileNoForApp" }, method = RequestMethod.POST)
+	public @ResponseBody VerifyCustomer getCustomerByMobileNoForApp(@RequestParam("mobileNo") String mobileNo) {
+
+		VerifyCustomer res = new VerifyCustomer();
+		Info info = new Info();
+
+		try {
+
+			List<CustomerDisplay> custList = customerDisplayRepo.getCustomerByMobileNo(mobileNo);
+
+			if (custList != null) {
+				res.setCustomerDisplay(custList.get(0));
+			}
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(false);
+			info.setMessage("success");
+		}
+		res.setInfo(info);
+
+		return res;
+	}
+
 	@RequestMapping(value = { "/saveFeedBackOfOrder" }, method = RequestMethod.POST)
 	public @ResponseBody OrderFeedback saveFeedBackOfOrder(@RequestBody OrderFeedback feedback) {
 
@@ -813,6 +940,351 @@ public class OrderApiController {
 		}
 
 		return res;
+	}
+
+	@RequestMapping(value = { "/saveGrievanceOfOrderForApp" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveGrievanceOfOrderForApp(@RequestBody OrderGrievance orderGrievance) {
+
+		Info info = new Info();
+		OrderGrievance res = new OrderGrievance();
+		try {
+
+			Setting setting = new Setting();
+			setting = settingRepository.findBySettingKey("GRI_NO");
+
+			int no = setting.getSettingValue();
+			String grievencceNo = String.format("%0" + 5 + "d", no);
+
+			orderGrievance.setGrievencceNo(grievencceNo);
+			res = orderGrievanceRepo.save(orderGrievance);
+
+			if (res != null) {
+				if (res.getGrieveId() > 0) {
+					info.setError(false);
+					info.setMessage("success");
+
+					no = no + 1;
+					settingRepository.udateKeyAndValue("GRI_NO", no);
+
+					orderGrievance.getOrderGrievanceTrail().setGrievencesId(res.getGrieveId());
+
+					orderGrievanceTrailRepo.save(orderGrievance.getOrderGrievanceTrail());
+
+					try {
+
+						NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_add_grievance", 0);
+
+						Customer cust = customerRepo.getCustomerByOrderId(orderGrievance.getOrderId());
+
+						SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MDVDRY");
+
+					} catch (Exception e) {
+					}
+
+				} else {
+					info.setError(true);
+					info.setMessage("failed");
+				}
+			} else {
+				info.setError(true);
+				info.setMessage("failed");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+		return info;
+	}
+
+	@RequestMapping(value = { "/placeOrderForApp" }, method = RequestMethod.POST)
+	public @ResponseBody Info placeOrderForApp(@RequestBody PlaceOrderParam placeOrderParam) {
+		Info info = new Info();
+
+		OrderHeader order = new OrderHeader();
+		List<OrderDetail> orderDetailList = new ArrayList<>();
+		OrderTrail orderTrail;
+
+		List<ItemDisplay> itemData = itemDisplayRepo.getAllItemByFr(placeOrderParam.getFrId(), 2,
+				placeOrderParam.getApplicableFor());
+
+		DecimalFormat df = new DecimalFormat("#.00");
+
+		try {
+
+			if (placeOrderParam != null) {
+
+				if (placeOrderParam.getOrderDetailParamList() != null) {
+
+					float itemGrandTotal = 0;
+
+					float finaTaxableAmt = 0;
+					float finaTaxAmt = 0;
+					float finaTotalAmt = 0;
+					float finalCgstAmt = 0;
+					float finalsgstAmt = 0;
+					float finalIgstAmt = 0;
+					float totalDiscAmt = 0, totalAddChargesAmt = 0;
+
+					for (int i = 0; i < placeOrderParam.getOrderDetailParamList().size(); i++) {
+						PlaceOrderDetailParam param = placeOrderParam.getOrderDetailParamList().get(i);
+						if (itemData != null) {
+							if (itemData.size() > 0) {
+								for (ItemDisplay item : itemData) {
+									if (param.getItemId() == item.getItemId()) {
+										float qty = param.getSelectedQty() * param.getQty();
+										itemGrandTotal = itemGrandTotal
+												+ (item.getMrpDiscAmt() * Float.parseFloat(df.format(qty)));
+									}
+								}
+							}
+						}
+					}
+
+					System.err.println("ITEM GRAND TOTAL = " + itemGrandTotal);
+
+					for (int i = 0; i < placeOrderParam.getOrderDetailParamList().size(); i++) {
+
+						PlaceOrderDetailParam param = placeOrderParam.getOrderDetailParamList().get(i);
+
+						if (itemData != null) {
+
+							if (itemData.size() > 0) {
+
+								for (ItemDisplay item : itemData) {
+
+									if (param.getItemId() == item.getItemId()) {
+
+										OrderDetail orderDetail = new OrderDetail();
+										orderDetail.setItemId(param.getItemId());
+
+										float qty = param.getSelectedQty() * param.getQty();
+										orderDetail.setQty(Float.parseFloat(df.format(qty)));
+
+										System.err.println("ITEM QTY = " + qty);
+										
+										orderDetail.setExFloat2(param.getSelectedQty());//App Selected Qty
+										orderDetail.setExInt1(param.getQty());//App Qty
+
+										orderDetail.setRate(item.getMrpDiscAmt());
+										orderDetail.setMrp(item.getMrpDiscAmt());
+										orderDetail.setCgstPer(item.getCgstPer());
+										orderDetail.setIgstPer(item.getIgstPer());
+										orderDetail.setSgstPer(item.getSgstPer());
+										orderDetail.setRemark("");
+
+										float detailDiscPer = 0;
+										float detailDiscAmt = 0;
+
+										if (placeOrderParam.getDiscAmt() > 0) {
+											detailDiscPer = ((item.getMrpDiscAmt() * qty * 100) / itemGrandTotal);
+											detailDiscAmt = ((detailDiscPer * placeOrderParam.getDiscAmt()) / 100);
+											totalDiscAmt = totalDiscAmt + detailDiscAmt;
+										}
+
+										float chPer = 0, chAmt = 0;
+										if (placeOrderParam.getDeliveryCharges() > 0) {
+											chPer = ((item.getMrpDiscAmt() * qty * 100) / itemGrandTotal);
+											System.err.println("DEL CH TOT = " + (item.getMrpDiscAmt() * qty * 100));
+											chAmt = ((chPer * placeOrderParam.getDeliveryCharges()) / 100);
+											totalAddChargesAmt = totalAddChargesAmt + chAmt;
+										}
+
+										System.err.println("DEL CH PER = " + chPer);
+										System.err.println("DEL CH AMT = " + chAmt);
+
+										float detailTotal = (item.getMrpDiscAmt() * qty) - detailDiscAmt + chAmt;
+
+										float baseRate = (detailTotal * 100) / (100 + item.getIgstPer());
+										float taxAmt = Float.parseFloat(df.format(detailTotal - baseRate));
+
+										float taxableAmt = detailTotal - taxAmt;
+
+										orderDetail.setTaxableAmt(Float.parseFloat(df.format(taxableAmt)));
+										orderDetail.setTaxAmt(taxAmt);
+										// orderDetail.setTotalAmt(itemJsonImportData[i].getTotal());
+										orderDetail.setTotalAmt(Float.parseFloat(df.format(detailTotal)));
+
+										float cgstAmt = Float.parseFloat(df.format(taxAmt / 2));
+
+										orderDetail.setCgstAmt(cgstAmt);
+										orderDetail.setSgstAmt(cgstAmt);
+										orderDetail.setIgstAmt(taxAmt);
+
+										orderDetail.setDiscAmt(detailDiscAmt);
+										orderDetail.setExFloat1(chAmt);
+
+										finalCgstAmt = Float.parseFloat(df.format(finalCgstAmt + (taxAmt / 2)));
+										finalsgstAmt = Float.parseFloat(df.format(finalsgstAmt + (taxAmt / 2)));
+										finalIgstAmt = Float.parseFloat(df.format(finalIgstAmt + (taxAmt)));
+
+										finaTaxableAmt = Float.parseFloat(df.format(finaTaxableAmt + taxableAmt));
+										finaTaxAmt = Float.parseFloat(df.format(finaTaxAmt + taxAmt));
+
+										orderDetailList.add(orderDetail);
+									}
+
+								}
+
+								finaTotalAmt = finaTaxableAmt + finaTaxAmt;
+
+							}
+
+						} else {
+							info.setError(true);
+							info.setMessage("failed");
+						}
+
+					}
+					
+					
+					// Order Header---------------------------
+
+					String uuid = UUID.randomUUID().toString();
+					Date ct = new Date();
+					SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat dttime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+					order.setOrderNo("0002");
+					order.setOrderDate(sf.format(ct));
+					order.setFrId(placeOrderParam.getFrId());
+					order.setCustId(placeOrderParam.getCustId());
+					order.setOrderStatus(placeOrderParam.getOrderStatus());
+					order.setPaidStatus(0);
+					order.setPaymentMethod(placeOrderParam.getPayMode());
+
+					CustomerAddressDisplay addr = customerAddressDisplayRepo
+							.getCustomerAddressById(placeOrderParam.getAddressId());
+					Customer cust = customerRepo.getOne(placeOrderParam.getCustId());
+
+					order.setCityId(addr.getCityId());
+					order.setAreaId(addr.getAreaId());
+					order.setAddressId(placeOrderParam.getAddressId());
+					order.setAddress(addr.getAddress());
+					order.setWhatsappNo(cust.getPhoneNumber());
+					order.setLandmark(addr.getLandmark());
+					order.setDeliveryDate(placeOrderParam.getDeliveryDate());
+					order.setDeliveryTime(placeOrderParam.getDeliveryTime());
+					order.setInsertDateTime(dttime.format(ct));
+					order.setInsertUserId(placeOrderParam.getCustId());
+					order.setOrderPlatform(placeOrderParam.getOrderPlatform());
+					order.setBillingName(cust.getCustName());
+					order.setBillingAddress(addr.getAddress());
+					order.setDeliveryType(placeOrderParam.getDeliveryType());
+					order.setDeliveryInstId(placeOrderParam.getDeliveryInstructionId());
+					order.setDeliveryInstText(placeOrderParam.getDeliveryInstructionText());
+					order.setUuidNo(uuid);
+					order.setExFloat1(placeOrderParam.getWallet());// Wallet Amt
+					order.setExVar1(placeOrderParam.getGst());
+					order.setExVar2(placeOrderParam.getCoupon());
+					order.setOfferId(placeOrderParam.getOfferId());
+					order.setDeliveryKm(placeOrderParam.getKm());
+					
+					order.setExFloat2(placeOrderParam.getItemTotal());// App Item Total
+					order.setExFloat3(placeOrderParam.getDiscAmt());// App Disc Amt
+
+					// Agent
+					order.setIsAgent(0);
+					order.setOrderDeliveredBy(0);
+
+					order.setDiscAmt(totalDiscAmt - placeOrderParam.getWallet());
+					order.setDeliveryCharges(totalAddChargesAmt);// Delivery and additional charges
+
+					order.setTaxableAmt(finaTaxableAmt);
+					order.setTaxAmt(finaTaxAmt);
+					// order.setTotalAmt(finaTotalAmt + deliveryCharges);
+					order.setTotalAmt(Float.parseFloat(df.format(finaTotalAmt)));
+					order.setSgstAmt(finalsgstAmt);
+					order.setCgstAmt(finalCgstAmt);
+					order.setIgstAmt(finalIgstAmt);
+					
+					
+					
+					// Order Trail----------------
+					orderTrail = new OrderTrail();
+					orderTrail.setActionByUserId(placeOrderParam.getCustId());
+					orderTrail.setActionDateTime(dttime.format(ct));
+					orderTrail.setStatus(1);
+					orderTrail.setExInt1(2);
+					orderTrail.setExVar1("-");
+					
+					OrderSaveData data = new OrderSaveData();
+					data.setOrderHeader(order);
+					data.setOrderDetailList(orderDetailList);
+					data.setOrderTrail(orderTrail);
+					
+					info = saveCloudOrder(data);
+
+					if (info != null) {
+						if (info.getError() == false) {
+
+							try {
+								if (placeOrderParam.getWallet() > 0) {
+
+									Wallet wallet = new Wallet();
+									wallet.setWalletId(0);
+									wallet.setOrderId(Integer.parseInt(info.getMessage()));
+									wallet.setSellBillNo(0);
+									wallet.setFrId(placeOrderParam.getFrId());
+									wallet.setPayMode(placeOrderParam.getPayMode());
+									wallet.setIsFrAffected(0);
+									wallet.setFrTranscType(0);
+									wallet.setAmount(placeOrderParam.getWallet());
+									wallet.setWalletTranscType(1);
+									wallet.setUserId(placeOrderParam.getCustId());
+									wallet.setWalletDate(sf.format(ct));
+									wallet.setWalletDatetime(dttime.format(ct));
+									wallet.setExInt1(0);
+									wallet.setExInt2(0);
+									wallet.setExVar1("");
+									wallet.setExVar2("");
+									wallet.setExFloat1(0);
+									wallet.setExFloat1(1);
+
+									walletRepo.save(wallet);
+
+								}
+							} catch (Exception e) {
+							}
+
+						}
+					}
+					
+					
+
+				} else {
+					info.setError(true);
+					info.setMessage("failed");
+				}
+
+			}
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		return info;
+	}
+
+	public static String convertToYMD(String date) {
+
+		String convertedDate = null;
+		try {
+			SimpleDateFormat ymdSDF = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dmySDF = new SimpleDateFormat("dd-MM-yyyy");
+			Date dmyDate = dmySDF.parse(date);
+
+			convertedDate = ymdSDF.format(dmyDate);
+
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return convertedDate;
+
 	}
 
 }

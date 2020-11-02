@@ -68,6 +68,41 @@ public class Wallet implements Serializable {
 
 	@Column(name = "ex_float2")
 	private float exFloat2;
+	
+	
+
+	public Wallet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+	public Wallet(int walletId, int orderId, int sellBillNo, int frId, int payMode, int isFrAffected, int frTranscType,
+			float amount, int walletTranscType, int userId, String walletDate, String walletDatetime, int exInt1,
+			int exInt2, String exVar1, String exVar2, float exFloat1, float exFloat2) {
+		super();
+		this.walletId = walletId;
+		this.orderId = orderId;
+		this.sellBillNo = sellBillNo;
+		this.frId = frId;
+		this.payMode = payMode;
+		this.isFrAffected = isFrAffected;
+		this.frTranscType = frTranscType;
+		this.amount = amount;
+		this.walletTranscType = walletTranscType;
+		this.userId = userId;
+		this.walletDate = walletDate;
+		this.walletDatetime = walletDatetime;
+		this.exInt1 = exInt1;
+		this.exInt2 = exInt2;
+		this.exVar1 = exVar1;
+		this.exVar2 = exVar2;
+		this.exFloat1 = exFloat1;
+		this.exFloat2 = exFloat2;
+	}
+
+
 
 	public int getWalletId() {
 		return walletId;

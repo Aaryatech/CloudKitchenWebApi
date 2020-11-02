@@ -15,9 +15,11 @@ import com.ats.ckweb.model.CustWalletTotal;
 import com.ats.ckweb.model.CustWalletTransaction;
 import com.ats.ckweb.model.FrWiseGrievenceReportData;
 import com.ats.ckweb.model.FrWiseOrderReportData;
+import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.Wallet;
 import com.ats.ckweb.model.WalletReportData;
+import com.ats.ckweb.model.app.GetWalletData;
 import com.ats.ckweb.report.repo.WalletRepo;
 import com.ats.ckweb.repository.CustWalletTotalRepo;
 import com.ats.ckweb.repository.CustWalletTransactionRepo;
@@ -43,9 +45,10 @@ public class WalletController {
 
 	@Autowired
 	FrWiseOrderReportDataRepo frWiseOrderReportDataRepo;
-	
-	@Autowired FrWiseGrievenceReportDataRepo frWiseGrievenceReportDataRepo;
-	
+
+	@Autowired
+	FrWiseGrievenceReportDataRepo frWiseGrievenceReportDataRepo;
+
 	@Autowired
 	SettingRepository settingRepository;
 
@@ -80,6 +83,32 @@ public class WalletController {
 		return res;
 	}
 
+	@RequestMapping(value = { "/getCustWalletTranscForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetWalletData getCustWalletTranscForApp(@RequestParam int custId) {
+
+		GetWalletData res = new GetWalletData();
+		Info info = new Info();
+
+		try {
+
+			List<CustWalletTransaction> wallet = new ArrayList<CustWalletTransaction>();
+			wallet = custWalletTransactionRepo.getCustWalletTransc(custId);
+
+			res.setWalletTransaction(wallet);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
 	@RequestMapping(value = { "/getFrAndDateWiseOrderData" }, method = RequestMethod.POST)
 	public @ResponseBody List<FrWiseOrderReportData> getFrAndDateWiseOrderData(@RequestParam String fromDate,
 			@RequestParam String toDate, @RequestParam List<Integer> frIds) {
@@ -88,7 +117,7 @@ public class WalletController {
 		res = frWiseOrderReportDataRepo.getFrWiseOrderReport(fromDate, toDate, frIds);
 		return res;
 	}
-	
+
 	@RequestMapping(value = { "/getFrWiseGrieveReportData" }, method = RequestMethod.POST)
 	public @ResponseBody List<FrWiseGrievenceReportData> getFrWiseGrieveReportData(@RequestParam String fromDate,
 			@RequestParam String toDate, @RequestParam List<Integer> frIds) {

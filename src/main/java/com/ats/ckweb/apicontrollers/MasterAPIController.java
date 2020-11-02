@@ -43,6 +43,9 @@ import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.OrderRemark;
 import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.UserType;
+import com.ats.ckweb.model.app.GetAllCities;
+import com.ats.ckweb.model.app.GetDeliveryInstructions;
+import com.ats.ckweb.model.app.GetLanguageList;
 import com.ats.ckweb.repository.AreaRepo;
 import com.ats.ckweb.repository.DeliveryChargesRepo;
 import com.ats.ckweb.repository.IngredientDetailListRepo;
@@ -61,16 +64,16 @@ public class MasterAPIController {
 
 	@Autowired
 	AreaRepo areaRepo;
-	
+
 	@Autowired
 	OrderRemarkRepo remarkRepo;
-	
+
 	@Autowired
 	DeliveryChargesRepo deliveryChargeRepo;
-	
+
 	@RequestMapping(value = { "/insertDesignation" }, method = RequestMethod.POST)
 	public @ResponseBody Designation insertDesignation(@RequestBody Designation desig) {
-		
+
 		Designation res = new Designation();
 		try {
 			res = tagService.addDesignation(desig);
@@ -105,6 +108,7 @@ public class MasterAPIController {
 		return list;
 
 	}
+
 	@RequestMapping(value = { "/getDesignationById" }, method = RequestMethod.POST)
 	public @ResponseBody Designation getDesignationById(@RequestParam int desigId, @RequestParam int compId) {
 
@@ -117,6 +121,7 @@ public class MasterAPIController {
 		return designation;
 
 	}
+
 	@RequestMapping(value = { "/deleteDesignationById" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteDesignationById(@RequestParam int desigId) {
 
@@ -135,7 +140,6 @@ public class MasterAPIController {
 		}
 		return info;
 	}
-	
 
 	/********************************************************************************/
 
@@ -441,6 +445,32 @@ public class MasterAPIController {
 
 	}
 
+	@RequestMapping(value = { "/getAllLanguagesForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetLanguageList getAllLanguagesForApp(@RequestParam int compId) {
+
+		GetLanguageList res = new GetLanguageList();
+		Info info = new Info();
+
+		List<Language> langList = new ArrayList<Language>();
+		try {
+			langList = tagService.getAllLanguages(compId);
+
+			res.setLangList(langList);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("failed");
+		}
+		res.setInfo(info);
+
+		return res;
+
+	}
+
 	@RequestMapping(value = { "/getLanguageById" }, method = RequestMethod.POST)
 	public @ResponseBody Language getLanguageById(@RequestParam int langId, @RequestParam int compId) {
 
@@ -519,7 +549,32 @@ public class MasterAPIController {
 		return cityList;
 
 	}
-	
+
+	@RequestMapping(value = { "/getAllCitiesForApp" }, method = RequestMethod.GET)
+	public @ResponseBody GetAllCities getAllCitiesForApp() {
+
+		GetAllCities res = new GetAllCities();
+		Info info = new Info();
+
+		List<City> cityList = new ArrayList<City>();
+		try {
+			cityList = tagService.getAllCities();
+			res.setCityList(cityList);
+
+			info.setError(false);
+			info.setMessage("success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+
+	}
+
 	@RequestMapping(value = { "/getAllCitiesByCompId" }, method = RequestMethod.POST)
 	public @ResponseBody List<City> getAllCities(@RequestParam int compId) {
 
@@ -532,7 +587,7 @@ public class MasterAPIController {
 		return cityList;
 
 	}
-	
+
 	@RequestMapping(value = { "/getAllCitiesOnly" }, method = RequestMethod.POST)
 	public @ResponseBody List<City> getAllCitiesOnly(@RequestParam int compId) {
 
@@ -753,6 +808,33 @@ public class MasterAPIController {
 		return instructnList;
 	}
 
+	@RequestMapping(value = { "/getAllDeliveryInstructionsForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetDeliveryInstructions getAllDeliveryInstructionsForApp(@RequestParam int compId) {
+
+		GetDeliveryInstructions res = new GetDeliveryInstructions();
+		Info info = new Info();
+
+		try {
+			List<DeliveryInstruction> instructnList = new ArrayList<DeliveryInstruction>();
+			instructnList = tagService.getAllDelvryInstructn(compId, 0);
+
+			res.setDeliveryInstruction(instructnList);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
 	@RequestMapping(value = { "/getDeliveryInstructionById" }, method = RequestMethod.POST)
 	public @ResponseBody DeliveryInstruction getDeliveryInstructionById(@RequestParam int instructId) {
 
@@ -828,7 +910,7 @@ public class MasterAPIController {
 		}
 		return grievTypeList;
 	}
-	
+
 	@RequestMapping(value = { "/getAllGrievType" }, method = RequestMethod.GET)
 	public @ResponseBody List<GrievencesTypeInstructn> getAllGrievType() {
 
@@ -1027,7 +1109,7 @@ public class MasterAPIController {
 		}
 		return user;
 	}
-	
+
 	@RequestMapping(value = { "/getMnUserByEmail" }, method = RequestMethod.POST)
 	public @ResponseBody MnUser getMnUserByEmail(@RequestParam String email, @RequestParam int userId) {
 
@@ -1443,7 +1525,7 @@ public class MasterAPIController {
 		}
 		return agent;
 	}
-	
+
 	/******************************************************************************************/
 	// Remark
 
@@ -1458,7 +1540,7 @@ public class MasterAPIController {
 		}
 		return remarkList;
 	}
-	
+
 	@RequestMapping(value = { "/addNewRemark" }, method = RequestMethod.POST)
 	public @ResponseBody OrderRemark addNewRemark(@RequestBody OrderRemark remark) {
 
@@ -1470,7 +1552,7 @@ public class MasterAPIController {
 		}
 		return saveRemark;
 	}
-	
+
 	@RequestMapping(value = { "/deleteRemarkById" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteRemarkById(@RequestParam int remarkId) {
 
@@ -1489,7 +1571,7 @@ public class MasterAPIController {
 		}
 		return info;
 	}
-	
+
 	@RequestMapping(value = { "/getRemarkById" }, method = RequestMethod.POST)
 	public @ResponseBody OrderRemark getRemarkById(@RequestParam int remarkId) {
 
@@ -1501,7 +1583,7 @@ public class MasterAPIController {
 		}
 		return remark;
 	}
-	
+
 	/******************************************************************************************/
 	// Remark
 
@@ -1516,7 +1598,7 @@ public class MasterAPIController {
 		}
 		return chagesList;
 	}
-	
+
 	@RequestMapping(value = { "/addNewDeliveryCharge" }, method = RequestMethod.POST)
 	public @ResponseBody DeliveryCharges addNewDeliveryCharge(@RequestBody DeliveryCharges delCharge) {
 
@@ -1528,7 +1610,7 @@ public class MasterAPIController {
 		}
 		return saveDelCharge;
 	}
-	
+
 	@RequestMapping(value = { "/deleteDeliverChargeById" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteDeliverChargeById(@RequestParam int chargeId) {
 
@@ -1547,7 +1629,6 @@ public class MasterAPIController {
 		}
 		return info;
 	}
-	
 
 	@RequestMapping(value = { "/getDeliveryChargeById" }, method = RequestMethod.POST)
 	public @ResponseBody DeliveryCharges getDeliveryChargeById(@RequestParam int chargeId) {
@@ -1560,6 +1641,5 @@ public class MasterAPIController {
 		}
 		return charge;
 	}
-	
 
 }
