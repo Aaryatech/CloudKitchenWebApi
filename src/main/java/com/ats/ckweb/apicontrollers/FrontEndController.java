@@ -2335,27 +2335,52 @@ public class FrontEndController {
 
 			List<OfferHeader> offerHeaderList = new ArrayList<>();
 
-			List<OfferHeader> couponWiseList = new ArrayList<>();
+			//List<OfferHeader> couponWiseList = new ArrayList<>();
 			List<OfferHeader> custWiseList = new ArrayList<>();
 
 			System.err.println("frId - " + frId + "    Cust - " + custId);
 
-			try {
-				couponWiseList = offerHeaderRepo.getBillOfferHeaderByFrCouponWise(frId, 2, applicableFor, 1);
-			} catch (Exception e) {
-			}
+//			try {
+//				couponWiseList = offerHeaderRepo.getBillOfferHeaderByFrCouponWise(frId, 2, applicableFor, 1);
+//			} catch (Exception e) {
+//			}
 
 			try {
 				custWiseList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, applicableFor, 1, custId);
 			} catch (Exception e) {
 			}
 
-			if (couponWiseList != null) {
-				offerHeaderList.addAll(couponWiseList);
-			}
+//			if (couponWiseList != null) {
+//				offerHeaderList.addAll(couponWiseList);
+//			}
 
 			if (custWiseList != null) {
 				offerHeaderList.addAll(custWiseList);
+			}
+
+			// Offer Detail List-----------------
+
+			try {
+				List<OfferDetail> offerDetailList = offerDetailRepo.getOfferDetailByFr(frId);
+				System.err.println("DETAIl LITS ---------------- " + offerDetailList);
+
+				for (int i = 0; i < offerHeaderList.size(); i++) {
+
+					List<OfferDetail> tempDetail = new ArrayList<>();
+
+					for (OfferDetail detail : offerDetailList) {
+
+						if (offerHeaderList.get(i).getOfferId() == detail.getOfferId()) {
+							tempDetail.add(detail);
+						}
+
+					}
+
+					offerHeaderList.get(i).setOfferDetailList(tempDetail);
+
+				}
+
+			} catch (Exception e) {
 			}
 
 			res.setOfferList(offerHeaderList);

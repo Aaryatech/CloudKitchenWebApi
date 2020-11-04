@@ -728,6 +728,23 @@ public class MasterAPIController2 {
 		return info;
 	}
 
+	@RequestMapping(value = { "/saveCustomerAddressForApp" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveCustomerAddressForApp(@RequestBody CustomerAddress custAddress) {
+
+		Info info = new Info();
+
+		CustomerAddress res = customerAddressRepo.save(custAddress);
+		if (res != null) {
+			info.setError(false);
+			info.setMessage(String.valueOf(res.getCustAddressId()));
+		} else {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		return info;
+	}
+
 	// Author-Anmol Shirke Created On-22-07-2020
 	// Desc- Returns all Customer List
 	@RequestMapping(value = { "/getAllCustomer" }, method = RequestMethod.GET)

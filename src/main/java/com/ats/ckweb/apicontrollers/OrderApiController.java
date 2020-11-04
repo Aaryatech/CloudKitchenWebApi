@@ -33,6 +33,7 @@ import com.ats.ckweb.model.GetOrderTrailList;
 import com.ats.ckweb.model.Info;
 import com.ats.ckweb.model.ItemDisplay;
 import com.ats.ckweb.model.NewSetting;
+import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OrderDetail;
 import com.ats.ckweb.model.OrderFeedback;
 import com.ats.ckweb.model.OrderGrievance;
@@ -62,6 +63,7 @@ import com.ats.ckweb.repository.GetOrderHeaderListRepository;
 import com.ats.ckweb.repository.GetOrderTrailListRepository;
 import com.ats.ckweb.repository.ItemDisplayRepo;
 import com.ats.ckweb.repository.NewSettingRepo;
+import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OrderDetailRepository;
 import com.ats.ckweb.repository.OrderFeedbackRepo;
 import com.ats.ckweb.repository.OrderGrievanceRepo;
@@ -135,6 +137,9 @@ public class OrderApiController {
 
 	@Autowired
 	WalletRepo walletRepo;
+
+	@Autowired
+	OfferDetailRepo offerDetailRepo;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -867,6 +872,7 @@ public class OrderApiController {
 		try {
 
 			List<CustomerDisplay> custList = customerDisplayRepo.getCustomerByMobileNo(mobileNo);
+			System.err.println("CUST LIST --------- " + custList);
 
 			if (custList != null) {
 				res.setCustomerDisplay(custList.get(0));
@@ -1063,9 +1069,9 @@ public class OrderApiController {
 										orderDetail.setQty(Float.parseFloat(df.format(qty)));
 
 										System.err.println("ITEM QTY = " + qty);
-										
-										orderDetail.setExFloat2(param.getSelectedQty());//App Selected Qty
-										orderDetail.setExInt1(param.getQty());//App Qty
+
+										orderDetail.setExFloat2(param.getSelectedQty());// App Selected Qty
+										orderDetail.setExInt1(param.getQty());// App Qty
 
 										orderDetail.setRate(item.getMrpDiscAmt());
 										orderDetail.setMrp(item.getMrpDiscAmt());
@@ -1137,8 +1143,7 @@ public class OrderApiController {
 						}
 
 					}
-					
-					
+
 					// Order Header---------------------------
 
 					String uuid = UUID.randomUUID().toString();
@@ -1177,10 +1182,25 @@ public class OrderApiController {
 					order.setUuidNo(uuid);
 					order.setExFloat1(placeOrderParam.getWallet());// Wallet Amt
 					order.setExVar1(placeOrderParam.getGst());
-					order.setExVar2(placeOrderParam.getCoupon());
+
+					String coupon = "";
+					try {
+						if (placeOrderParam.getOfferId() > 0) {
+							List<OfferDetail> offerDetailList = offerDetailRepo
+									.findAllByOfferId(placeOrderParam.getOfferId());
+
+							if (offerDetailList.size() > 0) {
+								coupon = offerDetailList.get(0).getCouponCode();
+							}
+						}
+					} catch (Exception e) {
+					}
+
+					// order.setExVar2(placeOrderParam.getCoupon());
+					order.setExVar2(coupon);
 					order.setOfferId(placeOrderParam.getOfferId());
 					order.setDeliveryKm(placeOrderParam.getKm());
-					
+
 					order.setExFloat2(placeOrderParam.getItemTotal());// App Item Total
 					order.setExFloat3(placeOrderParam.getDiscAmt());// App Disc Amt
 
@@ -1198,9 +1218,7 @@ public class OrderApiController {
 					order.setSgstAmt(finalsgstAmt);
 					order.setCgstAmt(finalCgstAmt);
 					order.setIgstAmt(finalIgstAmt);
-					
-					
-					
+
 					// Order Trail----------------
 					orderTrail = new OrderTrail();
 					orderTrail.setActionByUserId(placeOrderParam.getCustId());
@@ -1208,12 +1226,12 @@ public class OrderApiController {
 					orderTrail.setStatus(1);
 					orderTrail.setExInt1(2);
 					orderTrail.setExVar1("-");
-					
+
 					OrderSaveData data = new OrderSaveData();
 					data.setOrderHeader(order);
 					data.setOrderDetailList(orderDetailList);
 					data.setOrderTrail(orderTrail);
-					
+
 					info = saveCloudOrder(data);
 
 					if (info != null) {
@@ -1250,8 +1268,6 @@ public class OrderApiController {
 
 						}
 					}
-					
-					
 
 				} else {
 					info.setError(true);
