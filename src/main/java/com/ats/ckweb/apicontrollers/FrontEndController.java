@@ -63,6 +63,7 @@ import com.ats.ckweb.model.Tags;
 import com.ats.ckweb.model.app.AdditionalChargesForApp;
 import com.ats.ckweb.model.app.GetFreqOrderList;
 import com.ats.ckweb.model.app.GetOffersForApp;
+import com.ats.ckweb.model.app.GetSubCatItemList;
 import com.ats.ckweb.report.repo.WalletRepo;
 import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.AreaDataRepo;
@@ -827,10 +828,913 @@ public class FrontEndController {
 
 		res.setInfo(info);
 
-		publishData(res, frId);
+		// publishData(res, frId);
 
 		return res;
 	}
+
+	// ---------ALL DATA BY FR FOR APP-----------------------
+
+	@RequestMapping(value = { "/getAllDataByFrForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetAllDataByFr getAllDataByFrForApp(@RequestParam("frId") int frId,
+			@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
+			@RequestParam("compId") int compId) {
+
+		GetAllDataByFr res = new GetAllDataByFr();
+
+		Info info = new Info();
+
+		List<CategoryData> catData = null;
+		List<SubCategoryData> subCatData = null;
+		List<OfferHeader> offerData = null;
+		List<Tags> tagsData = null;
+		List<ItemDisplay> itemData = null;
+
+		try {
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
+					}
+				}
+
+				for (int i = 0; i < offerDisplayList.size(); i++) {
+
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
+
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
+
+						detailList.add(detail);
+
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
+
+			}
+
+			// -------CATEGORY LIST---------------
+			catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
+
+			if (catData == null) {
+				catData = new ArrayList<CategoryData>();
+			} else {
+
+				for (int i = 0; i < catData.size(); i++) {
+
+					List<Images> catImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == catData.get(i).getCatId() && image.getDocType() == 1) {
+								catImgList.add(image);
+							}
+						}
+					}
+					catData.get(i).setImageList(catImgList);
+				}
+			}
+			res.setCategoryData(catData);
+
+			// --------SUB CATEGORY LIST-------------
+			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
+
+			if (subCatData == null) {
+				subCatData = new ArrayList<SubCategoryData>();
+			} else {
+
+				for (int i = 0; i < subCatData.size(); i++) {
+
+					List<Images> subCatImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == subCatData.get(i).getSubCatId() && image.getDocType() == 2) {
+								subCatImgList.add(image);
+							}
+						}
+					}
+					subCatData.get(i).setImageList(subCatImgList);
+
+				}
+			}
+			res.setSubCategoryData(subCatData);
+
+			// ---------OFFER DATA--------------
+			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+
+			if (offerData == null) {
+				offerData = new ArrayList<OfferHeader>();
+			} else {
+
+				for (int i = 0; i < offerData.size(); i++) {
+
+					List<Images> offerImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+								offerImgList.add(image);
+							}
+						}
+					}
+					offerData.get(i).setImageList(offerImgList);
+
+				}
+			}
+			res.setOfferData(offerData);
+
+			// ------------Tag DATA--------------------
+			tagsData = tagRepo.getTagListByFr(frId, type);
+
+			if (tagsData == null) {
+				tagsData = new ArrayList<Tags>();
+			}
+			res.setTagsData(tagsData);
+
+			// ------------ITEM DATA----------------
+
+			Franchisee fr = franchiseeRepository.findByFrId(frId);
+
+			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
+			itemData = tempItemData;
+
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
+							}
+						}
+					}
+					itemData.get(i).setImageList(itemImgList);
+
+					// -----------RELATED PRODUCTS---------------
+					List<ItemDisplay> relItemData = new ArrayList<>();
+					List<Integer> relItemIdsList = new ArrayList<>();
+					try {
+						relItemIdsList = Stream.of(itemData.get(i).getRelItemIds().split(",")).map(Integer::parseInt)
+								.collect(Collectors.toList());
+					} catch (Exception e) {
+					}
+
+					for (int t = 0; t < itemData.size(); t++) {
+						if (relItemIdsList.contains(itemData.get(t).getItemId())) {
+
+							ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
+									itemData.get(t).getItemName(), itemData.get(t).getCatId(),
+									itemData.get(t).getCatName(), itemData.get(t).getSubCatId(),
+									itemData.get(t).getSubCatName(), itemData.get(t).getItemSortId(),
+									itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
+									itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
+									itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
+									itemData.get(t).getProductCategory(), itemData.get(t).getProductCategoryName(),
+									itemData.get(t).getPreperationTime(), itemData.get(t).getShowInOrder(),
+									itemData.get(t).getRating(), itemData.get(t).getTagIds(),
+									itemData.get(t).getTasteTypeIds(), itemData.get(t).getTagName(),
+									itemData.get(t).getTasteName(), itemData.get(t).getRateAmt(),
+									itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
+									itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
+									itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
+									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
+									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
+									itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
+									itemData.get(t).getIsAvailable());
+
+							// ----Related Item Images-----
+							List<Images> relItemImgList = new ArrayList<>();
+
+							if (imgList != null) {
+								for (Images image : imgList) {
+									if (image.getDocId() == relItem.getItemId() && image.getDocType() == 3) {
+										relItemImgList.add(image);
+									}
+								}
+							}
+							relItem.setImageList(relItemImgList);
+
+							relItemData.add(relItem);
+						}
+					}
+					itemData.get(i).setRelItemList(relItemData);
+
+					// ----------ITEM TAGS------------
+					List<Tags> tagList = new ArrayList<>();
+
+					if (allTagList != null) {
+
+						List<Integer> tagIdsList = new ArrayList<>();
+						try {
+							tagIdsList = Stream.of(itemData.get(i).getTagIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTagList.size(); t++) {
+							if (tagIdsList.contains(allTagList.get(t).getTagId())) {
+								tagList.add(allTagList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTagList(tagList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+					// ------------JSON STRING------------------------------
+					ObjectMapper Obj = new ObjectMapper();
+
+					try {
+						String jsonStr = Obj.writeValueAsString(itemData.get(i));
+						itemData.get(i).setJsonStr(jsonStr);
+					} catch (IOException e) {
+					}
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
+
+				}
+			}
+			res.setItemData(itemData);
+
+			try {
+
+				if (subCatData != null) {
+					if (subCatData.size() > 0) {
+						for (int i = 0; i < subCatData.size(); i++) {
+
+							List<ItemDisplay> subCatItemList = new ArrayList<>();
+
+							int count = 0;
+
+							if (itemData != null) {
+								if (itemData.size() > 0) {
+
+									for (int j = 0; j < itemData.size(); j++) {
+
+										if (subCatData.get(i).getSubCatId() == itemData.get(j).getSubCatId()) {
+											count = count + 1;
+											subCatItemList.add(itemData.get(j));
+											// System.err.println("ADDED ---"+" "+subCatData.get(i).getSubCatId()+"
+											// "+itemData.get(j));
+										}
+
+									}
+
+								}
+							}
+
+							subCatData.get(i).setProdCount(count);
+							subCatData.get(i).setItemList(subCatItemList);
+
+						}
+
+						res.setSubCategoryData(subCatData);
+					}
+				}
+
+			} catch (Exception e) {
+			}
+
+			info.setError(false);
+			info.setMessage("Success");
+
+			res.setInfo(info);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		res.setInfo(info);
+
+		// publishData(res, frId);
+
+		return res;
+	}
+
+	// ------------------------------------------------------
+
+	// ---GET ITEM LIST SUB CAT WISE FOR APP SORT---------------
+
+	@RequestMapping(value = { "/getSubCatItemListSortForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetAllDataByFr getSubCatItemListForApp(@RequestParam("frId") int frId,
+			@RequestParam("sort") int sort) {
+
+		int applicableFor = 2;
+		int compId = 1;
+		int type = 2;
+
+		GetAllDataByFr res = new GetAllDataByFr();
+		// GetSubCatItemList res = new GetSubCatItemList();
+
+		Info info = new Info();
+		List<SubCategoryData> subCatData = null;
+		List<ItemDisplay> itemData = new ArrayList<>();
+
+		try {
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			// --------SUB CATEGORY LIST-------------
+			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
+
+			if (subCatData == null) {
+				subCatData = new ArrayList<SubCategoryData>();
+			} else {
+
+				for (int i = 0; i < subCatData.size(); i++) {
+
+					List<Images> subCatImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == subCatData.get(i).getSubCatId() && image.getDocType() == 2) {
+								subCatImgList.add(image);
+							}
+						}
+					}
+					subCatData.get(i).setImageList(subCatImgList);
+
+				}
+			}
+			res.setSubCategoryData(subCatData);
+
+			// ------------ITEM DATA----------------
+
+			if (sort == 1) {// PRICE LOW TO HIGH
+				itemData = itemDisplayRepo.getAllItemByFrPriceLowToHigh(frId, type, applicableFor);
+			} else if (sort == 2) {// PRICE HIGH TO LOW
+				itemData = itemDisplayRepo.getAllItemByFrPriceHighToLow(frId, type, applicableFor);
+			} else if (sort == 3) {// RATINGS HIGH TO LOW
+				itemData = itemDisplayRepo.getAllItemByFrRatingHighToLow(frId, type, applicableFor);
+			} else {
+				itemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
+			}
+
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					// ----------ITEM IMAGES------------
+					List<Images> itemImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+								itemImgList.add(image);
+							}
+						}
+					}
+					itemData.get(i).setImageList(itemImgList);
+
+					// -----------RELATED PRODUCTS---------------
+					List<ItemDisplay> relItemData = new ArrayList<>();
+					List<Integer> relItemIdsList = new ArrayList<>();
+					try {
+						relItemIdsList = Stream.of(itemData.get(i).getRelItemIds().split(",")).map(Integer::parseInt)
+								.collect(Collectors.toList());
+					} catch (Exception e) {
+					}
+
+					for (int t = 0; t < itemData.size(); t++) {
+						if (relItemIdsList.contains(itemData.get(t).getItemId())) {
+
+							ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
+									itemData.get(t).getItemName(), itemData.get(t).getCatId(),
+									itemData.get(t).getCatName(), itemData.get(t).getSubCatId(),
+									itemData.get(t).getSubCatName(), itemData.get(t).getItemSortId(),
+									itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
+									itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
+									itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
+									itemData.get(t).getProductCategory(), itemData.get(t).getProductCategoryName(),
+									itemData.get(t).getPreperationTime(), itemData.get(t).getShowInOrder(),
+									itemData.get(t).getRating(), itemData.get(t).getTagIds(),
+									itemData.get(t).getTasteTypeIds(), itemData.get(t).getTagName(),
+									itemData.get(t).getTasteName(), itemData.get(t).getRateAmt(),
+									itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
+									itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
+									itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
+									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
+									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
+									itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
+									itemData.get(t).getIsAvailable());
+
+							// ----Related Item Images-----
+							List<Images> relItemImgList = new ArrayList<>();
+
+							if (imgList != null) {
+								for (Images image : imgList) {
+									if (image.getDocId() == relItem.getItemId() && image.getDocType() == 3) {
+										relItemImgList.add(image);
+									}
+								}
+							}
+							relItem.setImageList(relItemImgList);
+
+							relItemData.add(relItem);
+						}
+					}
+					itemData.get(i).setRelItemList(relItemData);
+
+					// ----------ITEM TAGS------------
+					List<Tags> tagList = new ArrayList<>();
+
+					if (allTagList != null) {
+
+						List<Integer> tagIdsList = new ArrayList<>();
+						try {
+							tagIdsList = Stream.of(itemData.get(i).getTagIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTagList.size(); t++) {
+							if (tagIdsList.contains(allTagList.get(t).getTagId())) {
+								tagList.add(allTagList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTagList(tagList);
+
+					// ----------ITEM TASTES------------
+					List<Ingrediant> taseList = new ArrayList<>();
+
+					if (allTasteList != null) {
+
+						List<Integer> tasteIdsList = new ArrayList<>();
+						try {
+							tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < allTasteList.size(); t++) {
+							if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+								taseList.add(allTasteList.get(t));
+							}
+						}
+
+					}
+					itemData.get(i).setTasteList(taseList);
+
+					// ------------JSON STRING------------------------------
+					ObjectMapper Obj = new ObjectMapper();
+
+					try {
+						String jsonStr = Obj.writeValueAsString(itemData.get(i));
+						itemData.get(i).setJsonStr(jsonStr);
+					} catch (IOException e) {
+					}
+
+					// --------------------OFFER LIST--------------------------
+
+					List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+					if (offerDisplayList != null) {
+						List<Integer> offerIdsList = new ArrayList<>();
+						try {
+							offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						for (int t = 0; t < offerDisplayList.size(); t++) {
+							if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+								itemOfferList.add(offerDisplayList.get(t));
+							}
+						}
+					}
+					itemData.get(i).setOfferList(itemOfferList);
+
+				}
+			}
+			res.setItemData(itemData);
+
+			try {
+
+				if (subCatData != null) {
+					if (subCatData.size() > 0) {
+						for (int i = 0; i < subCatData.size(); i++) {
+
+							List<ItemDisplay> subCatItemList = new ArrayList<>();
+
+							int count = 0;
+
+							if (itemData != null) {
+								if (itemData.size() > 0) {
+
+									for (int j = 0; j < itemData.size(); j++) {
+
+										if (subCatData.get(i).getSubCatId() == itemData.get(j).getSubCatId()) {
+											count = count + 1;
+											subCatItemList.add(itemData.get(j));
+										}
+
+									}
+
+								}
+							}
+
+							subCatData.get(i).setProdCount(count);
+							subCatData.get(i).setItemList(subCatItemList);
+
+						}
+
+						res.setSubCategoryData(subCatData);
+					}
+				}
+
+			} catch (Exception e) {
+			}
+
+			info.setError(false);
+			info.setMessage("Success");
+
+			res.setInfo(info);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
+	// ------------------------------------------------------------------------------------------------
+
+	// ---GET ITEM LIST SUB CAT WISE FOR APP BY RATINGS----------
+
+	@RequestMapping(value = { "/getSubCatItemListByRatingsForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetAllDataByFr getSubCatItemListByRatingsForApp(@RequestParam("frId") int frId,
+			@RequestParam("ratings") List<String> ratings) {
+
+		int applicableFor = 2;
+		int compId = 1;
+		int type = 2;
+
+		GetAllDataByFr res = new GetAllDataByFr();
+		// GetSubCatItemList res = new GetSubCatItemList();
+
+		Info info = new Info();
+		List<SubCategoryData> subCatData = null;
+		List<ItemDisplay> itemData = null;
+
+		try {
+			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
+			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			// --------SUB CATEGORY LIST-------------
+			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
+
+			if (subCatData == null) {
+				subCatData = new ArrayList<SubCategoryData>();
+			} else {
+
+				for (int i = 0; i < subCatData.size(); i++) {
+
+					List<Images> subCatImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == subCatData.get(i).getSubCatId() && image.getDocType() == 2) {
+								subCatImgList.add(image);
+							}
+						}
+					}
+					subCatData.get(i).setImageList(subCatImgList);
+
+				}
+			}
+			res.setSubCategoryData(subCatData);
+
+			// ------------ITEM DATA----------------
+
+			itemData = itemDisplayRepo.getAllItemByFrByRating(frId, type, applicableFor, ratings);
+
+			if (itemData == null) {
+				itemData = new ArrayList<ItemDisplay>();
+			} else {
+
+				for (int i = 0; i < itemData.size(); i++) {
+
+					if (itemData.get(i) != null) {
+
+						// System.err.println("ITEM --------------- " + itemData.get(i));
+
+						// ----------ITEM IMAGES------------
+						List<Images> itemImgList = new ArrayList<>();
+
+						try {
+							if (imgList != null) {
+								for (Images image : imgList) {
+									if (image.getDocId() == itemData.get(i).getItemId() && image.getDocType() == 3) {
+										itemImgList.add(image);
+									}
+								}
+							}
+
+							itemData.get(i).setImageList(itemImgList);
+						} catch (Exception e) {
+						}
+
+						// -----------RELATED PRODUCTS---------------
+						List<ItemDisplay> relItemData = new ArrayList<>();
+						List<Integer> relItemIdsList = new ArrayList<>();
+						try {
+							relItemIdsList = Stream.of(itemData.get(i).getRelItemIds().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+						} catch (Exception e) {
+						}
+
+						try {
+
+							for (int t = 0; t < itemData.size(); t++) {
+								// System.err.println("ITEMS ---------------- " + itemData.get(t).getItemId());
+								if (relItemIdsList.contains(itemData.get(t).getItemId())) {
+
+									ItemDisplay relItem = new ItemDisplay(itemData.get(t).getItemId(),
+											itemData.get(t).getItemName(), itemData.get(t).getCatId(),
+											itemData.get(t).getCatName(), itemData.get(t).getSubCatId(),
+											itemData.get(t).getSubCatName(), itemData.get(t).getItemSortId(),
+											itemData.get(t).getIsDecimal(), itemData.get(t).getItemUom(),
+											itemData.get(t).getUomId(), itemData.get(t).getItemDesc(),
+											itemData.get(t).getProductType(), itemData.get(t).getProductStatus(),
+											itemData.get(t).getProductCategory(),
+											itemData.get(t).getProductCategoryName(),
+											itemData.get(t).getPreperationTime(), itemData.get(t).getShowInOrder(),
+											itemData.get(t).getRating(), itemData.get(t).getTagIds(),
+											itemData.get(t).getTasteTypeIds(), itemData.get(t).getTagName(),
+											itemData.get(t).getTasteName(), itemData.get(t).getRateAmt(),
+											itemData.get(t).getMrpAmt(), itemData.get(t).getSpRateAmt(),
+											itemData.get(t).getCgstPer(), itemData.get(t).getSgstPer(),
+											itemData.get(t).getIgstPer(), itemData.get(t).getHsncd(),
+											itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
+											itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
+											itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
+											itemData.get(t).getIsAvailable());
+
+									// ----Related Item Images-----
+									List<Images> relItemImgList = new ArrayList<>();
+
+									if (imgList != null) {
+										for (Images image : imgList) {
+											if (image.getDocId() == relItem.getItemId() && image.getDocType() == 3) {
+												relItemImgList.add(image);
+											}
+										}
+									}
+									relItem.setImageList(relItemImgList);
+
+									relItemData.add(relItem);
+								}
+							}
+
+						} catch (Exception e) {
+						}
+
+						itemData.get(i).setRelItemList(relItemData);
+
+						// ----------ITEM TAGS------------
+						List<Tags> tagList = new ArrayList<>();
+
+						if (allTagList != null) {
+
+							List<Integer> tagIdsList = new ArrayList<>();
+							try {
+								tagIdsList = Stream.of(itemData.get(i).getTagIds().split(",")).map(Integer::parseInt)
+										.collect(Collectors.toList());
+							} catch (Exception e) {
+							}
+
+							for (int t = 0; t < allTagList.size(); t++) {
+								if (tagIdsList.contains(allTagList.get(t).getTagId())) {
+									tagList.add(allTagList.get(t));
+								}
+							}
+
+						}
+						itemData.get(i).setTagList(tagList);
+
+						// ----------ITEM TASTES------------
+						List<Ingrediant> taseList = new ArrayList<>();
+
+						if (allTasteList != null) {
+
+							List<Integer> tasteIdsList = new ArrayList<>();
+							try {
+								tasteIdsList = Stream.of(itemData.get(i).getTasteTypeIds().split(","))
+										.map(Integer::parseInt).collect(Collectors.toList());
+							} catch (Exception e) {
+							}
+
+							for (int t = 0; t < allTasteList.size(); t++) {
+								if (tasteIdsList.contains(allTasteList.get(t).getIngrediantId())) {
+									taseList.add(allTasteList.get(t));
+								}
+							}
+
+						}
+						itemData.get(i).setTasteList(taseList);
+
+						// ------------JSON STRING------------------------------
+						ObjectMapper Obj = new ObjectMapper();
+
+						try {
+							String jsonStr = Obj.writeValueAsString(itemData.get(i));
+							itemData.get(i).setJsonStr(jsonStr);
+						} catch (IOException e) {
+						} catch (Exception e) {
+						}
+
+						// --------------------OFFER LIST--------------------------
+
+						List<ItemWiseOfferHeaderDisplay> itemOfferList = new ArrayList<>();
+
+						if (offerDisplayList != null) {
+							List<Integer> offerIdsList = new ArrayList<>();
+							try {
+								offerIdsList = Stream.of(itemData.get(i).getOfferIds().split(","))
+										.map(Integer::parseInt).collect(Collectors.toList());
+							} catch (Exception e) {
+							}
+
+							for (int t = 0; t < offerDisplayList.size(); t++) {
+								if (offerIdsList.contains(offerDisplayList.get(t).getOfferId())) {
+									itemOfferList.add(offerDisplayList.get(t));
+								}
+							}
+						}
+						itemData.get(i).setOfferList(itemOfferList);
+
+					}
+
+				}
+			}
+
+			List<ItemDisplay> tempItemData = new ArrayList<>();
+
+			try {
+				for (ItemDisplay item : itemData) {
+					if (item != null) {
+						tempItemData.add(item);
+					}
+				}
+			} catch (Exception e) {
+			}
+
+			// res.setItemData(itemData);
+			res.setItemData(tempItemData);
+
+			try {
+
+				if (subCatData != null) {
+					if (subCatData.size() > 0) {
+						for (int i = 0; i < subCatData.size(); i++) {
+
+							List<ItemDisplay> subCatItemList = new ArrayList<>();
+
+							int count = 0;
+
+							if (itemData != null) {
+								if (itemData.size() > 0) {
+
+									for (int j = 0; j < itemData.size(); j++) {
+
+										if (itemData.get(j) != null) {
+											if (subCatData.get(i).getSubCatId() == itemData.get(j).getSubCatId()) {
+												count = count + 1;
+												subCatItemList.add(itemData.get(j));
+											}
+										}
+
+									}
+
+								}
+							}
+
+							subCatData.get(i).setProdCount(count);
+							subCatData.get(i).setItemList(subCatItemList);
+
+						}
+
+						res.setSubCategoryData(subCatData);
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			info.setError(false);
+			info.setMessage("Success");
+
+			res.setInfo(info);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
+	// ------------------------------------------------------------------------------------------------
 
 	@RequestMapping(value = { "/getAllItemListByFr" }, method = RequestMethod.POST)
 	public @ResponseBody List<ItemDisplay> getAllItemListByFr(@RequestParam("frId") int frId,
@@ -2335,7 +3239,7 @@ public class FrontEndController {
 
 			List<OfferHeader> offerHeaderList = new ArrayList<>();
 
-			//List<OfferHeader> couponWiseList = new ArrayList<>();
+			// List<OfferHeader> couponWiseList = new ArrayList<>();
 			List<OfferHeader> custWiseList = new ArrayList<>();
 
 			System.err.println("frId - " + frId + "    Cust - " + custId);

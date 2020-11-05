@@ -20,6 +20,9 @@ public class SubCategoryData {
 	@Transient
 	List<Images> imageList;
 
+	@Transient
+	List<ItemDisplay> itemList;
+
 	public int getSubCatId() {
 		return subCatId;
 	}
@@ -59,8 +62,6 @@ public class SubCategoryData {
 	public void setCatName(String catName) {
 		this.catName = catName;
 	}
-	
-	
 
 	public int getProdCount() {
 		return prodCount;
@@ -69,13 +70,19 @@ public class SubCategoryData {
 	public void setProdCount(int prodCount) {
 		this.prodCount = prodCount;
 	}
-	
-	
+
+	public List<ItemDisplay> getItemList() {
+		return itemList;
+	}
+
+	public void setItemList(List<ItemDisplay> itemList) {
+		this.itemList = itemList;
+	}
 
 	@Override
 	public String toString() {
 		return "SubCategoryData [subCatId=" + subCatId + ", catId=" + catId + ", catName=" + catName + ", subCatName="
-				+ subCatName + ", prodCount=" + prodCount + ", imageList=" + imageList + "]";
+				+ subCatName + ", prodCount=" + prodCount + ", imageList=" + imageList + ", itemList=" + itemList + "]";
 	}
 
 }
