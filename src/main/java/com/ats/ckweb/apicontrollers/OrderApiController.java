@@ -11,13 +11,18 @@ import java.util.UUID;
 import javax.persistence.Column;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import com.ats.ckweb.commons.HeaderRequestInterceptor;
 import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Customer;
@@ -46,6 +51,8 @@ import com.ats.ckweb.model.Setting;
 import com.ats.ckweb.model.Wallet;
 import com.ats.ckweb.model.app.GetOrderHistory;
 import com.ats.ckweb.model.app.GrievanceList;
+import com.ats.ckweb.model.app.PaymentGatewayParam;
+import com.ats.ckweb.model.app.PlaceOrderAppResponse;
 import com.ats.ckweb.model.app.PlaceOrderDetailParam;
 import com.ats.ckweb.model.app.PlaceOrderParam;
 import com.ats.ckweb.model.app.VerifyCustomer;
@@ -140,6 +147,15 @@ public class OrderApiController {
 
 	@Autowired
 	OfferDetailRepo offerDetailRepo;
+
+	@Value("${payment_url}")
+	private String paymentUrl;
+
+	@Value("${payment_client_id}")
+	private String paymentClientId;
+
+	@Value("${payment_secret_id}")
+	private String paymentSecretId;
 
 	@RequestMapping(value = { "/saveCloudOrder" }, method = RequestMethod.POST)
 	public @ResponseBody Info saveCloudOrder(@RequestBody OrderSaveData orderSaveData) {
@@ -1005,7 +1021,10 @@ public class OrderApiController {
 	}
 
 	@RequestMapping(value = { "/placeOrderForApp" }, method = RequestMethod.POST)
-	public @ResponseBody Info placeOrderForApp(@RequestBody PlaceOrderParam placeOrderParam) {
+	public @ResponseBody PlaceOrderAppResponse placeOrderForApp(@RequestBody PlaceOrderParam placeOrderParam) {
+
+		PlaceOrderAppResponse res = new PlaceOrderAppResponse();
+
 		Info info = new Info();
 
 		OrderHeader order = new OrderHeader();
@@ -1048,8 +1067,6 @@ public class OrderApiController {
 						}
 					}
 
-					System.err.println("ITEM GRAND TOTAL = " + itemGrandTotal);
-
 					for (int i = 0; i < placeOrderParam.getOrderDetailParamList().size(); i++) {
 
 						PlaceOrderDetailParam param = placeOrderParam.getOrderDetailParamList().get(i);
@@ -1067,8 +1084,6 @@ public class OrderApiController {
 
 										float qty = param.getSelectedQty() * param.getQty();
 										orderDetail.setQty(Float.parseFloat(df.format(qty)));
-
-										System.err.println("ITEM QTY = " + qty);
 
 										orderDetail.setExFloat2(param.getSelectedQty());// App Selected Qty
 										orderDetail.setExInt1(param.getQty());// App Qty
@@ -1092,13 +1107,9 @@ public class OrderApiController {
 										float chPer = 0, chAmt = 0;
 										if (placeOrderParam.getDeliveryCharges() > 0) {
 											chPer = ((item.getMrpDiscAmt() * qty * 100) / itemGrandTotal);
-											System.err.println("DEL CH TOT = " + (item.getMrpDiscAmt() * qty * 100));
 											chAmt = ((chPer * placeOrderParam.getDeliveryCharges()) / 100);
 											totalAddChargesAmt = totalAddChargesAmt + chAmt;
 										}
-
-										System.err.println("DEL CH PER = " + chPer);
-										System.err.println("DEL CH AMT = " + chAmt);
 
 										float detailTotal = (item.getMrpDiscAmt() * qty) - detailDiscAmt + chAmt;
 
@@ -1233,9 +1244,52 @@ public class OrderApiController {
 					data.setOrderTrail(orderTrail);
 
 					info = saveCloudOrder(data);
+					System.err.println("SAVE CLOUD ORDER------------ " + info);
 
 					if (info != null) {
 						if (info.getError() == false) {
+
+							int orderId = 0;
+							try {
+								orderId = Integer.parseInt(info.getMessage());
+							} catch (Exception e) {
+							}
+
+							res.setOrderId(orderId);
+							res.setUuidNo(uuid);
+							res.setAmt(Float.parseFloat(df.format(finaTotalAmt)));
+							res.setPayMode(placeOrderParam.getPayMode());
+							res.setPaidStatus(0);
+							res.setOrderStatus(0);
+
+							if (placeOrderParam.getPayMode() == 2) {
+								try {
+
+									PaymentGatewayParam param = new PaymentGatewayParam();
+									param.setOrderId(uuid);
+									param.setOrderAmount("" + Float.parseFloat(df.format(finaTotalAmt)));
+									param.setOrderCurrency("INR");
+
+									List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+									interceptors.add(
+											new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
+									interceptors.add(new HeaderRequestInterceptor("x-client-id", paymentClientId));
+									interceptors.add(new HeaderRequestInterceptor("x-client-secret", paymentSecretId));
+
+									RestTemplate restTemplate = new RestTemplate();
+									restTemplate.setInterceptors(interceptors);
+
+									// paymentUrl
+
+									Object obj = restTemplate.postForObject(paymentUrl, param, Object.class);
+
+									res.setPaymentResponse(obj);
+									//System.err.println("PAYMENT RESPONSE------------ " + obj.toString());
+
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
 
 							try {
 								if (placeOrderParam.getWallet() > 0) {
@@ -1279,9 +1333,12 @@ public class OrderApiController {
 		} catch (Exception e) {
 			info.setError(true);
 			info.setMessage("failed");
+			e.printStackTrace();
 		}
 
-		return info;
+		res.setInfo(info);
+
+		return res;
 	}
 
 	public static String convertToYMD(String date) {

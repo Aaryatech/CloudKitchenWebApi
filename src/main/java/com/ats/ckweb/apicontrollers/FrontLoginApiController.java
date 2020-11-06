@@ -1,6 +1,7 @@
 package com.ats.ckweb.apicontrollers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,10 +22,16 @@ public class FrontLoginApiController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Value("${email_id}")
+	private String email_id;
+	
+	@Value("${password}")
+	private String email_password;
 
 	
-	String senderEmail = "atsinfosoft@gmail.com";
-	String senderPassword = "atsinfosoft@123";
+	//String senderEmail = "atsinfosoft@gmail.com";
+	//String senderPassword = "atsinfosoft@123";
 	static String mailsubject = "";
 	String otp1 = null;
 	
@@ -55,7 +62,7 @@ public class FrontLoginApiController {
 			
 			 mailsubject = " OTP  Verification ";
 			 String text = "\n OTP for change your Password: ";
-			Info emailRes = EmailUtility.sendEmail(senderEmail, senderPassword,emailId, mailsubject,
+			Info emailRes = EmailUtility.sendEmail(email_id, email_password,emailId, mailsubject,
 					text, otp1);
 
 		

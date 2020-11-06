@@ -23,12 +23,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ats.ckweb.commons.EmailUtility;
+import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaData;
@@ -53,6 +56,7 @@ import com.ats.ckweb.model.ItemWiseOfferData;
 import com.ats.ckweb.model.ItemWiseOfferDetailDisplay;
 import com.ats.ckweb.model.ItemWiseOfferHeaderDisplay;
 import com.ats.ckweb.model.NewSetting;
+import com.ats.ckweb.model.NotificationApp;
 import com.ats.ckweb.model.OfferDetail;
 import com.ats.ckweb.model.OfferHeader;
 import com.ats.ckweb.model.OrderCheckoutData;
@@ -64,6 +68,8 @@ import com.ats.ckweb.model.app.AdditionalChargesForApp;
 import com.ats.ckweb.model.app.GetFreqOrderList;
 import com.ats.ckweb.model.app.GetOffersForApp;
 import com.ats.ckweb.model.app.GetSubCatItemList;
+import com.ats.ckweb.model.app.NotificationResponse;
+import com.ats.ckweb.model.app.SettingsData;
 import com.ats.ckweb.report.repo.WalletRepo;
 import com.ats.ckweb.repository.AgentRepo;
 import com.ats.ckweb.repository.AreaDataRepo;
@@ -80,6 +86,7 @@ import com.ats.ckweb.repository.IngrediantRepo;
 import com.ats.ckweb.repository.ItemDisplayRepo;
 import com.ats.ckweb.repository.ItemWiseOfferDataRepo;
 import com.ats.ckweb.repository.NewSettingRepo;
+import com.ats.ckweb.repository.NotificationAppRepo;
 import com.ats.ckweb.repository.OfferDetailRepo;
 import com.ats.ckweb.repository.OfferHeaderRepo;
 import com.ats.ckweb.repository.PostFrItemStockHeaderRepo;
@@ -161,6 +168,15 @@ public class FrontEndController {
 
 	@Autowired
 	OfferDetailRepo offerDetailRepo;
+
+	@Autowired
+	NotificationAppRepo notificationAppRepo;
+
+	@Value("${email_id}")
+	private String email_id;
+
+	@Value("${password}")
+	private String email_password;
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -3294,6 +3310,85 @@ public class FrontEndController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
+	// GET SETTINGS VALUES------------------
+
+	@RequestMapping(value = { "/getSettingsDataForApp" }, method = RequestMethod.POST)
+	public @ResponseBody SettingsData getSettingsDataForApp(@RequestParam("key") String key) {
+
+		SettingsData res = new SettingsData();
+		Info info = new Info();
+		NewSetting settings = new NewSetting();
+		try {
+
+			settings = newSettingRepo.findBySettingKeyAndDelStatus(key, 0);
+			res.setNewSetting(settings);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		res.setInfo(info);
+
+		return res;
+	}
+
+	// CONTACT_US
+
+	@RequestMapping(value = { "/saveContactUs" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveContactUs(@RequestParam("name") String name, @RequestParam("number") String number,
+			@RequestParam("email") String email, @RequestParam("msg") String msg) {
+
+		Info info = new Info();
+		try {
+
+			String subject = "Contact Us";
+			String text = "You have received a new message from the contact us form on your app.<br><br>\r\n"
+					+ "<b>Name : </b>&nbsp;" + name + "<br>\r\n" + "<b>Email Address : </b>&nbsp;" + email + "<br>\r\n"
+					+ "<b>Phone Number : </b>&nbsp;" + number + "<br>\r\n" + "<b>Message : </b>&nbsp;" + msg + "<br>";
+
+			info = EmailUtility.sendEmailContactUs(email_id, email_password, "madhvidairy@gmail.com", subject, text);
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		return info;
+	}
+
+	// ---NOTIFICATION LIST
+
+	@RequestMapping(value = { "/getAllNotificationsForApp" }, method = RequestMethod.GET)
+	public @ResponseBody NotificationResponse getAllNotificationsForApp() {
+
+		NotificationResponse res = new NotificationResponse();
+		Info info = new Info();
+		try {
+
+			List<NotificationApp> notifyList = notificationAppRepo.findBydelStatus(0);
+			if (notifyList == null) {
+				notifyList = new ArrayList<>();
+			}
+
+			res.setNotification(notifyList);
+
+			info.setError(false);
+			info.setMessage("success");
+
+		} catch (Exception e) {
 			info.setError(true);
 			info.setMessage("failed");
 		}

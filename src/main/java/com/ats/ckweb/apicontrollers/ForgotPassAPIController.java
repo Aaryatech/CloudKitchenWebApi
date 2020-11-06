@@ -3,6 +3,7 @@ package com.ats.ckweb.apicontrollers;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +22,14 @@ public class ForgotPassAPIController {
 	
 	@Autowired TagsServices tagService;
 	
-	public static String senderEmail ="madhvierp@gmail.com";
-	public static String senderPassword ="madhvi@#2020";
+	@Value("${email_id}")
+	private String email_id;
+	
+	@Value("${password}")
+	private String email_password;
+	
+	//public static String senderEmail ="madhvierp@gmail.com";
+	//public static String senderPassword ="madhvi@#2020";
 	static String mailsubject = "";
 	String otp1 = null;
 	
@@ -52,7 +59,7 @@ public class ForgotPassAPIController {
 					
 					 mailsubject = " OTP  Verification ";
 					 String text = "\n OTP for change your Password: ";
-					Info emailRes = EmailUtility.sendEmail(senderEmail, senderPassword,emailId, mailsubject,
+					Info emailRes = EmailUtility.sendEmail(email_id, email_password,emailId, mailsubject,
 							text, otp1);
 
 				
@@ -133,7 +140,7 @@ public class ForgotPassAPIController {
 				String emailId = usr.getUserEmail();
 				String password = "\n Username : " + usr.getUserName() + " \n Password : " + usr.getPassword();
 
-				Info emailRes = EmailUtility.sendEmail(senderEmail, senderPassword, emailId, mailsubject, text, password);
+				Info emailRes = EmailUtility.sendEmail(email_id, email_password, emailId, mailsubject, text, password);
 			}
 			res.setError(false);
 			res.setMessage("success");
