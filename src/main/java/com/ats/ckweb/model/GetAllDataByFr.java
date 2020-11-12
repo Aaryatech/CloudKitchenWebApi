@@ -10,6 +10,7 @@ public class GetAllDataByFr {
 	private List<OfferHeader> offerData;
 	private List<Tags> tagsData;
 	private List<ItemDisplay> itemData;
+	private FranchiseData franchise;
 
 	public Info getInfo() {
 		return info;
@@ -57,6 +58,14 @@ public class GetAllDataByFr {
 
 	public void setItemData(List<ItemDisplay> itemData) {
 		this.itemData = itemData;
+	}
+
+	public FranchiseData getFranchise() {
+		return franchise;
+	}
+
+	public void setFranchise(FranchiseData franchise) {
+		this.franchise = franchise;
 	}
 
 	@Override

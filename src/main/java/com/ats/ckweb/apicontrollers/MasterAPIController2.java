@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.ckweb.commons.Firebase;
 import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Category;
 import com.ats.ckweb.model.Customer;
@@ -656,8 +657,10 @@ public class MasterAPIController2 {
 			}
 
 			try {
-				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
-				SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
+				if (customer.getCustId() == 0) {
+					NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
+					SMSUtility.sendSMS(res.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
+				}
 			} catch (Exception e) {
 			}
 
@@ -696,8 +699,10 @@ public class MasterAPIController2 {
 			}
 
 			try {
-				NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
-				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
+				if (customer.getCustId() == 0) {
+					NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
+				}
 			} catch (Exception e) {
 			}
 
@@ -940,6 +945,11 @@ public class MasterAPIController2 {
 					Customer cust = customerRepo.getCustomerByOrderId(orderId);
 
 					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MDVDRY");
+
+					try {
+						Firebase.sendPushNotification(cust.getExVar3(), "Order Processed", val.getSettingValue1(), 1);
+					} catch (Exception e) {
+					}
 
 				} catch (Exception e) {
 				}

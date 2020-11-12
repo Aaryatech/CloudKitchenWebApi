@@ -23,6 +23,11 @@ public interface OrderHeaderRepository extends JpaRepository<OrderHeader, Intege
 	@Modifying
 	@Query("update OrderHeader set order_status=:status, paid_status=:paid WHERE uuid_no=:orderId")
 	int updateStatusAndIsPaid(int status, int paid, String orderId);
+	
+	@Transactional
+	@Modifying
+	@Query("update OrderHeader set order_status=:status, paid_status=:paid, payment_method=:payMode WHERE uuid_no=:orderId")
+	int updateStatusAndIsPaidAndPayMode(int status, int paid, String orderId, int payMode);
 
 	OrderHeader findByUuidNo(String orderId);
 	

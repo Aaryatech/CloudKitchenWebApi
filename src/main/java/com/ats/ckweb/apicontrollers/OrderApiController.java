@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.ats.ckweb.commons.Firebase;
 import com.ats.ckweb.commons.HeaderRequestInterceptor;
 import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Agent;
@@ -241,6 +242,12 @@ public class OrderApiController {
 							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent, "MDVDRY");
 						}
 					}
+					
+					
+					try {
+						Firebase.sendPushNotification(cust.getExVar3(),"Order Placed",msg,1);
+					}catch(Exception e) {}
+					
 				}
 
 				System.err.println("MSG - " + msg);
@@ -314,6 +321,10 @@ public class OrderApiController {
 							SMSUtility.sendSMS(agent.getMobileNo(), msgAgent, "MDVDRY");
 						}
 					}
+					
+					try {
+						Firebase.sendPushNotification(cust.getExVar3(),"Order Placed",msg,1);
+					}catch(Exception e) {}
 
 				}
 
@@ -434,6 +445,8 @@ public class OrderApiController {
 					String msg = "";
 
 					NewSetting val = new NewSetting();
+					
+					String title="Cloud Kitchen";
 
 					System.err.println("STATUS ---------------------======> " + status);
 
@@ -442,9 +455,14 @@ public class OrderApiController {
 
 						msg = val.getSettingValue1();
 						msg = msg.replace("$$$", order.getOrderNo());
+						
+						title="Order Accepted by Franchise";
 
 					} else if (status == 3) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_process_order", 0);
+						
+						title="Order Processed by Franchise";
+						
 					} else if (status == 4) {
 
 						try {
@@ -454,6 +472,8 @@ public class OrderApiController {
 							msg = msg.replace("CUSTNAME", cust.getCustName());
 							msg = msg.replace("###", order.getOrderNo());
 
+							title="Order is ready to deliver";
+							
 							String agentNm = "", agentMob = "";
 							if (order.getIsAgent() == 1) {
 
@@ -482,12 +502,16 @@ public class OrderApiController {
 
 					} else if (status == 5) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_delivered_order", 0);
+						
+						title="Order Delivered";
 
 						msg = val.getSettingValue1();
 						msg = msg.replace("###", order.getOrderNo());
 
 					} else if (status == 8) {
 						val = newSettingRepo.findBySettingKeyAndDelStatus("msg_cancelled_order", 0);
+						
+						title="Order Cancelled";
 
 						OrderTrail trail = orderTrailRepository.findByOrderIdAndStatus(order.getOrderId(), 8);
 
@@ -499,6 +523,10 @@ public class OrderApiController {
 					}
 
 					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
+					
+					try {
+						Firebase.sendPushNotification(cust.getExVar3(),title,msg,1);
+					}catch(Exception e) {}
 
 					if (status == 4) {
 
@@ -582,6 +610,50 @@ public class OrderApiController {
 				orderTrail.setExInt1(2);
 				OrderTrail orderRes = orderTrailRepository.save(orderTrail);
 			}
+
+			info.setError(false);
+			info.setMessage("Success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+	
+	
+	@RequestMapping(value = { "/updatePaymentSuccessfulForApp" }, method = RequestMethod.POST)
+	public @ResponseBody Info updatePaymentSuccessful(@RequestParam("status") int status,
+			@RequestParam("paid") int paid, @RequestParam("orderId") String orderId,
+			@RequestParam("txStatus") String txStatus,@RequestParam("payMode") int payMode) {
+
+		Info info = new Info();
+
+		try {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date dt = new Date();
+
+			int update = orderHeaderRepository.updateStatusAndIsPaidAndPayMode(status, paid, orderId,payMode);
+			System.err.println("RESULT - " + update);
+
+			//if (status == 8) {
+
+				OrderHeader orderHeader = orderHeaderRepository.findByUuidNo(orderId);
+				OrderTrail orderTrail = new OrderTrail();
+				orderTrail.setOrderId(orderHeader.getOrderId());
+				orderTrail.setActionByUserId(orderHeader.getCustId());
+				orderTrail.setActionDateTime(sf.format(dt));
+				orderTrail.setStatus(status);
+
+				String txt="";
+				if(paid==1) {
+					txt="Payment : " + txStatus;
+				}
+				orderTrail.setExVar1(txt);
+				orderTrail.setExInt1(2);
+				OrderTrail orderRes = orderTrailRepository.save(orderTrail);
+			//}
 
 			info.setError(false);
 			info.setMessage("Success");
@@ -952,6 +1024,8 @@ public class OrderApiController {
 				Customer cust = customerRepo.getCustomerByOrderId(orderGrievance.getOrderId());
 
 				SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MDVDRY");
+				
+				
 
 			} catch (Exception e) {
 			}

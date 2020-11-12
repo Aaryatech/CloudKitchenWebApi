@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ats.ckweb.commons.EmailUtility;
+import com.ats.ckweb.commons.Firebase;
 import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Area;
@@ -39,6 +40,7 @@ import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
 import com.ats.ckweb.model.CkDeliveryCharges;
 import com.ats.ckweb.model.CustWalletTotal;
+import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.FrCharges;
 import com.ats.ckweb.model.FrItemStock;
 import com.ats.ckweb.model.FranchiseData;
@@ -77,6 +79,7 @@ import com.ats.ckweb.repository.CategoryDataRepo;
 import com.ats.ckweb.repository.CityDataRepo;
 import com.ats.ckweb.repository.CkDeliveryChargesRepo;
 import com.ats.ckweb.repository.CustWalletTotalRepo;
+import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FrChargesRepo;
 import com.ats.ckweb.repository.FrItemStockRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
@@ -171,6 +174,9 @@ public class FrontEndController {
 
 	@Autowired
 	NotificationAppRepo notificationAppRepo;
+
+	@Autowired
+	CustomerRepo customerRepo;
 
 	@Value("${email_id}")
 	private String email_id;
@@ -865,11 +871,14 @@ public class FrontEndController {
 		List<OfferHeader> offerData = null;
 		List<Tags> tagsData = null;
 		List<ItemDisplay> itemData = null;
+		FranchiseData franchise;
 
 		try {
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			franchise = franchiseDataRepo.getFranchiseById(frId);
+			res.setFranchise(franchise);
 
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
 
@@ -1190,6 +1199,19 @@ public class FrontEndController {
 					}
 				}
 
+				List<SubCategoryData> newSubCatData = new ArrayList<>();
+
+				if (subCatData != null) {
+					if (subCatData.size() > 0) {
+						for (int i = 0; i < subCatData.size(); i++) {
+							if (subCatData.get(i).getProdCount() > 0) {
+								newSubCatData.add(subCatData.get(i));
+							}
+						}
+					}
+				}
+				res.setSubCategoryData(newSubCatData);
+
 			} catch (Exception e) {
 			}
 
@@ -1217,7 +1239,7 @@ public class FrontEndController {
 
 	@RequestMapping(value = { "/getSubCatItemListSortForApp" }, method = RequestMethod.POST)
 	public @ResponseBody GetAllDataByFr getSubCatItemListForApp(@RequestParam("frId") int frId,
-			@RequestParam("sort") int sort) {
+			@RequestParam("sort") int sort,@RequestParam("custId") int custId) {
 
 		int applicableFor = 2;
 		int compId = 1;
@@ -1227,14 +1249,146 @@ public class FrontEndController {
 		// GetSubCatItemList res = new GetSubCatItemList();
 
 		Info info = new Info();
+//		List<SubCategoryData> subCatData = null;
+//		List<ItemDisplay> itemData = new ArrayList<>();
+//		FranchiseData franchise;
+
+		List<CategoryData> catData = null;
 		List<SubCategoryData> subCatData = null;
-		List<ItemDisplay> itemData = new ArrayList<>();
+		List<OfferHeader> offerData = null;
+		List<Tags> tagsData = null;
+		List<ItemDisplay> itemData = null;
+		FranchiseData franchise;
 
 		try {
+
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			franchise = franchiseDataRepo.getFranchiseById(frId);
+			res.setFranchise(franchise);
+
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
+					}
+				}
+
+				for (int i = 0; i < offerDisplayList.size(); i++) {
+
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
+
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
+
+						detailList.add(detail);
+
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
+
+			}
+
+			// -------CATEGORY LIST---------------
+			catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
+
+			if (catData == null) {
+				catData = new ArrayList<CategoryData>();
+			} else {
+
+				for (int i = 0; i < catData.size(); i++) {
+
+					List<Images> catImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == catData.get(i).getCatId() && image.getDocType() == 1) {
+								catImgList.add(image);
+							}
+						}
+					}
+					catData.get(i).setImageList(catImgList);
+				}
+			}
+			res.setCategoryData(catData);
+
+			// ---------OFFER DATA--------------
+			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+			
+
+			if (offerData == null) {
+				offerData = new ArrayList<OfferHeader>();
+			} else {
+
+				for (int i = 0; i < offerData.size(); i++) {
+
+					List<Images> offerImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+								offerImgList.add(image);
+							}
+						}
+					}
+					offerData.get(i).setImageList(offerImgList);
+
+				}
+			}
+			res.setOfferData(offerData);
+
+			// ------------Tag DATA--------------------
+			tagsData = tagRepo.getTagListByFr(frId, type);
+
+			if (tagsData == null) {
+				tagsData = new ArrayList<Tags>();
+			}
+			res.setTagsData(tagsData);
+
+			// ------------------------------------------------------------
+
+			// List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+			// List<Tags> allTagList =
+			// tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
+			// List<Ingrediant> allTasteList =
+			// ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			// List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+			// franchise = franchiseDataRepo.getFranchiseById(frId);
+			// res.setFranchise(franchise);
 
 			// --------SUB CATEGORY LIST-------------
 			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
@@ -1473,7 +1627,7 @@ public class FrontEndController {
 
 	@RequestMapping(value = { "/getSubCatItemListByRatingsForApp" }, method = RequestMethod.POST)
 	public @ResponseBody GetAllDataByFr getSubCatItemListByRatingsForApp(@RequestParam("frId") int frId,
-			@RequestParam("ratings") List<String> ratings) {
+			@RequestParam("ratings") List<String> ratings, @RequestParam("custId") int custId) {
 
 		int applicableFor = 2;
 		int compId = 1;
@@ -1483,14 +1637,148 @@ public class FrontEndController {
 		// GetSubCatItemList res = new GetSubCatItemList();
 
 		Info info = new Info();
+		//List<SubCategoryData> subCatData = null;
+		//List<ItemDisplay> itemData = null;
+		//FranchiseData franchise;
+		
+		
+		List<CategoryData> catData = null;
 		List<SubCategoryData> subCatData = null;
+		List<OfferHeader> offerData = null;
+		List<Tags> tagsData = null;
 		List<ItemDisplay> itemData = null;
+		FranchiseData franchise;
+		
 
 		try {
+//			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
+//			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
+//			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+//			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+//
+//			franchise = franchiseDataRepo.getFranchiseById(frId);
+//			res.setFranchise(franchise);
+			
+			
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
+			franchise = franchiseDataRepo.getFranchiseById(frId);
+			res.setFranchise(franchise);
+
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
+
+			List<ItemWiseOfferData> allOfferList = itemWiseOfferDataRepo.getAllOffersByFr(frId, type, applicableFor);
+			if (allOfferList != null) {
+				Set<Integer> offerSet = new HashSet<Integer>();
+				for (ItemWiseOfferData data : allOfferList) {
+					offerSet.add(data.getOfferId());
+				}
+
+				List<Integer> offerIdList = new ArrayList<>();
+				offerIdList.addAll(offerSet);
+
+				Collections.sort(offerIdList);
+
+				for (int i = 0; i < offerIdList.size(); i++) {
+					for (int j = 0; j < allOfferList.size(); j++) {
+						if (offerIdList.get(i) == allOfferList.get(j).getOfferId()) {
+
+							ItemWiseOfferHeaderDisplay header = new ItemWiseOfferHeaderDisplay(
+									allOfferList.get(j).getOfferId(), allOfferList.get(j).getOfferName(),
+									allOfferList.get(j).getOfferDesc(), allOfferList.get(j).getType(),
+									allOfferList.get(j).getApplicableFor(), allOfferList.get(j).getOfferType(),
+									allOfferList.get(j).getOfferSubType(), allOfferList.get(j).getFrequencyType(),
+									allOfferList.get(j).getFrequency(), allOfferList.get(j).getFromDate(),
+									allOfferList.get(j).getToDate(), allOfferList.get(j).getFromTime(),
+									allOfferList.get(j).getToTime(), allOfferList.get(j).getPrimaryItemId(),
+									allOfferList.get(j).getPrimaryItemName(), allOfferList.get(j).getPrimaryQty(),
+									allOfferList.get(j).getDiscPer());
+
+							offerDisplayList.add(header);
+
+							break;
+
+						}
+					}
+				}
+
+				for (int i = 0; i < offerDisplayList.size(); i++) {
+
+					List<ItemWiseOfferDetailDisplay> detailList = new ArrayList<>();
+
+					for (int j = 0; j < allOfferList.size(); j++) {
+						ItemWiseOfferDetailDisplay detail = new ItemWiseOfferDetailDisplay(
+								allOfferList.get(j).getOfferDetailId(), allOfferList.get(j).getPrimaryItemId(),
+								allOfferList.get(j).getSecondaryItemId(), allOfferList.get(j).getSecondaryQty(),
+								allOfferList.get(j).getSecondaryItemName());
+
+						detailList.add(detail);
+
+					}
+					offerDisplayList.get(i).setOfferDetailList(detailList);
+				}
+
+			}
+
+			// -------CATEGORY LIST---------------
+			catData = categoryDataRepo.getCategoriesByFrAndType(frId, type);
+
+			if (catData == null) {
+				catData = new ArrayList<CategoryData>();
+			} else {
+
+				for (int i = 0; i < catData.size(); i++) {
+
+					List<Images> catImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == catData.get(i).getCatId() && image.getDocType() == 1) {
+								catImgList.add(image);
+							}
+						}
+					}
+					catData.get(i).setImageList(catImgList);
+				}
+			}
+			res.setCategoryData(catData);
+
+			// ---------OFFER DATA--------------
+			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+			
+		
+			if (offerData == null) {
+				offerData = new ArrayList<OfferHeader>();
+			} else {
+
+				for (int i = 0; i < offerData.size(); i++) {
+
+					List<Images> offerImgList = new ArrayList<>();
+
+					if (imgList != null) {
+						for (Images image : imgList) {
+							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+								offerImgList.add(image);
+							}
+						}
+					}
+					offerData.get(i).setImageList(offerImgList);
+
+				}
+			}
+			res.setOfferData(offerData);
+
+			// ------------Tag DATA--------------------
+			tagsData = tagRepo.getTagListByFr(frId, type);
+
+			if (tagsData == null) {
+				tagsData = new ArrayList<Tags>();
+			}
+			res.setTagsData(tagsData);
+			
+			
+			//----------------------------------------------------------------------------------------
 
 			// --------SUB CATEGORY LIST-------------
 			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
@@ -3359,7 +3647,14 @@ public class FrontEndController {
 					+ "<b>Name : </b>&nbsp;" + name + "<br>\r\n" + "<b>Email Address : </b>&nbsp;" + email + "<br>\r\n"
 					+ "<b>Phone Number : </b>&nbsp;" + number + "<br>\r\n" + "<b>Message : </b>&nbsp;" + msg + "<br>";
 
-			info = EmailUtility.sendEmailContactUs(email_id, email_password, "madhvidairy@gmail.com", subject, text);
+			NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("CONTACT_US_EMAIL", 0);
+
+			String mailId = "";
+			if (val != null) {
+				mailId = val.getSettingValue1();
+			}
+
+			info = EmailUtility.sendEmailContactUs(email_id, email_password, mailId, subject, text);
 
 		} catch (Exception e) {
 			info.setError(true);
@@ -3396,6 +3691,84 @@ public class FrontEndController {
 		res.setInfo(info);
 
 		return res;
+	}
+
+	@RequestMapping(value = { "/getAllNotificationList" }, method = RequestMethod.GET)
+	public @ResponseBody List<NotificationApp> getAllNotificationList() {
+
+		List<NotificationApp> res = new ArrayList<>();
+		try {
+			res = notificationAppRepo.findBydelStatus(0);
+			if (res == null) {
+				res = new ArrayList<>();
+			}
+		} catch (Exception e) {
+		}
+		return res;
+	}
+
+	// SAVE NOTIFICATION-----------10-11-2020
+	@RequestMapping(value = { "/saveNotification" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveNotification(@RequestParam("title") String title,
+			@RequestParam("message") String message, @RequestParam("type") int type,
+			@RequestParam("image") String image) {
+
+		Info info = new Info();
+		try {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+			NotificationApp model = new NotificationApp();
+			model.setNotificationId(0);
+			model.setTitle(title);
+			model.setDescription(message);
+			model.setType(type);
+			model.setImage(image);
+			model.setDatetime("" + sdf.format(Calendar.getInstance().getTime()));
+			model.setDelStatus(0);
+			model.setExInt1(0);
+			model.setExInt2(0);
+			model.setExVar1("");
+			model.setExVar2("");
+
+			NotificationApp res = notificationAppRepo.save(model);
+			System.err.println("RES----> " + res);
+			if (res != null) {
+
+				info.setError(false);
+				info.setMessage("Success");
+
+				try {
+
+					List<Customer> custList = customerRepo.findByDelStatusAndCompIdOrderByCustIdDesc(0, 1);
+
+					List<String> tokenList = new ArrayList<>();
+					if (custList != null) {
+						for (Customer c : custList) {
+							if (c.getExVar3() != null) {
+								if (c.getExVar3() != "") {
+									tokenList.add(c.getExVar3());
+								}
+							}
+						}
+
+						Firebase.send_FCM_NotificationList(tokenList, title, message, type);
+
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("Failed");
+			e.printStackTrace();
+		}
+
+		return info;
 	}
 
 }
