@@ -516,7 +516,7 @@ public class MasterAPIController2 {
 	@RequestMapping(value = { "/getAllOfferHeaderListByCompId" }, method = RequestMethod.POST)
 	public @ResponseBody List<OfferHeader> getAllOfferHeaderListByCompId(@RequestParam("compId") int compId) {
 
-		List<OfferHeader> res = offerHeaderRepo.findByCompIdAndDelStatusAndIsActive(compId, 0, 0);
+		List<OfferHeader> res = offerHeaderRepo.findByCompIdAndDelStatus(compId, 0);
 
 		if (res == null) {
 			res = new ArrayList<>();

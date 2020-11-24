@@ -29,6 +29,8 @@ public interface OfferHeaderRepo extends JpaRepository<OfferHeader, Integer> {
 	
 	List<OfferHeader> findByCompIdAndDelStatusAndIsActive(int i,int j,int k);
 	
+	List<OfferHeader> findByCompIdAndDelStatus(int i,int j);
+	
 	List<OfferHeader> findByCompIdAndDelStatusOrderByOfferIdDesc(int compId, int del);
 	
 	@Transactional
