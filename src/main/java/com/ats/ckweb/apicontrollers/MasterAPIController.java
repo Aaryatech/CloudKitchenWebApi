@@ -25,6 +25,7 @@ import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetAllConfiguredItemTag;
 import com.ats.ckweb.model.GetConfigureOfferList;
 import com.ats.ckweb.model.GetFrConfigList;
+import com.ats.ckweb.model.GetGrievanceTypeListData;
 import com.ats.ckweb.model.GetItemTagDetails;
 import com.ats.ckweb.model.GetOfferFrConfiguredList;
 import com.ats.ckweb.model.GetProductRelatedList;
@@ -999,6 +1000,31 @@ public class MasterAPIController {
 			e.printStackTrace();
 		}
 		return grievList;
+	}
+
+	@RequestMapping(value = { "/getAllGrievancesInstructnsForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetGrievanceTypeListData getAllGrievanceInstructnForApp(@RequestParam int compId) {
+
+		GetGrievanceTypeListData res = new GetGrievanceTypeListData();
+		Info info = new Info();
+
+		List<GrievencesInstruction> grievList = new ArrayList<GrievencesInstruction>();
+		try {
+			grievList = tagService.getAllGrievanceList(compId);
+
+			info.setError(false);
+			info.setMessage("Success");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		res.setInfo(info);
+		res.setGrievanceTypeList(grievList);
+
+		return res;
 	}
 
 	@RequestMapping(value = { "/getGrievanceInstructnById" }, method = RequestMethod.POST)

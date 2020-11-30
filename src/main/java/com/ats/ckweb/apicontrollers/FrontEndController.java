@@ -1131,13 +1131,13 @@ public class FrontEndController {
 					itemData.get(i).setTasteList(taseList);
 
 					// ------------JSON STRING------------------------------
-					ObjectMapper Obj = new ObjectMapper();
-
-					try {
-						String jsonStr = Obj.writeValueAsString(itemData.get(i));
-						itemData.get(i).setJsonStr(jsonStr);
-					} catch (IOException e) {
-					}
+//					ObjectMapper Obj = new ObjectMapper();
+//
+//					try {
+//						String jsonStr = Obj.writeValueAsString(itemData.get(i));
+//						itemData.get(i).setJsonStr(jsonStr);
+//					} catch (IOException e) {
+//					}
 
 					// --------------------OFFER LIST--------------------------
 
@@ -1228,7 +1228,7 @@ public class FrontEndController {
 
 		res.setInfo(info);
 
-		// publishData(res, frId);
+		publishData(res, frId);
 
 		return res;
 	}
@@ -1239,7 +1239,7 @@ public class FrontEndController {
 
 	@RequestMapping(value = { "/getSubCatItemListSortForApp" }, method = RequestMethod.POST)
 	public @ResponseBody GetAllDataByFr getSubCatItemListForApp(@RequestParam("frId") int frId,
-			@RequestParam("sort") int sort,@RequestParam("custId") int custId) {
+			@RequestParam("sort") int sort) {
 
 		int applicableFor = 2;
 		int compId = 1;
@@ -1627,7 +1627,7 @@ public class FrontEndController {
 
 	@RequestMapping(value = { "/getSubCatItemListByRatingsForApp" }, method = RequestMethod.POST)
 	public @ResponseBody GetAllDataByFr getSubCatItemListByRatingsForApp(@RequestParam("frId") int frId,
-			@RequestParam("ratings") List<String> ratings, @RequestParam("custId") int custId) {
+			@RequestParam("ratings") List<String> ratings) {
 
 		int applicableFor = 2;
 		int compId = 1;
@@ -3233,10 +3233,10 @@ public class FrontEndController {
 
 	public void publishData(GetAllDataByFr allData, int frId) {
 
-		final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
+		//final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
 
-		// final String JSON_SAVE_URL =
-		// "/opt/apache-tomcat-8.5.49/webapps/uploads/ckjson/";
+		final String JSON_SAVE_URL =
+		 "/opt/apache-tomcat-8.5.49/webapps/uploads/appjson/";
 		// final String TALLY_VIEW =
 		// "http://107.180.91.43:8080/uploads/ckuploads/ckjson/";
 
@@ -3297,8 +3297,9 @@ public class FrontEndController {
 
 			for (int i = 0; i < frList.size(); i++) {
 
-				getAllDataByFr(frList.get(i).getFrId(), 2, 1, 1);
-
+				//getAllDataByFr(frList.get(i).getFrId(), 2, 1, 1);
+				getAllDataByFrForApp(frList.get(i).getFrId(), 2, 2, 1);
+				
 			}
 
 			info.setError(false);
