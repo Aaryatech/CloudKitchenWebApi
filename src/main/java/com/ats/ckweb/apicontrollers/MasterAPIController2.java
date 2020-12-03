@@ -675,6 +675,20 @@ public class MasterAPIController2 {
 		Info info = new Info();
 		Customer cust = new Customer();
 
+		String ph1=customer.getPhoneNumber();
+		String ph2=customer.getWhatsappNo();
+		
+		customer.setPhoneNumber(ph1);
+		
+		if(ph1.length()>11) {
+			customer.setPhoneNumber(ph1.trim().substring(ph1.length()-11));
+		}
+		
+		if(ph2.length()>11) {
+			customer.setWhatsappNo(ph2.trim().substring(ph2.length()-11));
+		}
+		
+		
 		cust = customerRepo.save(customer);
 		if (cust == null) {
 			cust = new Customer();
@@ -1101,5 +1115,7 @@ public class MasterAPIController2 {
 		}
 		return info;
 	}
+	
+	
 
 }

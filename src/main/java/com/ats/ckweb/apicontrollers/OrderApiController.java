@@ -958,6 +958,12 @@ public class OrderApiController {
 		Info info = new Info();
 
 		try {
+			
+			if(mobileNo.length()>11) {
+				mobileNo=mobileNo.trim().substring(mobileNo.length()-11);
+			}
+			System.err.println("=====================> "+mobileNo);
+			
 
 			List<CustomerDisplay> custList = customerDisplayRepo.getCustomerByMobileNo(mobileNo);
 			System.err.println("CUST LIST --------- " + custList);
