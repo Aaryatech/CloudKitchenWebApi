@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,9 +22,12 @@ import com.ats.ckweb.repository.CustomerRepo;
 
 @Controller
 public class ImageUploadController {
+	
+	@Value("${PROFILE_IMAGE_UPLOAD_URL}")
+	private String PROFILE_PIC_URL;
 
 	//private static String PROFILE_PIC_URL = "C://Users/MAXADMIN/Desktop/Report/";
-	private static String PROFILE_PIC_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/profile/";
+	//private static String PROFILE_PIC_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/profile/";
 	
 	@Autowired CustomerRepo customerRepo;
 

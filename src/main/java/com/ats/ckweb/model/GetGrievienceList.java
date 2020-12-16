@@ -76,7 +76,10 @@ public class GetGrievienceList {
 
 	@Column(name = "order_no")
 	private String orderNo;
-	
+
+	@Column(name = "wallet_amt")
+	private float walletAmt;
+
 	@Transient
 	private List<GetGrievienceTailList> getGrievienceTailList;
 
@@ -250,6 +253,14 @@ public class GetGrievienceList {
 		this.getGrievienceTailList = getGrievienceTailList;
 	}
 
+	public float getWalletAmt() {
+		return walletAmt;
+	}
+
+	public void setWalletAmt(float walletAmt) {
+		this.walletAmt = walletAmt;
+	}
+
 	@Override
 	public String toString() {
 		return "GetGrievienceList [grieveId=" + grieveId + ", orderId=" + orderId + ", grievenceTypeId="
@@ -259,7 +270,7 @@ public class GetGrievienceList {
 				+ grievenceSubtypeName + ", date=" + date + ", extraInt1=" + extraInt1 + ", extraInt2=" + extraInt2
 				+ ", extraVar1=" + extraVar1 + ", extraVar2=" + extraVar2 + ", platform=" + platform + ", grievencceNo="
 				+ grievencceNo + ", grvInstrustion=" + grvInstrustion + ", grvType=" + grvType + ", orderNo=" + orderNo
-				+ ", getGrievienceTailList=" + getGrievienceTailList + "]";
+				+ ", walletAmt=" + walletAmt + ", getGrievienceTailList=" + getGrievienceTailList + "]";
 	}
 
 }

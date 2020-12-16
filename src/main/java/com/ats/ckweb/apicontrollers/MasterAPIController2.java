@@ -678,14 +678,22 @@ public class MasterAPIController2 {
 		String ph1=customer.getPhoneNumber();
 		String ph2=customer.getWhatsappNo();
 		
-		customer.setPhoneNumber(ph1);
+		ph1=ph1.trim();
+		ph1=ph1.replaceAll(" ", "");
+		
+		ph2=ph2.trim();
+		ph2=ph2.replaceAll(" ", "");
 		
 		if(ph1.length()>11) {
-			customer.setPhoneNumber(ph1.trim().substring(ph1.length()-11));
+			customer.setPhoneNumber(ph1.substring(ph1.length()-10));
+		}else if(ph1.length()==10) {
+			customer.setPhoneNumber(ph1);
 		}
 		
 		if(ph2.length()>11) {
-			customer.setWhatsappNo(ph2.trim().substring(ph2.length()-11));
+			customer.setWhatsappNo(ph2.substring(ph2.length()-10));
+		}else if(ph2.length()==10) {
+			customer.setWhatsappNo(ph2);
 		}
 		
 		
@@ -727,6 +735,77 @@ public class MasterAPIController2 {
 
 		return res;
 	}
+	
+	
+	@RequestMapping(value = { "/addCustomerForApp" }, method = RequestMethod.POST)
+	public @ResponseBody SaveCustomer addCustomerForApp(@RequestBody Customer customer) {
+		SaveCustomer res = new SaveCustomer();
+		Info info = new Info();
+		Customer cust = new Customer();
+
+		String ph1=customer.getPhoneNumber();
+		String ph2=customer.getWhatsappNo();
+		
+		ph1=ph1.trim();
+		ph1=ph1.replaceAll(" ", "");
+		
+		ph2=ph2.trim();
+		ph2=ph2.replaceAll(" ", "");
+		
+		if(ph1.length()>11) {
+			customer.setPhoneNumber(ph1.substring(ph1.length()-10));
+		}else if(ph1.length()==10) {
+			customer.setPhoneNumber(ph1);
+		}
+		
+		if(ph2.length()>11) {
+			customer.setWhatsappNo(ph2.substring(ph2.length()-10));
+		}else if(ph2.length()==10) {
+			customer.setWhatsappNo(ph2);
+		}
+		
+		
+		cust = customerRepo.save(customer);
+		if (cust == null) {
+			cust = new Customer();
+			cust.setError(true);
+			cust.setMessage("Failed");
+			cust.setLangName("");
+
+			info.setError(true);
+			info.setMessage("Failed");
+
+		} else {
+			info.setError(false);
+			info.setMessage("Success");
+
+			cust.setError(false);
+			cust.setMessage("Success");
+
+			try {
+				Language lang = langRepo.findByLangIdAndDelStatusAndCompanyId(cust.getLangId(), 0, cust.getCompId());
+				cust.setLangName(lang.getLangName());
+			} catch (Exception e) {
+			}
+
+			try {
+				if (customer.getCustId() == 0) {
+					NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("msg_new_cust", 0);
+					SMSUtility.sendSMS(cust.getPhoneNumber(), val.getSettingValue1(), "MADHVI");
+				}
+			} catch (Exception e) {
+			}
+
+		}
+
+		res.setCustomer(cust);
+		res.setInfo(info);
+
+		return res;
+	}
+	
+	
+	
 
 	// Author-Anmol Shirke Created On-23-07-2020
 	// Desc- Returns Customer object - save Customer.
@@ -1115,6 +1194,8 @@ public class MasterAPIController2 {
 		}
 		return info;
 	}
+	
+	
 	
 	
 

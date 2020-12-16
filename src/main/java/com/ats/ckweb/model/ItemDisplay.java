@@ -67,6 +67,8 @@ public class ItemDisplay {
 	@Transient
 	List<ItemWiseOfferHeaderDisplay> offerList;
 
+	private String exVar1;
+
 	public ItemDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -77,7 +79,8 @@ public class ItemDisplay {
 			String productStatus, int productCategory, String productCategoryName, String preperationTime,
 			int showInOrder, float rating, String tagIds, String tasteTypeIds, String tagName, String tasteName,
 			float rateAmt, float mrpAmt, float spRateAmt, float cgstPer, float sgstPer, float igstPer, String hsncd,
-			String relItemIds, float discPer, float mrpDiscAmt, float spDiscAmt, String offerIds, float freqOrderedQty,int isAvailable) {
+			String relItemIds, float discPer, float mrpDiscAmt, float spDiscAmt, String offerIds, float freqOrderedQty,
+			int isAvailable, String exVar1) {
 		super();
 		this.itemId = itemId;
 		this.itemName = itemName;
@@ -115,6 +118,7 @@ public class ItemDisplay {
 		this.offerIds = offerIds;
 		this.freqOrderedQty = freqOrderedQty;
 		this.isAvailable = isAvailable;
+		this.exVar1 = exVar1;
 	}
 
 	public int getItemId() {
@@ -453,6 +457,14 @@ public class ItemDisplay {
 		this.offerList = offerList;
 	}
 
+	public String getExVar1() {
+		return exVar1;
+	}
+
+	public void setExVar1(String exVar1) {
+		this.exVar1 = exVar1;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemDisplay [itemId=" + itemId + ", itemName=" + itemName + ", catId=" + catId + ", catName=" + catName
@@ -467,7 +479,7 @@ public class ItemDisplay {
 				+ discPer + ", mrpDiscAmt=" + mrpDiscAmt + ", spDiscAmt=" + spDiscAmt + ", offerIds=" + offerIds
 				+ ", freqOrderedQty=" + freqOrderedQty + ", isAvailable=" + isAvailable + ", jsonStr=" + jsonStr
 				+ ", tagList=" + tagList + ", tasteList=" + tasteList + ", imageList=" + imageList + ", relItemList="
-				+ relItemList + ", offerList=" + offerList + "]";
+				+ relItemList + ", offerList=" + offerList + ", exVar1=" + exVar1 + "]";
 	}
 
 }

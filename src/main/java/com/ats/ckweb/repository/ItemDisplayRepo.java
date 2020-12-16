@@ -80,7 +80,8 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"d.show_in_order, " + 
 			"d.ex_float1 AS rating, " + 
 			"d.tag_ids, " + 
-			"d.taste_type_ids " + 
+			"d.taste_type_ids, " + 
+			"d.ex_var1 " + 
 			"FROM " + 
 			"    m_item i, " + 
 			"    mn_detail d, " + 
@@ -299,7 +300,8 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"d.show_in_order, " + 
 			"d.ex_float1 AS rating, " + 
 			"d.tag_ids, " + 
-			"d.taste_type_ids " + 
+			"d.taste_type_ids, " +
+			"d.ex_var1 " + 
 			"FROM " + 
 			"    m_item i, " + 
 			"    mn_detail d, " + 
@@ -539,7 +541,8 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 			"d.show_in_order, " + 
 			"d.ex_float1 AS rating, " + 
 			"d.tag_ids, " + 
-			"d.taste_type_ids " + 
+			"d.taste_type_ids, " +
+			"d.ex_var1 " + 
 			"FROM " + 
 			"    m_item i, " + 
 			"    mn_detail d, " + 
@@ -759,7 +762,8 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 				"d.show_in_order, " + 
 				"d.ex_float1 AS rating, " + 
 				"d.tag_ids, " + 
-				"d.taste_type_ids " + 
+				"d.taste_type_ids, " +
+				"d.ex_var1 " + 
 				"FROM " + 
 				"    m_item i, " + 
 				"    mn_detail d, " + 
@@ -979,7 +983,8 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 					"d.show_in_order, " + 
 					"d.ex_float1 AS rating, " + 
 					"d.tag_ids, " + 
-					"d.taste_type_ids " + 
+					"d.taste_type_ids, " +
+					"d.ex_var1 " + 
 					"FROM " + 
 					"    m_item i, " + 
 					"    mn_detail d, " + 
@@ -1201,7 +1206,8 @@ public interface ItemDisplayRepo extends JpaRepository<ItemDisplay, Integer> {
 					"d.show_in_order, " + 
 					"d.ex_float1 AS rating, " + 
 					"d.tag_ids, " + 
-					"d.taste_type_ids " + 
+					"d.taste_type_ids, " +
+					"d.ex_var1 " + 
 					"FROM " + 
 					"    m_item i, " + 
 					"    mn_detail d, " + 

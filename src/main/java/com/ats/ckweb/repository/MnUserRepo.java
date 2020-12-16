@@ -157,4 +157,25 @@ public interface MnUserRepo extends JpaRepository<MnUser, Integer> {
 	MnUser findByUserEmailAndDelStatus(String email, int del);
 	
 	MnUser findByUserEmailAndDelStatusAndUserIdNot(String email, int del, int userId);
+	
+	
+	@Transactional
+	@Modifying
+	@Query("UPDATE MnUser SET ex_int1=:roleId WHERE user_id=:id")
+	int updateRoleIdByEmpId(@Param("id") int id, @Param("roleId") int roleId);
+	
+	List<MnUser> findByDelStatus(int del);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value = " UPDATE mn_user SET ex_int1=:roleId "
+			+ " WHERE user_id IN (:userIdList) ", nativeQuery = true)
+	int updateRoleId(@Param("roleId") int roleId, 
+			@Param("userIdList") List<String> userIdList
+			);
+	
+	
+	
+	
 }

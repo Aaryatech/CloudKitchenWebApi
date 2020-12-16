@@ -49,6 +49,7 @@ import com.ats.ckweb.model.GetAllDataByFr;
 import com.ats.ckweb.model.GetCategoryData;
 import com.ats.ckweb.model.GetFranchiseData;
 import com.ats.ckweb.model.GetRelatedItemsAndFreqOrderList;
+import com.ats.ckweb.model.GetSettingsValueApp;
 import com.ats.ckweb.model.GetSubCategoryData;
 import com.ats.ckweb.model.Images;
 import com.ats.ckweb.model.Info;
@@ -710,7 +711,7 @@ public class FrontEndController {
 									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
 									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
 									itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
-									itemData.get(t).getIsAvailable());
+									itemData.get(t).getIsAvailable(), itemData.get(t).getExVar1());
 
 							// ----Related Item Images-----
 							List<Images> relItemImgList = new ArrayList<>();
@@ -1021,6 +1022,8 @@ public class FrontEndController {
 			List<ItemDisplay> tempItemData = itemDisplayRepo.getAllItemByFr(frId, type, applicableFor);
 			itemData = tempItemData;
 
+			System.err.println("ITEM -----> " + itemData);
+
 			if (itemData == null) {
 				itemData = new ArrayList<ItemDisplay>();
 			} else {
@@ -1069,7 +1072,7 @@ public class FrontEndController {
 									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
 									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
 									itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
-									itemData.get(t).getIsAvailable());
+									itemData.get(t).getIsAvailable(), itemData.get(t).getExVar1());
 
 							// ----Related Item Images-----
 							List<Images> relItemImgList = new ArrayList<>();
@@ -1348,7 +1351,6 @@ public class FrontEndController {
 
 			// ---------OFFER DATA--------------
 			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
-			
 
 			if (offerData == null) {
 				offerData = new ArrayList<OfferHeader>();
@@ -1474,7 +1476,7 @@ public class FrontEndController {
 									itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
 									itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
 									itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
-									itemData.get(t).getIsAvailable());
+									itemData.get(t).getIsAvailable(), itemData.get(t).getExVar1());
 
 							// ----Related Item Images-----
 							List<Images> relItemImgList = new ArrayList<>();
@@ -1637,18 +1639,16 @@ public class FrontEndController {
 		// GetSubCatItemList res = new GetSubCatItemList();
 
 		Info info = new Info();
-		//List<SubCategoryData> subCatData = null;
-		//List<ItemDisplay> itemData = null;
-		//FranchiseData franchise;
-		
-		
+		// List<SubCategoryData> subCatData = null;
+		// List<ItemDisplay> itemData = null;
+		// FranchiseData franchise;
+
 		List<CategoryData> catData = null;
 		List<SubCategoryData> subCatData = null;
 		List<OfferHeader> offerData = null;
 		List<Tags> tagsData = null;
 		List<ItemDisplay> itemData = null;
 		FranchiseData franchise;
-		
 
 		try {
 //			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
@@ -1658,8 +1658,7 @@ public class FrontEndController {
 //
 //			franchise = franchiseDataRepo.getFranchiseById(frId);
 //			res.setFranchise(franchise);
-			
-			
+
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
@@ -1746,8 +1745,7 @@ public class FrontEndController {
 
 			// ---------OFFER DATA--------------
 			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
-			
-		
+
 			if (offerData == null) {
 				offerData = new ArrayList<OfferHeader>();
 			} else {
@@ -1776,9 +1774,8 @@ public class FrontEndController {
 				tagsData = new ArrayList<Tags>();
 			}
 			res.setTagsData(tagsData);
-			
-			
-			//----------------------------------------------------------------------------------------
+
+			// ----------------------------------------------------------------------------------------
 
 			// --------SUB CATEGORY LIST-------------
 			subCatData = subCategoryDataRepo.getSubCategoriesByFrAndType(frId, type);
@@ -1868,7 +1865,7 @@ public class FrontEndController {
 											itemData.get(t).getRelItemIds(), itemData.get(t).getDiscPer(),
 											itemData.get(t).getMrpDiscAmt(), itemData.get(t).getSpDiscAmt(),
 											itemData.get(t).getOfferIds(), itemData.get(t).getFreqOrderedQty(),
-											itemData.get(t).getIsAvailable());
+											itemData.get(t).getIsAvailable(), itemData.get(t).getExVar1());
 
 									// ----Related Item Images-----
 									List<Images> relItemImgList = new ArrayList<>();
@@ -3233,10 +3230,9 @@ public class FrontEndController {
 
 	public void publishData(GetAllDataByFr allData, int frId) {
 
-		//final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
+		// final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
 
-		final String JSON_SAVE_URL =
-		 "/opt/apache-tomcat-8.5.49/webapps/uploads/appjson/";
+		final String JSON_SAVE_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/appjson/";
 		// final String TALLY_VIEW =
 		// "http://107.180.91.43:8080/uploads/ckuploads/ckjson/";
 
@@ -3297,9 +3293,9 @@ public class FrontEndController {
 
 			for (int i = 0; i < frList.size(); i++) {
 
-				//getAllDataByFr(frList.get(i).getFrId(), 2, 1, 1);
+				// getAllDataByFr(frList.get(i).getFrId(), 2, 1, 1);
 				getAllDataByFrForApp(frList.get(i).getFrId(), 2, 2, 1);
-				
+
 			}
 
 			info.setError(false);
@@ -3665,6 +3661,41 @@ public class FrontEndController {
 		return info;
 	}
 
+	// BULK/DAIRY MART ORDER MAIL
+
+	@RequestMapping(value = { "/sendDairyMartOrderMail" }, method = RequestMethod.POST)
+	public @ResponseBody Info sendDairyMartOrderMail(@RequestParam("name") String name,
+			@RequestParam("number") String number, @RequestParam("email") String email,
+			@RequestParam("time") String time, @RequestParam("people") String people,
+			@RequestParam("address") String address) {
+
+		Info info = new Info();
+		try {
+
+			String subject = "Dairy Mart Order";
+			String text = "Dairy Mart Order.<br><br>\r\n" + "<b>Name : </b>&nbsp;" + name + "<br>\r\n"
+					+ "<b>Email Address : </b>&nbsp;" + email + "<br>\r\n" + "<b>Phone Number : </b>&nbsp;" + number
+					+ "<br>\r\n" + "<b>Preferred Time to Call : </b>&nbsp;" + time + "<br>\r\n"
+					+ "<b>No. of People : </b>&nbsp;" + people + "<br>\r\n" + "<b>Address : </b>&nbsp;" + address
+					+ "<br>";
+
+			NewSetting val = newSettingRepo.findBySettingKeyAndDelStatus("CONTACT_US_EMAIL", 0);
+
+			String mailId = "";
+			if (val != null) {
+				mailId = val.getSettingValue1();
+			}
+			
+			info = EmailUtility.sendEmailContactUs(email_id, email_password, mailId, subject, text);
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("failed");
+		}
+
+		return info;
+	}
+
 	// ---NOTIFICATION LIST
 
 	@RequestMapping(value = { "/getAllNotificationsForApp" }, method = RequestMethod.GET)
@@ -3770,6 +3801,31 @@ public class FrontEndController {
 		}
 
 		return info;
+	}
+
+	@RequestMapping(value = { "/getSettingValueForApp" }, method = RequestMethod.POST)
+	public @ResponseBody GetSettingsValueApp getSettingValueForApp(@RequestParam("key") String key) {
+
+		NewSetting setting = new NewSetting();
+		Info info = new Info();
+
+		GetSettingsValueApp res = new GetSettingsValueApp();
+
+		try {
+			setting = newSettingRepo.findBySettingKeyAndDelStatus(key, 0);
+			
+			info.setError(false);
+			info.setMessage("Success");
+			
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMessage("Failed");
+		}
+
+		res.setNewSetting(setting);
+		res.setInfo(info);
+
+		return res;
 	}
 
 }
