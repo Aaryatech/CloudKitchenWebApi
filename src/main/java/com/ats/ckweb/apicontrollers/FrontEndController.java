@@ -3539,9 +3539,9 @@ public class FrontEndController {
 			// Offers------
 
 			List<OfferHeader> offerHeaderList = new ArrayList<>();
+			List<OfferHeader> allOfferHeaderList = new ArrayList<>();
 
 			// List<OfferHeader> couponWiseList = new ArrayList<>();
-			List<OfferHeader> custWiseList = new ArrayList<>();
 
 			System.err.println("frId - " + frId + "    Cust - " + custId);
 
@@ -3551,7 +3551,8 @@ public class FrontEndController {
 //			}
 
 			try {
-				custWiseList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, applicableFor, 1, custId);
+				allOfferHeaderList = offerHeaderRepo.getBillOfferHeaderByFrCustomerWise(frId, 2, applicableFor, 1,
+						custId);
 			} catch (Exception e) {
 			}
 
@@ -3559,8 +3560,24 @@ public class FrontEndController {
 //				offerHeaderList.addAll(couponWiseList);
 //			}
 
-			if (custWiseList != null) {
-				offerHeaderList.addAll(custWiseList);
+			Set<Integer> uniqueHeaderIds = new HashSet<>();
+			if (allOfferHeaderList != null) {
+				for (OfferHeader head : allOfferHeaderList) {
+					uniqueHeaderIds.add(head.getOfferId());
+				}
+			}
+
+			List<Integer> ids = new ArrayList<>();
+			ids.addAll(uniqueHeaderIds);
+
+			for (Integer id : ids) {
+				for (OfferHeader head : allOfferHeaderList) {
+					if (id == head.getOfferId()) {
+
+						offerHeaderList.add(head);
+						break;
+					}
+				}
 			}
 
 			// Offer Detail List-----------------
@@ -3592,6 +3609,41 @@ public class FrontEndController {
 
 			info.setError(false);
 			info.setMessage("success");
+
+			CustWalletTotal wallet = new CustWalletTotal();
+
+			try {
+				wallet = custWalletTotalRepo.getCustTotalWalletAmt(custId);
+				if (wallet == null) {
+					wallet = new CustWalletTotal();
+				}
+
+				NewSetting applyLimit = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_on_rs", 0);
+				NewSetting walletPer = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_percent", 0);
+				NewSetting walletRs = newSettingRepo.findBySettingKeyAndDelStatus("wallet_apply_rs", 0);
+
+				if (applyLimit != null) {
+					wallet.setWalletLimitRs(Float.parseFloat(applyLimit.getSettingValue1()));
+				} else {
+					wallet.setWalletLimitRs(0);
+				}
+
+				if (walletPer != null) {
+					wallet.setWalletPercent(Float.parseFloat(walletPer.getSettingValue1()));
+				} else {
+					wallet.setWalletPercent(0);
+				}
+
+				if (walletRs != null) {
+					wallet.setWalletMinAmt(Float.parseFloat(walletRs.getSettingValue1()));
+				} else {
+					wallet.setWalletMinAmt(0);
+				}
+
+			} catch (Exception e) {
+			}
+
+			res.setCustWalletTotal(wallet);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3685,7 +3737,7 @@ public class FrontEndController {
 			if (val != null) {
 				mailId = val.getSettingValue1();
 			}
-			
+
 			info = EmailUtility.sendEmailContactUs(email_id, email_password, mailId, subject, text);
 
 		} catch (Exception e) {
@@ -3813,10 +3865,10 @@ public class FrontEndController {
 
 		try {
 			setting = newSettingRepo.findBySettingKeyAndDelStatus(key, 0);
-			
+
 			info.setError(false);
 			info.setMessage("Success");
-			
+
 		} catch (Exception e) {
 			info.setError(true);
 			info.setMessage("Failed");
