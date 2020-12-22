@@ -32,6 +32,7 @@ BannerPage findByBannerId(int bannerId);
 	
 	List<BannerPage> findByCompIdAndDelStatusOrderByBannerIdDesc(int compId, int del);
 	
+	List<BannerPage> findByIsActiveAndDelStatusAndCompIdOrderByBannerIdDesc(int isActive, int del, int compId);
 	
 
 }

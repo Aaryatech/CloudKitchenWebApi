@@ -106,4 +106,21 @@ public class BannerpageApiController {
 		return info;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 2020-12-22
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- getAllActiveBannerByCompId
+	@RequestMapping(value = { "/getAllActiveBannerByCompId" }, method = RequestMethod.POST)
+	public @ResponseBody List<BannerPage> getAllActiveBannerByCompId(@RequestParam int compId) {
+
+		List<BannerPage> list = new ArrayList<BannerPage>();
+		try {
+			list = bannerPageRepo.findByIsActiveAndDelStatusAndCompIdOrderByBannerIdDesc(1, 1, compId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 }
