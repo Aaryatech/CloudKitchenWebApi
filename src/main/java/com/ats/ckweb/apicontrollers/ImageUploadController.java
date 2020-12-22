@@ -23,10 +23,10 @@ import com.ats.ckweb.repository.CustomerRepo;
 @Controller
 public class ImageUploadController {
 	
-	@Value("${PROFILE_IMAGE_UPLOAD_URL}")
-	private String PROFILE_PIC_URL;
+	//@Value("${PROFILE_IMAGE_UPLOAD_URL}")
+	//private String PROFILE_PIC_URL;
 
-	//private static String PROFILE_PIC_URL = "C://Users/MAXADMIN/Desktop/Report/";
+	private static String PROFILE_PIC_URL = "C://Users/MAXADMIN/Desktop/Report/";
 	//private static String PROFILE_PIC_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/profile/";
 	
 	@Autowired CustomerRepo customerRepo;
