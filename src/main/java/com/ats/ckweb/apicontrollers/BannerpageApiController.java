@@ -17,12 +17,10 @@ import com.ats.ckweb.repository.BannerPageRepo;
 
 @RestController
 public class BannerpageApiController {
-	
+
 	@Autowired
 	BannerPageRepo bannerPageRepo;
-	
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Akhilesh Dani
 	// Created On :- 2020-12-21
@@ -41,12 +39,12 @@ public class BannerpageApiController {
 		return addBanner;
 
 	}
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Akhilesh Dani
-		// Created On :- 2020-12-21
-		// Modified By :- NA
-		// Modified On :- NA
+	// Created On :- 2020-12-21
+	// Modified By :- NA
+	// Modified On :- NA
 	// Description :- Get Banner
 
 	@RequestMapping(value = { "/getBannerById" }, method = RequestMethod.POST)
@@ -61,12 +59,12 @@ public class BannerpageApiController {
 		return banner;
 
 	}
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Akhilesh Dani
-			// Created On :- 2020-12-21
-			// Modified By :- NA
-			// Modified On :- NA
+	// Created On :- 2020-12-21
+	// Modified By :- NA
+	// Modified On :- NA
 	// Description :- getAllBannerByCompId
 	@RequestMapping(value = { "/getAllBannerByCompId" }, method = RequestMethod.POST)
 	public @ResponseBody List<BannerPage> getAllBannerByCompId(@RequestParam int compId) {
@@ -80,12 +78,12 @@ public class BannerpageApiController {
 		return list;
 
 	}
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Akhilesh Dani
-				// Created On :- 2020-12-21
-				// Modified By :- NA
-				// Modified On :- NA
+	// Created On :- 2020-12-21
+	// Modified By :- NA
+	// Modified On :- NA
 	// Description :- Delete Banner
 
 	@RequestMapping(value = { "/deleteBannerById" }, method = RequestMethod.POST)
@@ -107,7 +105,5 @@ public class BannerpageApiController {
 		}
 		return info;
 	}
-	
-	
 
 }
