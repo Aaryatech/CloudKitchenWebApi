@@ -878,7 +878,7 @@ public class FrontEndController {
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
-			franchise = franchiseDataRepo.getFranchiseById(frId);
+			franchise = franchiseDataRepo.getFranchiseByIdApp(frId);
 			res.setFranchise(franchise);
 
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
