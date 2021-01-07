@@ -17,6 +17,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
 
 	List<Customer> findByDelStatusAndCompIdOrderByCustIdDesc(int del, int compId);
 	List<Customer> findByDelStatusAndCustId(int del, int custId);
+	Customer findByCustId(int custId);
 	
 	@Query(value="select c.* from m_customer c, tn_order_header h where h.del_status=0 AND h.cust_id=c.cust_id AND h.order_id=:orderId",nativeQuery=true)
 	Customer getCustomerByOrderId(@Param("orderId") int orderId);

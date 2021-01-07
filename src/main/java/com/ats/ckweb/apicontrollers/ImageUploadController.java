@@ -53,6 +53,7 @@ public class ImageUploadController {
 			saveUploadedFile(uploadfile, fileName);
 			
 			int update=customerRepo.updateProfilePic(custId, fileName);
+			System.err.println("--------------------RESULT------------------ "+update);
 			if(update>0) {
 				res.setFileName(fileName);
 				info.setError(false);

@@ -141,6 +141,68 @@ public class Customer {
 
 	@Transient
 	private String langName;
+	
+	
+	
+	
+
+	public Customer() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+
+	public Customer(int custId, String custName, String phoneNumber, String whatsappNo, String emailId,
+			 int gender, String custDob, String ageGroup, int langId, int compId, int cityId,
+			int frId, int isBuissHead, String companyName, String gstNo, String address, int isActive, int delStatus,
+			int custAddPlatform, String custAddDatetime, int addedFormType, int userId, int isPremiumCust, int exInt1,
+			int exInt2, int exInt3, int exInt4, int exInt5, String exVar1, String exVar2, String exVar3, String exVar4,
+			String exVar5, float exFloat1, float exFloat2, float exFloat3, float exFloat4, float exFloat5) {
+		super();
+		this.custId = custId;
+		this.custName = custName;
+		this.phoneNumber = phoneNumber;
+		this.whatsappNo = whatsappNo;
+		this.emailId = emailId;
+		this.gender = gender;
+		this.custDob = custDob;
+		this.ageGroup = ageGroup;
+		this.langId = langId;
+		this.compId = compId;
+		this.cityId = cityId;
+		this.frId = frId;
+		this.isBuissHead = isBuissHead;
+		this.companyName = companyName;
+		this.gstNo = gstNo;
+		this.address = address;
+		this.isActive = isActive;
+		this.delStatus = delStatus;
+		this.custAddPlatform = custAddPlatform;
+		this.custAddDatetime = custAddDatetime;
+		this.addedFormType = addedFormType;
+		this.userId = userId;
+		this.isPremiumCust = isPremiumCust;
+		this.exInt1 = exInt1;
+		this.exInt2 = exInt2;
+		this.exInt3 = exInt3;
+		this.exInt4 = exInt4;
+		this.exInt5 = exInt5;
+		this.exVar1 = exVar1;
+		this.exVar2 = exVar2;
+		this.exVar3 = exVar3;
+		this.exVar4 = exVar4;
+		this.exVar5 = exVar5;
+		this.exFloat1 = exFloat1;
+		this.exFloat2 = exFloat2;
+		this.exFloat3 = exFloat3;
+		this.exFloat4 = exFloat4;
+		this.exFloat5 = exFloat5;
+	}
+
+
+
 
 	public int getCustId() {
 		return custId;

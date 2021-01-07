@@ -697,7 +697,15 @@ public class MasterAPIController2 {
 		}
 		
 		
+		if(customer.getCustId()!=0) {
+			Customer c = customerRepo.findByCustId(customer.getCustId());
+			customer.setProfilePic(c.getProfilePic());
+		}
+		
+		
+		//Customer saveModel=new Customer(customer.getCustId(), customer.getCustName(), customer.getPhoneNumber(), customer.getWhatsappNo(), customer.getEmailId(), customer.getGender(), customer.getCustDob(), customer.getAgeGroup(), customer.getLangId(), customer.getCompId(), customer.getCityId(), customer.getFrId(), customer.getIsBuissHead(), customer.getCompanyName(), customer.getGstNo(), customer.getAddress(), customer.getIsActive(), customer.getDelStatus(), customer.getCustAddPlatform(), customer.getCustAddDatetime(), customer.getAddedFormType(), customer.getUserId(), customer.getIsPremiumCust(), customer.getExInt1(), customer.getExInt2(), customer.getExInt3(), customer.getExInt4(), customer.getExInt5(), customer.getExVar1(), customer.getExVar2(), customer.getExVar3(), customer.getExVar4(), customer.getExVar5(), customer.getExFloat1(), customer.getExFloat2(), customer.getExFloat3(), customer.getExFloat4(), customer.getExFloat5());
 		cust = customerRepo.save(customer);
+		
 		if (cust == null) {
 			cust = new Customer();
 			cust.setError(true);
