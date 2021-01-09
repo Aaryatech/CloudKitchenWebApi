@@ -23,11 +23,11 @@ import com.ats.ckweb.repository.CustomerRepo;
 @Controller
 public class ImageUploadController {
 	
-	//@Value("${PROFILE_IMAGE_UPLOAD_URL}")
-	//private String PROFILE_PIC_URL;
+	@Value("${PROFILE_IMAGE_UPLOAD_URL}")
+	private String PROFILE_PIC_URL;
 
 	//private static String PROFILE_PIC_URL = "C://Users/MAXADMIN/Desktop/Report/";
-	private static String PROFILE_PIC_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/profile/";
+	//private static String PROFILE_PIC_URL = "/opt/apache-tomcat-8.5.49/webapps/uploads/profile/";
 	
 	@Autowired CustomerRepo customerRepo;
 
@@ -53,7 +53,7 @@ public class ImageUploadController {
 			saveUploadedFile(uploadfile, fileName);
 			
 			int update=customerRepo.updateProfilePic(custId, fileName);
-			System.err.println("--------------------RESULT------------------ "+update);
+			//System.err.println("--------------------RESULT------------------ "+update);
 			if(update>0) {
 				res.setFileName(fileName);
 				info.setError(false);
