@@ -15,7 +15,7 @@ public interface FranchiseDataRepo extends JpaRepository<FranchiseData, Integer>
 			"    fc.fr_id," + 
 			"    fc.fr_type," + 
 			"    f.fr_name," + 
-			"    f.fr_code," + 
+			"    CONCAT(f.fr_code,'~',f.fba_license_date) as fr_code," + 
 			"    f.fr_address," + 
 			"    f.fr_mob," + 
 			"    fc.from_latitude," + 
@@ -36,7 +36,7 @@ public interface FranchiseDataRepo extends JpaRepository<FranchiseData, Integer>
 			"    fc.fr_id," + 
 			"    fc.fr_type," + 
 			"    f.fr_name," + 
-			"    f.fr_code," + 
+			"    CONCAT(f.fr_code,'~',f.fba_license_date) as fr_code," + 
 			"    f.fr_address," + 
 			"    f.fr_mob," + 
 			"    fc.from_latitude," + 
@@ -78,7 +78,7 @@ public interface FranchiseDataRepo extends JpaRepository<FranchiseData, Integer>
 			"        fc.fr_id,\r\n" + 
 			"        fc.fr_type,\r\n" + 
 			"        f.fr_name,\r\n" + 
-			"        f.fr_code,\r\n" + 
+			"        CONCAT(f.fr_code,'~',f.fba_license_date) as fr_code,\r\n" + 
 			"        f.fr_address,\r\n" + 
 			"        f.fr_mob,\r\n" + 
 			"        fc.from_latitude,\r\n" + 
