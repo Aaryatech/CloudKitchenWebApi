@@ -3982,7 +3982,6 @@ public class FrontEndController {
 							}
 						}
 						
-						tokenList.remove("");
 						
 						System.err.println("tokens------------------------ "+tokenList);
 
