@@ -3,7 +3,7 @@ package com.ats.ckweb.apicontrollers;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException; 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.persistence.Column;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -36,6 +38,7 @@ import com.ats.ckweb.commons.SMSUtility;
 import com.ats.ckweb.model.Agent;
 import com.ats.ckweb.model.Area;
 import com.ats.ckweb.model.AreaData;
+import com.ats.ckweb.model.BannerPage;
 import com.ats.ckweb.model.CategoryData;
 import com.ats.ckweb.model.CityData;
 import com.ats.ckweb.model.CkDeliveryCharges;
@@ -44,8 +47,10 @@ import com.ats.ckweb.model.Customer;
 import com.ats.ckweb.model.FrCharges;
 import com.ats.ckweb.model.FrItemStock;
 import com.ats.ckweb.model.FranchiseData;
+import com.ats.ckweb.model.FranchiseDataNew;
 import com.ats.ckweb.model.Franchisee;
 import com.ats.ckweb.model.GetAllDataByFr;
+import com.ats.ckweb.model.GetAllDataByFrNew;
 import com.ats.ckweb.model.GetCategoryData;
 import com.ats.ckweb.model.GetFranchiseData;
 import com.ats.ckweb.model.GetRelatedItemsAndFreqOrderList;
@@ -83,6 +88,7 @@ import com.ats.ckweb.repository.CustWalletTotalRepo;
 import com.ats.ckweb.repository.CustomerRepo;
 import com.ats.ckweb.repository.FrChargesRepo;
 import com.ats.ckweb.repository.FrItemStockRepo;
+import com.ats.ckweb.repository.FranchiseDataNewRepo;
 import com.ats.ckweb.repository.FranchiseDataRepo;
 import com.ats.ckweb.repository.FranchiseeRepository;
 import com.ats.ckweb.repository.ImagesRepo;
@@ -100,6 +106,7 @@ import com.ats.ckweb.repository.TagRepo;
 import com.ats.ckweb.services.ImagesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ats.ckweb.repository.AreaRepo;
+import com.ats.ckweb.repository.BannerPageRepo;
 
 @Controller
 public class FrontEndController {
@@ -178,6 +185,12 @@ public class FrontEndController {
 
 	@Autowired
 	CustomerRepo customerRepo;
+
+	@Autowired
+	FranchiseDataNewRepo franchiseDataNewRepo;
+
+	@Autowired
+	BannerPageRepo bannerPageRepo;
 
 	@Value("${email_id}")
 	private String email_id;
@@ -859,11 +872,11 @@ public class FrontEndController {
 	// ---------ALL DATA BY FR FOR APP-----------------------
 
 	@RequestMapping(value = { "/getAllDataByFrForApp" }, method = RequestMethod.POST)
-	public @ResponseBody GetAllDataByFr getAllDataByFrForApp(@RequestParam("frId") int frId,
+	public @ResponseBody GetAllDataByFrNew getAllDataByFrForApp(@RequestParam("frId") int frId,
 			@RequestParam("type") int type, @RequestParam("applicableFor") int applicableFor,
 			@RequestParam("compId") int compId) {
 
-		GetAllDataByFr res = new GetAllDataByFr();
+		GetAllDataByFrNew res = new GetAllDataByFrNew();
 
 		Info info = new Info();
 
@@ -872,13 +885,13 @@ public class FrontEndController {
 		List<OfferHeader> offerData = null;
 		List<Tags> tagsData = null;
 		List<ItemDisplay> itemData = null;
-		FranchiseData franchise;
+		FranchiseDataNew franchise;
 
 		try {
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
-			franchise = franchiseDataRepo.getFranchiseByIdApp(frId);
+			franchise = franchiseDataNewRepo.getFranchiseByIdApp(frId);
 			res.setFranchise(franchise);
 
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
@@ -984,25 +997,50 @@ public class FrontEndController {
 			res.setSubCategoryData(subCatData);
 
 			// ---------OFFER DATA--------------
-			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+			// offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
 
-			if (offerData == null) {
+//			if (offerData == null) {
+//				offerData = new ArrayList<OfferHeader>();
+//			} else {
+//
+//				for (int i = 0; i < offerData.size(); i++) {
+//
+//					List<Images> offerImgList = new ArrayList<>();
+//
+//					if (imgList != null) {
+//						for (Images image : imgList) {
+//							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+//								offerImgList.add(image);
+//							}
+//						}
+//					}
+//					offerData.get(i).setImageList(offerImgList);
+//
+//				}
+//			}
+//			res.setOfferData(offerData);
+
+			List<BannerPage> bannerList = bannerPageRepo.getHomePageBannerList(frId);
+			if (bannerList == null) {
 				offerData = new ArrayList<OfferHeader>();
 			} else {
+				offerData = new ArrayList<OfferHeader>();
 
-				for (int i = 0; i < offerData.size(); i++) {
+				List<OfferHeader> temp = new ArrayList<>();
+
+				for (BannerPage b : bannerList) {
 
 					List<Images> offerImgList = new ArrayList<>();
+					Images img = new Images(1, 1, 1, b.getBannerImage(), b.getSortNo(), b.getIsActive(),
+							b.getDelStatus(), 0, 0, 0, "", "", "", "", "", "", "");
+					offerImgList.add(img);
 
-					if (imgList != null) {
-						for (Images image : imgList) {
-							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
-								offerImgList.add(image);
-							}
-						}
-					}
-					offerData.get(i).setImageList(offerImgList);
+					List<OfferDetail> detailList = new ArrayList<>();
 
+					OfferHeader banner = new OfferHeader(b.getBannerId(), b.getBannerEventName(), "", 0, "1,2", 0, 0,
+							"", "", "", "", "", 0, "", "", b.getCompId(), b.getIsActive(), b.getDelStatus(), 0, 0, 0, 0,
+							"", "", "", "", 0, 0, 0, 0, offerImgList, detailList);
+					offerData.add(banner);	
 				}
 			}
 			res.setOfferData(offerData);
@@ -1231,7 +1269,7 @@ public class FrontEndController {
 
 		res.setInfo(info);
 
-		publishData(res, frId);
+		publishDataNew(res, frId);
 
 		return res;
 	}
@@ -1241,14 +1279,14 @@ public class FrontEndController {
 	// ---GET ITEM LIST SUB CAT WISE FOR APP SORT---------------
 
 	@RequestMapping(value = { "/getSubCatItemListSortForApp" }, method = RequestMethod.POST)
-	public @ResponseBody GetAllDataByFr getSubCatItemListForApp(@RequestParam("frId") int frId,
+	public @ResponseBody GetAllDataByFrNew getSubCatItemListForApp(@RequestParam("frId") int frId,
 			@RequestParam("sort") int sort) {
 
 		int applicableFor = 2;
 		int compId = 1;
 		int type = 2;
 
-		GetAllDataByFr res = new GetAllDataByFr();
+		GetAllDataByFrNew res = new GetAllDataByFrNew();
 		// GetSubCatItemList res = new GetSubCatItemList();
 
 		Info info = new Info();
@@ -1261,14 +1299,14 @@ public class FrontEndController {
 		List<OfferHeader> offerData = null;
 		List<Tags> tagsData = null;
 		List<ItemDisplay> itemData = null;
-		FranchiseData franchise;
+		FranchiseDataNew franchise;
 
 		try {
 
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
-			franchise = franchiseDataRepo.getFranchiseById(frId);
+			franchise = franchiseDataNewRepo.getFranchiseById(frId);
 			res.setFranchise(franchise);
 
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
@@ -1350,25 +1388,51 @@ public class FrontEndController {
 			res.setCategoryData(catData);
 
 			// ---------OFFER DATA--------------
-			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
-
-			if (offerData == null) {
+//			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+//
+//			if (offerData == null) {
+//				offerData = new ArrayList<OfferHeader>();
+//			} else {
+//
+//				for (int i = 0; i < offerData.size(); i++) {
+//
+//					List<Images> offerImgList = new ArrayList<>();
+//
+//					if (imgList != null) {
+//						for (Images image : imgList) {
+//							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+//								offerImgList.add(image);
+//							}
+//						}
+//					}
+//					offerData.get(i).setImageList(offerImgList);
+//
+//				}
+//			}
+//			res.setOfferData(offerData);
+			
+			
+			List<BannerPage> bannerList = bannerPageRepo.getHomePageBannerList(frId);
+			if (bannerList == null) {
 				offerData = new ArrayList<OfferHeader>();
 			} else {
+				offerData = new ArrayList<OfferHeader>();
 
-				for (int i = 0; i < offerData.size(); i++) {
+				List<OfferHeader> temp = new ArrayList<>();
+
+				for (BannerPage b : bannerList) {
 
 					List<Images> offerImgList = new ArrayList<>();
+					Images img = new Images(1, 1, 1, b.getBannerImage(), b.getSortNo(), b.getIsActive(),
+							b.getDelStatus(), 0, 0, 0, "", "", "", "", "", "", "");
+					offerImgList.add(img);
 
-					if (imgList != null) {
-						for (Images image : imgList) {
-							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
-								offerImgList.add(image);
-							}
-						}
-					}
-					offerData.get(i).setImageList(offerImgList);
+					List<OfferDetail> detailList = new ArrayList<>();
 
+					OfferHeader banner = new OfferHeader(b.getBannerId(), b.getBannerEventName(), "", 0, "1,2", 0, 0,
+							"", "", "", "", "", 0, "", "", b.getCompId(), b.getIsActive(), b.getDelStatus(), 0, 0, 0, 0,
+							"", "", "", "", 0, 0, 0, 0, offerImgList, detailList);
+					offerData.add(banner);	
 				}
 			}
 			res.setOfferData(offerData);
@@ -1628,14 +1692,14 @@ public class FrontEndController {
 	// ---GET ITEM LIST SUB CAT WISE FOR APP BY RATINGS----------
 
 	@RequestMapping(value = { "/getSubCatItemListByRatingsForApp" }, method = RequestMethod.POST)
-	public @ResponseBody GetAllDataByFr getSubCatItemListByRatingsForApp(@RequestParam("frId") int frId,
+	public @ResponseBody GetAllDataByFrNew getSubCatItemListByRatingsForApp(@RequestParam("frId") int frId,
 			@RequestParam("ratings") List<String> ratings) {
 
 		int applicableFor = 2;
 		int compId = 1;
 		int type = 2;
 
-		GetAllDataByFr res = new GetAllDataByFr();
+		GetAllDataByFrNew res = new GetAllDataByFrNew();
 		// GetSubCatItemList res = new GetSubCatItemList();
 
 		Info info = new Info();
@@ -1648,7 +1712,7 @@ public class FrontEndController {
 		List<OfferHeader> offerData = null;
 		List<Tags> tagsData = null;
 		List<ItemDisplay> itemData = null;
-		FranchiseData franchise;
+		FranchiseDataNew franchise;
 
 		try {
 //			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
@@ -1662,7 +1726,7 @@ public class FrontEndController {
 			List<Images> imgList = imagesRepo.findAllByDelStatus(0);
 			List<Tags> allTagList = tagRepo.findByTagDeleteStatusAndExInt1OrderByTagIdDesc(0, compId);
 			List<Ingrediant> allTasteList = ingrediantRepo.findByDelStatusOrderByIngrediantIdDesc(0);
-			franchise = franchiseDataRepo.getFranchiseById(frId);
+			franchise = franchiseDataNewRepo.getFranchiseById(frId);
 			res.setFranchise(franchise);
 
 			List<ItemWiseOfferHeaderDisplay> offerDisplayList = new ArrayList<>();
@@ -1744,25 +1808,51 @@ public class FrontEndController {
 			res.setCategoryData(catData);
 
 			// ---------OFFER DATA--------------
-			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
-
-			if (offerData == null) {
+//			offerData = offerHeaderRepo.getOfferHeaderByFr(frId, type, applicableFor);
+//
+//			if (offerData == null) {
+//				offerData = new ArrayList<OfferHeader>();
+//			} else {
+//
+//				for (int i = 0; i < offerData.size(); i++) {
+//
+//					List<Images> offerImgList = new ArrayList<>();
+//
+//					if (imgList != null) {
+//						for (Images image : imgList) {
+//							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
+//								offerImgList.add(image);
+//							}
+//						}
+//					}
+//					offerData.get(i).setImageList(offerImgList);
+//
+//				}
+//			}
+//			res.setOfferData(offerData);
+			
+			
+			List<BannerPage> bannerList = bannerPageRepo.getHomePageBannerList(frId);
+			if (bannerList == null) {
 				offerData = new ArrayList<OfferHeader>();
 			} else {
+				offerData = new ArrayList<OfferHeader>();
 
-				for (int i = 0; i < offerData.size(); i++) {
+				List<OfferHeader> temp = new ArrayList<>();
+
+				for (BannerPage b : bannerList) {
 
 					List<Images> offerImgList = new ArrayList<>();
+					Images img = new Images(1, 1, 1, b.getBannerImage(), b.getSortNo(), b.getIsActive(),
+							b.getDelStatus(), 0, 0, 0, "", "", "", "", "", "", "");
+					offerImgList.add(img);
 
-					if (imgList != null) {
-						for (Images image : imgList) {
-							if (image.getDocId() == offerData.get(i).getOfferId() && image.getDocType() == 4) {
-								offerImgList.add(image);
-							}
-						}
-					}
-					offerData.get(i).setImageList(offerImgList);
+					List<OfferDetail> detailList = new ArrayList<>();
 
+					OfferHeader banner = new OfferHeader(b.getBannerId(), b.getBannerEventName(), "", 0, "1,2", 0, 0,
+							"", "", "", "", "", 0, "", "", b.getCompId(), b.getIsActive(), b.getDelStatus(), 0, 0, 0, 0,
+							"", "", "", "", 0, 0, 0, 0, offerImgList, detailList);
+					offerData.add(banner);	
 				}
 			}
 			res.setOfferData(offerData);
@@ -3282,6 +3372,62 @@ public class FrontEndController {
 
 	}
 
+	public void publishDataNew(GetAllDataByFrNew allData, int frId) {
+
+		// final String JSON_SAVE_URL = "C:/Users/MAXADMIN/Desktop/Report/";
+///home/ubuntu/tomcat/apache-tomcat-9.0.41/webapps/ROOT/uploads
+		// final String JSON_SAVE_URL =
+		// "/opt/apache-tomcat-8.5.49/webapps/uploads/appjson/";
+		final String JSON_SAVE_URL = "/home/ubuntu/tomcat/apache-tomcat-9.0.41/webapps/ROOT/uploads/appjson/";
+		// final String TALLY_VIEW =
+		// "http://107.180.91.43:8080/uploads/ckuploads/ckjson/";
+
+		ObjectMapper Obj = new ObjectMapper();
+		String json = "";
+		try {
+			json = Obj.writeValueAsString(allData);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		if (json != null) {
+
+			try {
+				Writer output = null;
+				File file = new File(JSON_SAVE_URL + frId + ".json");
+				output = new BufferedWriter(new FileWriter(file));
+				output.write(json.toString());
+				output.close();
+
+				String fileName = JSON_SAVE_URL + frId + ".zip";
+				String sourceFile = JSON_SAVE_URL + frId + ".json";
+
+				FileOutputStream fos = new FileOutputStream(fileName);
+				ZipOutputStream zipOut = new ZipOutputStream(fos);
+				File fileToZip = new File(sourceFile);
+				FileInputStream fis = new FileInputStream(fileToZip);
+				ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+
+				zipOut.putNextEntry(zipEntry);
+				byte[] bytes = new byte[1024];
+				int length;
+				while ((length = fis.read(bytes)) >= 0) {
+					zipOut.write(bytes, 0, length);
+				}
+				zipOut.close();
+				fis.close();
+				fos.close();
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
 	@RequestMapping(value = { "/publishAllFrData" }, method = RequestMethod.GET)
 	public @ResponseBody Info publishAllFrData() {
 
@@ -3835,6 +3981,9 @@ public class FrontEndController {
 								}
 							}
 						}
+						
+						
+						System.err.println("tokens------------------------ "+tokenList);
 
 						Firebase.send_FCM_NotificationList(tokenList, title, message, type);
 

@@ -64,6 +64,34 @@ public class Images {
 	@Column(name = "ex_Float3")
 	private String exFloat3;
 
+	public Images() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Images(int imagesId, int docType, int docId, String imageName, float seqNo, int isActive, int delStatus,
+			int exInt1, int exInt2, int exInt3, String exVar1, String exVar2, String exVar3, String exVar4,
+			String exFloat1, String exFloat2, String exFloat3) {
+		super();
+		this.imagesId = imagesId;
+		this.docType = docType;
+		this.docId = docId;
+		this.imageName = imageName;
+		this.seqNo = seqNo;
+		this.isActive = isActive;
+		this.delStatus = delStatus;
+		this.exInt1 = exInt1;
+		this.exInt2 = exInt2;
+		this.exInt3 = exInt3;
+		this.exVar1 = exVar1;
+		this.exVar2 = exVar2;
+		this.exVar3 = exVar3;
+		this.exVar4 = exVar4;
+		this.exFloat1 = exFloat1;
+		this.exFloat2 = exFloat2;
+		this.exFloat3 = exFloat3;
+	}
+
 	public int getImagesId() {
 		return imagesId;
 	}
