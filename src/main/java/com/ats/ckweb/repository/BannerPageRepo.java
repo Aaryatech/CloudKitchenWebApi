@@ -34,5 +34,10 @@ BannerPage findByBannerId(int bannerId);
 	
 	List<BannerPage> findByIsActiveAndDelStatusAndCompIdOrderByBannerIdDesc(int isActive, int del, int compId);
 	
+	
+	@Query(value="SELECT b.* FROM banner_home_page b WHERE FIND_IN_SET(:frId,b.fr_ids)",nativeQuery=true)
+	List<BannerPage> getHomePageBannerList(@Param("frId") int frId);
+
+	
 
 }

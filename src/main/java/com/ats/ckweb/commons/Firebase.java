@@ -21,7 +21,8 @@ import com.google.android.gcm.server.Sender;
 public class Firebase {
 
 	// Method to send Notifications from server to client end.
-	public final static String AUTH_KEY_FCM = "AAAAHZVWJIo:APA91bHv6s8hgUrH6t_erPCU7yweVjokN66Y3-zo5ZOyWtBerOayCaCAQrITf-DD8BOVEMQTv7N-hE_FHEdcwy7OdCMsedxDVGXqf0zzFKuSLmoKprNqaVyEUPo68yA_4Pmp_DoHaHzs";
+	//public final static String AUTH_KEY_FCM = "AAAAHZVWJIo:APA91bHv6s8hgUrH6t_erPCU7yweVjokN66Y3-zo5ZOyWtBerOayCaCAQrITf-DD8BOVEMQTv7N-hE_FHEdcwy7OdCMsedxDVGXqf0zzFKuSLmoKprNqaVyEUPo68yA_4Pmp_DoHaHzs";
+	public final static String AUTH_KEY_FCM = "AAAAHZVWJIo:APA91bFIXx3RXZoQBvbnzj5uXjgcOqw7E7C2RhPx6LJ49NX8Ub1zx4W1fwIlGnVgXauxoEXqwH6qbjR0kbCH6GYhPdaKfsOZqfXQauOiw47oUGwXQkb6j3gJ7D4AYBP8ehuPdKN-K7HF";
 
 	public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
 

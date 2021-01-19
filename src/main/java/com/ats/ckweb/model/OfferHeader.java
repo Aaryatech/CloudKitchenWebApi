@@ -111,6 +111,58 @@ public class OfferHeader {
 
 	@Transient
 	List<OfferDetail> offerDetailList;
+	
+	
+
+	public OfferHeader() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+	public OfferHeader(int offerId, String offerName, String offerDesc, int type, String applicableFor, int offerType,
+			int frequencyType, String frequency, String fromDate, String toDate, String fromTime, String toTime,
+			int makerUserId, String makerDatetime, String lastUpdatedDatetime, int compId, int isActive, int delStatus,
+			int exInt1, int exInt2, int exInt3, int exInt4, String exVar1, String exVar2, String exVar3, String exVar4,
+			float exFloat1, float exFloat2, float exFloat3, float exFloat4, List<Images> imageList,
+			List<OfferDetail> offerDetailList) {
+		super();
+		this.offerId = offerId;
+		this.offerName = offerName;
+		this.offerDesc = offerDesc;
+		this.type = type;
+		this.applicableFor = applicableFor;
+		this.offerType = offerType;
+		this.frequencyType = frequencyType;
+		this.frequency = frequency;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.fromTime = fromTime;
+		this.toTime = toTime;
+		this.makerUserId = makerUserId;
+		this.makerDatetime = makerDatetime;
+		this.lastUpdatedDatetime = lastUpdatedDatetime;
+		this.compId = compId;
+		this.isActive = isActive;
+		this.delStatus = delStatus;
+		this.exInt1 = exInt1;
+		this.exInt2 = exInt2;
+		this.exInt3 = exInt3;
+		this.exInt4 = exInt4;
+		this.exVar1 = exVar1;
+		this.exVar2 = exVar2;
+		this.exVar3 = exVar3;
+		this.exVar4 = exVar4;
+		this.exFloat1 = exFloat1;
+		this.exFloat2 = exFloat2;
+		this.exFloat3 = exFloat3;
+		this.exFloat4 = exFloat4;
+		this.imageList = imageList;
+		this.offerDetailList = offerDetailList;
+	}
+
+
 
 	public int getOfferId() {
 		return offerId;
