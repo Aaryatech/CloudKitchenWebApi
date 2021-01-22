@@ -197,6 +197,11 @@ public class FrontEndController {
 
 	@Value("${password}")
 	private String email_password;
+	
+	@Value("${NOTIFY_IMG_URL}")
+	private String NOTIFY_IMG_URL;
+	
+	
 
 	// Author-Anmol Shirke Created On-20-07-2020
 	// Desc- Returns franchisee,city,area list
@@ -3985,7 +3990,9 @@ public class FrontEndController {
 						
 						System.err.println("tokens------------------------ "+tokenList);
 
-						Firebase.send_FCM_NotificationList(tokenList, title, message, type);
+						String img=NOTIFY_IMG_URL+""+image;
+						
+						Firebase.send_FCM_NotificationList(tokenList, title, message, type,img);
 
 					}
 

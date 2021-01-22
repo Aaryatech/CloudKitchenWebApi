@@ -150,7 +150,8 @@ public class Firebase {
 
 			objData = new JSONObject();
 			objData.put("registration_ids", regId);
-			objData.put("data", data);
+			//objData.put("data", data);
+			objData.put("notification", data);
 			//System.out.println("!_@rj@_group_PASS:>" + objData.toString());
 
 			System.out.println("json :" + objData.toString());
@@ -193,5 +194,95 @@ public class Firebase {
 	}
 
 
+	
+	public static void send_FCM_NotificationList(List<String> putIds2, String title, String message, int tag,String image) {
+		try {
+			// Create URL instance.
+			URL url = new URL(API_URL_FCM);
+			// create connection.
+			HttpURLConnection conn;
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setUseCaches(false);
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			// set method as POST or GET
+			conn.setRequestMethod("POST");
+			// pass FCM server key
+			conn.setRequestProperty("Authorization", "key=" + AUTH_KEY_FCM);
+			// Specify Message Format
+			conn.setRequestProperty("Content-Type", "application/json");
+			// Create JSON Object & pass value
+
+			JSONArray regId = null;
+			JSONObject objData = null;
+			JSONObject data = null;
+			JSONObject notif = null;
+
+			regId = new JSONArray();
+			for (int i = 0; i < putIds2.size(); i++) {
+				regId.put(putIds2.get(i));
+			}
+			data = new JSONObject();
+			data.put("message", message);
+			data.put("title", title);
+			data.put("body", message);
+			data.put("tag", tag);
+			data.put("sound", "default");
+			data.put("vibrate", "true");
+			data.put("imageUrl", image);
+			
+			notif = new JSONObject();
+			notif.put("title", title);
+			notif.put("body", message);
+			notif.put("tag", tag);
+			notif.put("image", image);
+
+			objData = new JSONObject();
+			objData.put("registration_ids", regId);
+			objData.put("data", data);
+			objData.put("notification", notif);
+			//System.out.println("!_@rj@_group_PASS:>" + objData.toString());
+
+			System.out.println("json :" + objData.toString());
+			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+			wr.write(objData.toString());
+			wr.flush();
+			int status = 0;
+			if (null != conn) {
+				status = conn.getResponseCode();
+			}
+			if (status != 0) {
+
+				if (status == 200) {
+					// SUCCESS message
+					BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+					System.out.println("Android Notification Response : " + reader.readLine());
+				} else if (status == 401) {
+					// client side error
+					System.out.println("Notification Response : 401 ");
+				} else if (status == 501) {
+					// server side error
+					System.out.println("Notification Response : 501 ");
+				} else if (status == 503) {
+					// server side error
+					System.out.println("Notification Response : 503 ");
+				}
+			}
+		} catch (MalformedURLException mlfexception) {
+			System.out.println("Error occurred while sending push Notification!.." + mlfexception.getMessage());
+		} catch (IOException mlfexception) {
+			// URL problem
+			System.out.println(
+					"Reading URL, Error occurred while sending push Notification!.." + mlfexception.getMessage());
+			mlfexception.printStackTrace();
+		} catch (Exception exception) {
+			// General Error or exception.
+			System.out.println("Error occurred while sending push Notification!.." + exception.getMessage());
+		}
+	}
+
+	
+	
 
 }
