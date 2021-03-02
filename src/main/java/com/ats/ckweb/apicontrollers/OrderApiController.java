@@ -244,7 +244,10 @@ public class OrderApiController {
 					}
 
 					try {
-						Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+						if (res.getPaymentMethod() == 2) {
+							Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+						}
+
 					} catch (Exception e) {
 					}
 
@@ -323,7 +326,9 @@ public class OrderApiController {
 					}
 
 					try {
-						Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+						if (res.getPaymentMethod() == 2) {
+							Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+						}
 					} catch (Exception e) {
 					}
 
@@ -649,6 +654,21 @@ public class OrderApiController {
 			String txt = "";
 			if (paid == 1) {
 				txt = "Payment : " + txStatus;
+
+				try {
+
+					NewSetting val = new NewSetting();
+					Customer cust = customerRepo.getOne(orderHeader.getCustId());
+					val = newSettingRepo.findBySettingKeyAndDelStatus("msg_place_order", 0);
+					String msg = val.getSettingValue1();
+
+					msg = msg.replace("###", cust.getCustName());
+					msg = msg.replace("$$$", orderHeader.getOrderNo());
+
+					Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+				} catch (Exception e) {
+
+				}
 			}
 			orderTrail.setExVar1(txt);
 			orderTrail.setExInt1(2);
