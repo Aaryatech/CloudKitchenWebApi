@@ -35,7 +35,7 @@ public interface CustWalletTransactionRepo extends JpaRepository<CustWalletTrans
 			"WHERE\r\n" + 
 			"    w.order_id = h.order_id AND h.cust_id = :custId AND h.del_status = 0\r\n" + 
 			"ORDER BY\r\n" + 
-			"    w.wallet_date",nativeQuery=true)
+			"    w.wallet_date desc, h.order_id desc ",nativeQuery=true)
 	public List<CustWalletTransaction> getCustWalletTransc(@Param("custId") int custId);
 	
 

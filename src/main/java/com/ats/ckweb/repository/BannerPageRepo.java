@@ -20,7 +20,7 @@ BannerPage findByBannerId(int bannerId);
 	@Query(value="UPDATE\n" + 
 			"        `banner_home_page` \n" + 
 			"    SET\n" + 
-			"        del_status=0,\n" + 
+			"        del_status=1,\n" + 
 			"        update_date_time=:dateTime, \n" + 
 			"        update_user_id=:userId\n" + 
 			"    WHERE\n" + 
@@ -35,7 +35,7 @@ BannerPage findByBannerId(int bannerId);
 	List<BannerPage> findByIsActiveAndDelStatusAndCompIdOrderByBannerIdDesc(int isActive, int del, int compId);
 	
 	
-	@Query(value="SELECT b.* FROM banner_home_page b WHERE FIND_IN_SET(:frId,b.fr_ids)",nativeQuery=true)
+	@Query(value="SELECT b.* FROM banner_home_page b WHERE FIND_IN_SET(:frId,b.fr_ids) AND del_status=0 ",nativeQuery=true)
 	List<BannerPage> getHomePageBannerList(@Param("frId") int frId);
 
 	

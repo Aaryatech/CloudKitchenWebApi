@@ -71,7 +71,7 @@ public class BannerpageApiController {
 
 		List<BannerPage> list = new ArrayList<BannerPage>();
 		try {
-			list = bannerPageRepo.findByCompIdAndDelStatusOrderByBannerIdDesc(compId, 1);
+			list = bannerPageRepo.findByCompIdAndDelStatusOrderByBannerIdDesc(compId, 0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,7 +116,7 @@ public class BannerpageApiController {
 
 		List<BannerPage> list = new ArrayList<BannerPage>();
 		try {
-			list = bannerPageRepo.findByIsActiveAndDelStatusAndCompIdOrderByBannerIdDesc(1, 1, compId);
+			list = bannerPageRepo.findByIsActiveAndDelStatusAndCompIdOrderByBannerIdDesc(1, 0, compId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
