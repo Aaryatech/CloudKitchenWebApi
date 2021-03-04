@@ -223,8 +223,6 @@ public class OrderApiController {
 					msg = msg.replace("$$$", orderSaveData.getOrderHeader().getOrderNo());
 					// msg = msg.replace("@@@", "1234567899");
 
-					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
-
 					if (orderSaveData.getOrderHeader().getIsAgent() == 1) {
 
 						Agent agent = agentRepo.findByAgentIdAndCompanyIdAndDelStatus(
@@ -244,8 +242,9 @@ public class OrderApiController {
 					}
 
 					try {
-						if (res.getPaymentMethod() == 2) {
+						if (res.getPaymentMethod() == 1) {
 							Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+							SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
 						}
 
 					} catch (Exception e) {
@@ -666,6 +665,7 @@ public class OrderApiController {
 					msg = msg.replace("$$$", orderHeader.getOrderNo());
 
 					Firebase.sendPushNotification(cust.getExVar3(), "Order Placed", msg, 1);
+					SMSUtility.sendSMS(cust.getPhoneNumber(), msg, "MDVDRY");
 				} catch (Exception e) {
 
 				}
@@ -1345,7 +1345,7 @@ public class OrderApiController {
 
 					info = saveCloudOrder(data);
 					System.err.println("SAVE CLOUD ORDER------------ " + info);
-
+					System.err.println("order.getTotalAmt() " + order.getTotalAmt());
 					if (info != null) {
 						if (info.getError() == false) {
 
@@ -1357,7 +1357,7 @@ public class OrderApiController {
 
 							res.setOrderId(orderId);
 							res.setUuidNo(uuid);
-							res.setAmt(Float.parseFloat(df.format(finaTotalAmt)));
+							res.setAmt(order.getTotalAmt());
 							res.setPayMode(placeOrderParam.getPayMode());
 							res.setPaidStatus(0);
 							res.setOrderStatus(0);
@@ -1367,7 +1367,7 @@ public class OrderApiController {
 
 									PaymentGatewayParam param = new PaymentGatewayParam();
 									param.setOrderId(uuid);
-									param.setOrderAmount("" + Float.parseFloat(df.format(finaTotalAmt)));
+									param.setOrderAmount("" + order.getTotalAmt());
 									param.setOrderCurrency("INR");
 
 									List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
@@ -1384,7 +1384,7 @@ public class OrderApiController {
 									Object obj = restTemplate.postForObject(paymentUrl, param, Object.class);
 
 									res.setPaymentResponse(obj);
-									// System.err.println("PAYMENT RESPONSE------------ " + obj.toString());
+									System.err.println("PAYMENT RESPONSE------------ " + obj.toString());
 
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -1437,7 +1437,7 @@ public class OrderApiController {
 		}
 
 		res.setInfo(info);
-
+		System.err.println("FINAL RESPONSE------------ " + res);
 		return res;
 	}
 
